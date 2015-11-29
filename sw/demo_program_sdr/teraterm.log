@@ -1,0 +1,122 @@
+
+
+
++----------------------------------------------------------------+
+|    <<< STORM Core Processor System - By Stephan Nolting >>>    |
++----------------------------------------------------------------+
+|         Bootloader for STORM SoC   Version: J_SDRAM            |
+|               Contact: stnolting@googlemail.com                |
++----------------------------------------------------------------+
+
+ < Welcome to the STORM SoC bootloader console! >
+ < Select an operation from the menu below or press >
+ < the boot key for immediate application start. >
+
+ 0 - boot from  SDRAM (start application)
+ 1 - program  SDRAM via UART_0
+ 2 -  SDRAM dump
+ 3 - boot from I2C EEPROM
+ 4 - program I2C EEPROM via UART_0
+ 5 - show content of I2C EEPROM
+ a - automatic boot configuration
+ h - help
+ r - restart system
+
+Select: 1
+
+Application will start automatically after download.
+-> Waiting for 'storm_program.bin' in byte-stream mode...
+Master Boot Record Code OK
+SMBRпре€п ERROR! Program file too big!
+
+€ Invalid operation!
+Try again: ) Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again: р Invalid operation!
+Try again:  Invalid operation!
+Try again: ю Invalid operation!
+Try again: A Invalid operation!
+Try again: л Invalid operation!
+Try again: б Invalid operation!
+Try again: л Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again: d Invalid operation!
+Try again:  Invalid operation!
+Try again: е Invalid operation!
+Try again: а Invalid operation!
+Try again: е Invalid operation!
+Try again: † Invalid operation!
+Try again: а Invalid operation!
+Try again:  Invalid operation!
+Try again: 0
+
+-> Starting application...
+
+
+
+
++----------------------------------------------------------------+
+|    <<< STORM Core Processor System - By Stephan Nolting >>>    |
++----------------------------------------------------------------+
+|         Bootloader for STORM SoC   Version: J_SDRAM            |
+|               Contact: stnolting@googlemail.com                |
++----------------------------------------------------------------+
+
+ < Welcome to the STORM SoC bootloader console! >
+ < Select an operation from the menu below or press >
+ < the boot key for immediate application start. >
+
+ 0 - boot from  SDRAM (start application)
+ 1 - program  SDRAM via UART_0
+ 2 -  SDRAM dump
+ 3 - boot from I2C EEPROM
+ 4 - program I2C EEPROM via UART_0
+ 5 - show content of I2C EEPROM
+ a - automatic boot configuration
+ h - help
+ r - restart system
+
+Select: 1
+
+Application will start automatically after download.
+-> Waiting for 'storm_program.bin' in byte-stream mode...
+Master Boot Record Code OK
+SMBRпре€п ERROR! Program file too big!
+
+€ Invalid operation!
+Try again: ) Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again: р Invalid operation!
+Try again:  Invalid operation!
+Try again: ю Invalid operation!
+Try again: A Invalid operation!
+Try again: л Invalid operation!
+Try again: б Invalid operation!
+Try again: л Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again:  Invalid operation!
+Try again: d Invalid operation!
+Try again:  Invalid operation!
+Try again: е Invalid operation!
+Try again: а Invalid operation!
+Try again: е Invalid operation!
+Try again: † Invalid operation!
+Try again: а Invalid operation!
+Try again:  Invalid operation!
+Try again: 0
+
+-> Starting application...
+

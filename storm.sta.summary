@@ -1,0 +1,245 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.538
+TNS   : -49.550
+
+Type  : Slow 1200mV 85C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.820
+TNS   : -2.040
+
+Type  : Slow 1200mV 85C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 1.590
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.028
+TNS   : -41.403
+
+Type  : Slow 1200mV 85C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.202
+TNS   : -0.262
+
+Type  : Slow 1200mV 85C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 0.270
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -1.412
+TNS   : -1.412
+
+Type  : Slow 1200mV 85C Model Recovery 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -0.403
+TNS   : -28.416
+
+Type  : Slow 1200mV 85C Model Recovery 'MINI_UART:GP_UART_0|LoadA'
+Slack : -0.046
+TNS   : -0.046
+
+Type  : Slow 1200mV 85C Model Recovery 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 16.889
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'MINI_UART:GP_UART_0|LoadA'
+Slack : 0.190
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : 0.392
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : 0.518
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 1.005
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.000
+TNS   : -72.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|LoadA'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 4.746
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 9.660
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLK_I'
+Slack : 9.835
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.265
+TNS   : -36.369
+
+Type  : Slow 1200mV 0C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.586
+TNS   : -1.193
+
+Type  : Slow 1200mV 0C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 2.487
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -0.852
+TNS   : -31.395
+
+Type  : Slow 1200mV 0C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.258
+TNS   : -0.380
+
+Type  : Slow 1200mV 0C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 0.238
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -1.214
+TNS   : -1.214
+
+Type  : Slow 1200mV 0C Model Recovery 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -0.325
+TNS   : -22.886
+
+Type  : Slow 1200mV 0C Model Recovery 'MINI_UART:GP_UART_0|LoadA'
+Slack : 0.004
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 17.228
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'MINI_UART:GP_UART_0|LoadA'
+Slack : 0.229
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : 0.420
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : 0.504
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 0.907
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.000
+TNS   : -72.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|LoadA'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 4.743
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 9.686
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'CLK_I'
+Slack : 9.818
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -0.403
+TNS   : -3.246
+
+Type  : Fast 1200mV 0C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.082
+TNS   : -0.098
+
+Type  : Fast 1200mV 0C Model Setup 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 5.167
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -0.777
+TNS   : -38.662
+
+Type  : Fast 1200mV 0C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : -0.107
+TNS   : -0.152
+
+Type  : Fast 1200mV 0C Model Hold 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 0.129
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -0.419
+TNS   : -0.419
+
+Type  : Fast 1200mV 0C Model Recovery 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : 0.206
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'MINI_UART:GP_UART_0|LoadA'
+Slack : 0.424
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 18.179
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'MINI_UART:GP_UART_0|LoadA'
+Slack : -0.004
+TNS   : -0.004
+
+Type  : Fast 1200mV 0C Model Removal 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : 0.100
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : 0.188
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 0.549
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'PWM_CTRL:PWM_CONTROLLER_0|CLK_DIV[5]'
+Slack : -1.000
+TNS   : -72.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|LoadA'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'MINI_UART:GP_UART_0|RxUnit:Uart_RxUnit|RRegL'
+Slack : -1.000
+TNS   : -1.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[1]'
+Slack : 4.756
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLK_I'
+Slack : 9.587
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'SYSCON_CLK|altpll_component|pll|clk[0]'
+Slack : 9.748
+TNS   : 0.000
+
+------------------------------------------------------------

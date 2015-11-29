@@ -1,0 +1,162 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2013 Altera Corporation
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, Altera MegaCore Function License 
+# Agreement, or other applicable license agreement, including, 
+# without limitation, that your use is for the sole purpose of 
+# programming logic devices manufactured by Altera and sold by 
+# Altera or its authorized distributors.  Please refer to the 
+# applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus II 64-Bit
+# Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
+# Date created = 21:03:11  November 01, 2015
+#
+# -------------------------------------------------------------------------- #
+
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "21:03:11  NOVEMBER 01, 2015"
+set_global_assignment -name TOP_LEVEL_ENTITY STORM_SoC_basic
+# -------------------------------------------------------------------------- #
+
+set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name DEVICE EP4CE22F17C6
+set_global_assignment -name FAMILY "Cyclone IV E"
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name TIMEQUEST_DO_CCPP_REMOVAL ON
+set_global_assignment -name STRATIX_DEVICE_IO_STANDARD "2.5 V"
+set_location_assignment PIN_M15 -to BOOT_CONFIG_I[3]
+set_location_assignment PIN_B9 -to BOOT_CONFIG_I[2]
+set_location_assignment PIN_T8 -to BOOT_CONFIG_I[1]
+set_location_assignment PIN_M1 -to BOOT_CONFIG_I[0]
+set_location_assignment PIN_R8 -to CLK_I
+set_location_assignment PIN_F2 -to I2C_SCL_IO
+set_location_assignment PIN_F1 -to I2C_SDA_IO
+set_location_assignment PIN_L3 -to LED_BAR_O[7]
+set_location_assignment PIN_B1 -to LED_BAR_O[6]
+set_location_assignment PIN_F3 -to LED_BAR_O[5]
+set_location_assignment PIN_D1 -to LED_BAR_O[4]
+set_location_assignment PIN_A11 -to LED_BAR_O[3]
+set_location_assignment PIN_B13 -to LED_BAR_O[2]
+set_location_assignment PIN_A13 -to LED_BAR_O[1]
+set_location_assignment PIN_A15 -to LED_BAR_O[0]
+set_location_assignment PIN_J15 -to RST_I
+set_location_assignment PIN_L4 -to SDRAM_ADDR_O[12]
+set_location_assignment PIN_N1 -to SDRAM_ADDR_O[11]
+set_location_assignment PIN_N2 -to SDRAM_ADDR_O[10]
+set_location_assignment PIN_P1 -to SDRAM_ADDR_O[9]
+set_location_assignment PIN_R1 -to SDRAM_ADDR_O[8]
+set_location_assignment PIN_T6 -to SDRAM_ADDR_O[7]
+set_location_assignment PIN_N8 -to SDRAM_ADDR_O[6]
+set_location_assignment PIN_T7 -to SDRAM_ADDR_O[5]
+set_location_assignment PIN_P8 -to SDRAM_ADDR_O[4]
+set_location_assignment PIN_M8 -to SDRAM_ADDR_O[3]
+set_location_assignment PIN_N6 -to SDRAM_ADDR_O[2]
+set_location_assignment PIN_N5 -to SDRAM_ADDR_O[1]
+set_location_assignment PIN_P2 -to SDRAM_ADDR_O[0]
+set_location_assignment PIN_M6 -to SDRAM_BA_O[1]
+set_location_assignment PIN_M7 -to SDRAM_BA_O[0]
+set_location_assignment PIN_L1 -to SDRAM_CAS_O
+set_location_assignment PIN_L7 -to SDRAM_CKE_O
+set_location_assignment PIN_R4 -to SDRAM_CLK_O
+set_location_assignment PIN_P6 -to SDRAM_CS_O
+set_location_assignment PIN_T5 -to SDRAM_DQM_O[1]
+set_location_assignment PIN_R6 -to SDRAM_DQM_O[0]
+set_location_assignment PIN_L2 -to SDRAM_RAS_O
+set_location_assignment PIN_C2 -to SDRAM_WE_O
+set_location_assignment PIN_E1 -to START_I
+set_location_assignment PIN_N16 -to UART0_RXD_I
+set_location_assignment PIN_P16 -to UART0_TXD_O
+set_global_assignment -name ENABLE_SIGNALTAP OFF
+set_global_assignment -name USE_SIGNALTAP_FILE sdram.stp
+set_location_assignment PIN_G2 -to SDRAM_DQ_IO[0]
+set_location_assignment PIN_G1 -to SDRAM_DQ_IO[1]
+set_location_assignment PIN_L8 -to SDRAM_DQ_IO[2]
+set_location_assignment PIN_K5 -to SDRAM_DQ_IO[3]
+set_location_assignment PIN_K2 -to SDRAM_DQ_IO[4]
+set_location_assignment PIN_J2 -to SDRAM_DQ_IO[5]
+set_location_assignment PIN_J1 -to SDRAM_DQ_IO[6]
+set_location_assignment PIN_R7 -to SDRAM_DQ_IO[7]
+set_location_assignment PIN_T4 -to SDRAM_DQ_IO[8]
+set_location_assignment PIN_T2 -to SDRAM_DQ_IO[9]
+set_location_assignment PIN_T3 -to SDRAM_DQ_IO[10]
+set_location_assignment PIN_R3 -to SDRAM_DQ_IO[11]
+set_location_assignment PIN_R5 -to SDRAM_DQ_IO[12]
+set_location_assignment PIN_P3 -to SDRAM_DQ_IO[13]
+set_location_assignment PIN_N3 -to SDRAM_DQ_IO[14]
+set_location_assignment PIN_K1 -to SDRAM_DQ_IO[15]
+set_global_assignment -name VHDL_FILE storm_soc/components/reset_protector/rtl/RST_PROTECT_new.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/pwm_controller/rtl/PWM_CTRL.vhd
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/dpram_altera.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/dual_clock_fifo.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/sdram_ctrl.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/wb_port.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/arbiter.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/dpram_generic.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/wb_sdram_ctrl.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/wb_sdram_ctrl/bufram.v
+set_global_assignment -name VHDL_FILE storm_soc/components/vector_interrupt_controller/rtl/VIC.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/timer/rtl/TIMER.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/WB_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/STORM_TOP.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/REG_FILE.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/OPERAND_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/OPCODE_DECODER.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/MULTIPLY_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/MS_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/MC_SYS.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/LOAD_STORE_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/FLOW_CTRL.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/CORE_PKG.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/CORE.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/CACHE.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/BUS_UNIT.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/BARREL_SHIFTER.vhd
+set_global_assignment -name VHDL_FILE storm_core/rtl/ALU.vhd
+set_global_assignment -name VHDL_FILE storm_soc/basic_system/rtl/STORM_SoC_basic.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/sram_memory/rtl/MEMORY.vhd
+set_global_assignment -name VERILOG_FILE storm_soc/components/spi_controller/rtl/verilog/timescale.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/spi_controller/rtl/verilog/spi_top.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/spi_controller/rtl/verilog/spi_shift.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/spi_controller/rtl/verilog/spi_defines.v
+set_global_assignment -name VERILOG_FILE storm_soc/components/spi_controller/rtl/verilog/spi_clgen.v
+set_global_assignment -name VHDL_FILE storm_soc/components/miniuart/rtl/vhdl/utils.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/miniuart/rtl/vhdl/Txunit.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/miniuart/rtl/vhdl/Rxunit.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/miniuart/rtl/vhdl/MINI_UART.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/io_controller/rtl/GP_IO_CTRL.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/boot_rom/rtl/BOOT_ROM_FILE.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/i2c_controller/rtl/vhdl/i2c_master_top.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/i2c_controller/rtl/vhdl/i2c_master_byte_ctrl.vhd
+set_global_assignment -name VHDL_FILE storm_soc/components/i2c_controller/rtl/vhdl/i2c_master_bit_ctrl.vhd
+set_global_assignment -name QIP_FILE system_pll.qip
+set_global_assignment -name SIGNALTAP_FILE sdram.stp
+set_global_assignment -name SLD_FILE sdram_auto_stripped.stp
+set_global_assignment -name SEARCH_PATH storm_core/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/basic_system/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/boot_rom/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/i2c_controller/rtl/vhdl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/io_controller/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/miniuart/rtl/vhdl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/pwm_controller/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/reset_protector/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/spi_controller/rtl/verilog/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/sram_memory/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/timer/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/vector_interrupt_controller/rtl/ -tag from_archive
+set_global_assignment -name SEARCH_PATH storm_soc/components/wb_sdram_ctrl/ -tag from_archive
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
