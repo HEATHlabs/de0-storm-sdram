@@ -133,9 +133,7 @@ main_menu:
 						*data_pointer = qbytes_to_long(buffer); // store memory entry
 						data_pointer = data_pointer + 1;
 					}
-//	asm volatile ("nop");
-//	asm volatile ("nop");
-//	asm volatile ("nop");
+					uart0_printf("\n\r");
 					print_intro();
 					//start_app = 1;
 				}

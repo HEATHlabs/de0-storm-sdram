@@ -20,7 +20,7 @@ LOAD d:/winarm/bin/../lib/gcc/arm-elf/4.1.1/../../../../arm-elf/lib/be/nofmult\l
 END GROUP
                 0x00002000                STACK_SIZE = 0x2000
 
-.text           0x00010000     0x1e50
+.text           0x00010000     0x1e18
  *storm_startup_code.o(.text)
  *(.text)
  .text          0x00010000       0x70 build/storm_boot_startup_code.o
@@ -33,7 +33,7 @@ END GROUP
                 0x00010064                exit
                 0x00010058                _jump_to_program
                 0x00010020                start
- .text          0x00010070     0x1134 main.o
+ .text          0x00010070     0x10fc main.o
                 0x00010280                io_spi0_disable
                 0x00010094                io_set_gpio0_pin
                 0x000100d4                io_toggle_gpio0_pin
@@ -46,7 +46,7 @@ END GROUP
                 0x00010654                get_adc
                 0x00010564                uart0_scanf
                 0x00010264                io_spi0_enable
-                0x00011184                io_enable_xint
+                0x0001114c                io_enable_xint
                 0x0001022c                io_spi0_trans
                 0x000102d0                io_i2c0_byte_transfer
                 0x000104d8                set_syscpreg
@@ -62,40 +62,40 @@ END GROUP
                 0x000101fc                io_spi0_config
                 0x000101e0                io_uart0_send_byte
                 0x00010770                qbytes_to_long
-                0x00011194                io_disable_xint
+                0x0001115c                io_disable_xint
                 0x00010070                io_read_gpio0_pin
                 0x00010088                io_read_gpio0_port
                 0x00010178                io_get_pwm
  *(.rodata)
- .rodata        0x000111a4        0x4 main.o
+ .rodata        0x0001116c        0x4 main.o
  *(.rodata*)
  .rodata.str1.4
-                0x000111a8      0xca8 main.o
+                0x00011170      0xca8 main.o
                                 0xcb4 (size before relaxing)
  *(.glue_7)
- .glue_7        0x00011e50        0x0 build/storm_boot_startup_code.o
- .glue_7        0x00011e50        0x0 main.o
+ .glue_7        0x00011e18        0x0 build/storm_boot_startup_code.o
+ .glue_7        0x00011e18        0x0 main.o
  *(.glue_7t)
- .glue_7t       0x00011e50        0x0 build/storm_boot_startup_code.o
- .glue_7t       0x00011e50        0x0 main.o
-                0x00011e50                . = ALIGN (0x4)
+ .glue_7t       0x00011e18        0x0 build/storm_boot_startup_code.o
+ .glue_7t       0x00011e18        0x0 main.o
+                0x00011e18                . = ALIGN (0x4)
 
-.ctors          0x00011e50        0x0
-                0x00011e50                PROVIDE (__ctors_start__, .)
+.ctors          0x00011e18        0x0
+                0x00011e18                PROVIDE (__ctors_start__, .)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x00011e50                PROVIDE (__ctors_end__, .)
+                0x00011e18                PROVIDE (__ctors_end__, .)
 
-.dtors          0x00011e50        0x0
-                0x00011e50                PROVIDE (__dtors_start__, .)
+.dtors          0x00011e18        0x0
+                0x00011e18                PROVIDE (__dtors_start__, .)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x00011e50                PROVIDE (__dtors_end__, .)
-                0x00011e50                . = ALIGN (0x4)
-                0x00011e50                _etext = .
-                0x00011e50                PROVIDE (etext, .)
+                0x00011e18                PROVIDE (__dtors_end__, .)
+                0x00011e18                . = ALIGN (0x4)
+                0x00011e18                _etext = .
+                0x00011e18                PROVIDE (etext, .)
 
-.data           0x00000000        0x0 load address 0x00011e50
+.data           0x00000000        0x0 load address 0x00011e18
                 0x00000000                _data = .
  *(.data)
  .data          0x00000000        0x0 build/storm_boot_startup_code.o
@@ -181,10 +181,10 @@ END GROUP
  .debug_abbrev  0x00000000       0x14 build/storm_boot_startup_code.o
  .debug_abbrev  0x00000014      0x26d main.o
 
-.debug_line     0x00000000      0x39e
+.debug_line     0x00000000      0x39c
  *(.debug_line)
  .debug_line    0x00000000       0x6e build/storm_boot_startup_code.o
- .debug_line    0x0000006e      0x330 main.o
+ .debug_line    0x0000006e      0x32e main.o
 
 .debug_frame    0x00000000      0x27c
  *(.debug_frame)
