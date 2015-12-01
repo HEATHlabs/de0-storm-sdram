@@ -981,22 +981,22 @@ begin
 --							)
 			port map (
 						-- Wishbone Bus --
-						  wb_clk      => MAIN_CLK,
-                    wb_rst       => MAIN_RST,
+		    wb_clk        => MAIN_CLK,
+                    wb_rst        => MAIN_RST,
 						  
-                    wb_adr_i    => CORE_WB_ADR_O, 
- 						  wb_dat_i      => CORE_WB_DATA_O,
+                    wb_adr_i      => CORE_WB_ADR_O, 
+ 		    wb_dat_i      => CORE_WB_DATA_O,
                     wb_dat_o      => SDRAM_MEM_DATA_O,
                     wb_sel_i      => CORE_WB_SEL_O,
                     wb_cyc_i      => CORE_WB_CYC_O,
                     wb_stb_i      => SDRAM_MEM_STB_I,
                     wb_we_i       => CORE_WB_WE_O,
                     wb_ack_o      => SDRAM_MEM_ACK_O,
-						  wb_cti_i		=> CORE_WB_CTI_O,
+		    wb_cti_i	  => CORE_WB_CTI_O,
 
 				-- Interface to SDRAMs 
                     sdram_clk	     => XMEM_CLK,
-						  sdram_rst		=>MAIN_RST,
+		    sdram_rst		=>MAIN_RST,
                     cke_pad_o    => SDRAM_CKE_O,
                     cs_n_pad_o    => SDRAM_CS_O,
                     we_pad_o    => SDRAM_WE_O,
