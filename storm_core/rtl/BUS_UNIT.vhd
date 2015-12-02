@@ -90,6 +90,7 @@ entity BUS_UNIT is
 
 				WB_ADR_O           : out STD_LOGIC_VECTOR(31 downto 0); -- address
 				WB_CTI_O           : out STD_LOGIC_VECTOR(02 downto 0); -- cycle type
+				WB_BTE_O           : out STD_LOGIC_VECTOR(01 downto 0); -- Bus Trans type
 				WB_DATA_O          : out STD_LOGIC_VECTOR(31 downto 0); -- data
 				WB_SEL_O           : out STD_LOGIC_VECTOR(03 downto 0); -- byte select
 				WB_TGC_O           : out STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
@@ -126,6 +127,7 @@ architecture Structure of BUS_UNIT is
 	signal WB_ERR_BUF                    : STD_LOGIC;
 	signal WB_DATA_FF,   WB_DATA_FF_NXT  : STD_LOGIC_VECTOR(31 downto 0);
 	signal WB_CTI_O_NXT                  : STD_LOGIC_VECTOR(02 downto 0);
+	signal WB_BTE_O_NXT                  : STD_LOGIC_VECTOR(01 downto 0);
 	signal WB_TGC_O_NXT                  : STD_LOGIC_VECTOR(06 downto 0);
 	signal WB_STB_O_NXT                  : STD_LOGIC;
 	signal WB_CYC_O_NXT                  : STD_LOGIC;
@@ -214,6 +216,7 @@ begin
 					WB_DATA_FF   <= (others => '0');
 					WB_ADR_O     <= (others => '0');
 					WB_CTI_O     <= (others => '0');
+					WB_BTE_O     <= (others => '0');
 					WB_TGC_O     <= (others => '0');
 					WB_STB_O     <= '0';
 					WB_CYC_O     <= '0';
@@ -232,6 +235,7 @@ begin
 						WB_DATA_FF   <= WB_DATA_FF_NXT;
 						WB_ADR_O     <= WB_ADR_BUF;
 						WB_CTI_O     <= WB_CTI_O_NXT;
+						WB_BTE_O     <= WB_BTE_O_NXT;
 						WB_TGC_O     <= WB_TGC_O_NXT;
 						WB_STB_O     <= WB_STB_O_NXT;
 						WB_CYC_O     <= WB_CYC_O_NXT;
@@ -287,6 +291,7 @@ begin
 
 			--- Wishbone Bus Defaults ---
 			WB_CTI_O_NXT    <= WB_CLASSIC_CYC;
+			WB_BTE_O_NXT    <= "00";-- Increment Burst
 			WB_TGC_O_NXT    <= "00" & STORM_MODE_I;
 			WB_CYC_O_NXT    <= '0';
 			WB_STB_O_NXT    <= '0';
@@ -347,6 +352,7 @@ begin
 					WB_TGC_O_NXT(5) <= '1'; -- indicate instruction transfer
 					WB_TGC_O_NXT(6) <= '0'; -- mem access
 					WB_CTI_O_NXT    <= WB_INC_BST_CYC;
+					WB_BTE_O_NXT    <= "00"; -- increment Burst
 					WB_CYC_O_NXT    <= '1'; -- valid cycle
 					WB_STB_O_NXT    <= '1'; -- valid transfer
 					WB_WE_O_NXT     <= '0'; -- bus read
@@ -354,6 +360,7 @@ begin
 					if (IC_ADR_BUF >= Std_Logic_Vector(unsigned(BASE_BUF) + (I_CACHE_PAGE_SIZE-1)*4)) and
 					   (to_integer(unsigned(WB_ACK_CNT)) >= I_CACHE_PAGE_SIZE) then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
+						WB_BTE_O_NXT    <= "00"; --Incremennt Burst
 						ARB_STATE_NXT   <= END_TRANSFER;
 						IC_MSS_ACK_O    <= '1'; -- ack miss!
 						WB_CYC_O_NXT    <= '0'; -- terminate cycle
@@ -369,6 +376,7 @@ begin
 					-- Timeout or abnormal cycle termination --
 					if (TIMEOUT_CNT > C_BUS_CYCC_I) or (WB_ERR_BUF = '1') then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
+						WB_BTE_O_NXT    <= "00"; -- Increment Burst
 						ARB_STATE_NXT   <= END_TRANSFER;
 						IC_MSS_ACK_O    <= '1'; -- ack miss!
 						I_ABORT_O       <= '1'; -- abort interrupt
@@ -382,6 +390,7 @@ begin
 					WB_TGC_O_NXT(5) <= '0'; -- indicate data transfer
 					WB_TGC_O_NXT(6) <= '0'; -- mem access
 					WB_CTI_O_NXT    <= WB_INC_BST_CYC;
+					WB_BTE_O_NXT    <= "00"; -- increment burst
 					WB_CYC_O_NXT    <= '1'; -- valid cycle
 					WB_STB_O_NXT    <= '1'; -- valid transfer
 					DC_WE_O         <= '1'; -- cache write access
@@ -390,6 +399,7 @@ begin
 					if (DC_ADR_BUF >= Std_Logic_Vector(unsigned(BASE_BUF) + (D_CACHE_PAGE_SIZE-1)*4)) and
 					   (to_integer(unsigned(WB_ACK_CNT)) >= D_CACHE_PAGE_SIZE) then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
+						WB_BTE_O_NXT    <= "00"; -- Increment Burst
 						ARB_STATE_NXT   <= END_TRANSFER;
 						DC_MSS_ACK_O    <= '1'; -- ack miss!
 						WB_CYC_O_NXT    <= '0'; -- terminate cycle
@@ -405,6 +415,7 @@ begin
 					-- Timeout or abnormal cycle termination --
 					if (TIMEOUT_CNT > C_BUS_CYCC_I) or (WB_ERR_BUF = '1') then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
+						WB_BTE_O_NXT    <= "00";
 						ARB_STATE_NXT   <= END_TRANSFER;
 						DC_MSS_ACK_O    <= '1'; -- ack miss!
 						D_ABORT_O       <= '1'; -- abort interrupt
@@ -417,6 +428,7 @@ begin
 					WB_TGC_O_NXT(5) <= '0'; -- indicate data transfer
 					WB_TGC_O_NXT(6) <= '1'; -- io access
 					WB_CTI_O_NXT    <= WB_CLASSIC_CYC;
+					WB_BTE_O_NXT    <= "00";
 					WB_CYC_O_NXT    <= '1'; -- valid cycle
 					WB_STB_O_NXT    <= '1'; -- valid transfer
 					WB_WE_O_NXT     <= BIT_BUF; -- bus read/write
@@ -425,6 +437,7 @@ begin
 					TIMEOUT_CNT_NXT <= Std_Logic_Vector(unsigned(TIMEOUT_CNT) + 1);	
 					if (to_integer(unsigned(WB_ACK_CNT)) >= 1) then
 						WB_CTI_O_NXT    <= WB_CLASSIC_CYC;
+						WB_BTE_O_NXT    <= "00";
 						ARB_STATE_NXT   <= END_TRANSFER;
 						DC_DRT_ACK_O    <= '1'; -- ack of pseudo dirty signal
 						DC_MSS_ACK_O    <= '1'; -- ack of pseudo miss signal
@@ -434,6 +447,7 @@ begin
 					-- Timeout or abnormal cycle termination --
 					if (TIMEOUT_CNT > C_BUS_CYCC_I) or (WB_ERR_BUF = '1') then
 						WB_CTI_O_NXT   <= WB_CLASSIC_CYC;
+						WB_BTE_O_NXT    <= "00";
 						ARB_STATE_NXT  <= END_TRANSFER;
 						DC_DRT_ACK_O   <= '1'; -- ack of pseudo dirty signal
 						DC_MSS_ACK_O   <= '1'; -- ack of pseudo miss signal
@@ -462,6 +476,7 @@ begin
 					WB_TGC_O_NXT(5) <= '0'; -- indicate data transfer
 					WB_TGC_O_NXT(6) <= '0'; -- mem access
 					WB_CTI_O_NXT    <= WB_INC_BST_CYC;
+					WB_BTE_O_NXT    <= "00";
 					WB_CYC_O_NXT    <= '1'; -- valid cycle, delayed one cycle
 					WB_STB_O_NXT    <= '1'; -- valid transfer, delayed one cycle
 					WB_WE_O_NXT     <= '1'; -- bus write
@@ -474,6 +489,7 @@ begin
 							WB_CYC_O_NXT   <= '0';
 							WB_STB_O_NXT <= '0';
 							WB_CTI_O_NXT <= WB_BST_END_CYC;
+							WB_BTE_O_NXT    <= "00";
 							DC_DRT_ACK_O <= '1'; -- ack of dirty signal
 						end if;
 					end if;
@@ -484,6 +500,7 @@ begin
 					-- Timeout or abnormal cycle termination --
 					if (TIMEOUT_CNT > C_BUS_CYCC_I) or (WB_ERR_BUF = '1') then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
+						WB_BTE_O_NXT    <= "00";
 						ARB_STATE_NXT   <= ASSIGN_D_PAGE;
 						DC_DRT_ACK_O    <= '1'; -- ack dirty signal
 						D_ABORT_O       <= '1'; -- abort interrupt
