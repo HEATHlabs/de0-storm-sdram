@@ -165,6 +165,7 @@ architecture Structure of STORM_SoC_basic is
 		-- Wishbone Core Bus --
 		signal CORE_WB_ADR_O      : STD_LOGIC_VECTOR(31 downto 0); -- address
 		signal CORE_WB_CTI_O      : STD_LOGIC_VECTOR(02 downto 0); -- cycle type
+		signal CORE_WB_BTE_O      : STD_LOGIC_VECTOR(01 downto 0); -- burst trans type
 		signal CORE_WB_TGC_O      : STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
 		signal CORE_WB_SEL_O      : STD_LOGIC_VECTOR(03 downto 0); -- byte select
 		signal CORE_WB_WE_O       : STD_LOGIC;                     -- write enable
@@ -411,7 +412,8 @@ architecture Structure of STORM_SoC_basic is
                     wb_stb_i			: in  STD_LOGIC;
                     wb_we_i			: in  STD_LOGIC;
                     wb_ack_o			: out STD_LOGIC;
-							wb_cti_i			: in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
+		    wb_cti_i			: in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
+		    wb_bte_i			: in  STD_LOGIC_VECTOR(01 downto 0); -- burst trans type
 
 		
 				-- Interface to SDRAMs 
@@ -806,6 +808,7 @@ begin
 								-- Wishbone Bus --
 								WB_ADR_O          => CORE_WB_ADR_O,   -- address
 								WB_CTI_O          => CORE_WB_CTI_O,   -- cycle type
+								WB_BTE_O          => CORE_WB_BTE_O,   -- cycle type
 								WB_TGC_O          => CORE_WB_TGC_O,   -- cycle tag
 								WB_SEL_O          => CORE_WB_SEL_O,   -- byte select
 								WB_WE_O           => CORE_WB_WE_O,    -- write enable
@@ -993,6 +996,7 @@ begin
                     wb_we_i       => CORE_WB_WE_O,
                     wb_ack_o      => SDRAM_MEM_ACK_O,
 		    wb_cti_i	  => CORE_WB_CTI_O,
+		    wb_bte_i	  => CORE_WB_BTE_O,
 
 				-- Interface to SDRAMs 
                     sdram_clk	     => XMEM_CLK,
