@@ -60,6 +60,7 @@ entity STORM_TOP is
 
 				WB_ADR_O      : out STD_LOGIC_VECTOR(31 downto 0); -- address
 				WB_CTI_O      : out STD_LOGIC_VECTOR(02 downto 0); -- cycle type
+				WB_BTE_O      : out STD_LOGIC_VECTOR(01 downto 0); -- bust cycle type
 				WB_TGC_O      : out STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
 				WB_SEL_O      : out STD_LOGIC_VECTOR(03 downto 0); -- byte select
 				WB_WE_O       : out STD_LOGIC; -- write enable
@@ -372,6 +373,7 @@ begin
 						-- Wishbone Bus --
 						WB_ADR_O            => WB_ADR_O,      -- address
 						WB_CTI_O            => WB_CTI_O,      -- cycle type
+						WB_BTE_O            => WB_BTE_O,      -- bus trans type
 						WB_DATA_O           => WB_DATA_O,     -- data
 						WB_SEL_O            => WB_SEL_O,      -- byte select
 						WB_TGC_O            => WB_TGC_O,      -- cycle tag
