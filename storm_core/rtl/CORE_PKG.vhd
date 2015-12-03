@@ -42,6 +42,13 @@ package STORM_core_package is
 	constant WB_CON_BST_CYC   : STD_LOGIC_VECTOR(2 downto 0) := "001"; -- constant address burst
 	constant WB_INC_BST_CYC   : STD_LOGIC_VECTOR(2 downto 0) := "010"; -- incrementing address burst
 	constant WB_BST_END_CYC   : STD_LOGIC_VECTOR(2 downto 0) := "111"; -- burst end
+ 
+  -- BURST  CYCLE TYPES -------------------------------------------------------------------
+  -- -------------------------------------------------------------------------------------------
+	constant WB_BURST_INCR   : STD_LOGIC_VECTOR(1 downto 0) := "00"; -- Increment Burst
+	constant WB_BURST_04BT   : STD_LOGIC_VECTOR(1 downto 0) := "01"; -- 4 Beat Wrap Burst
+	constant WB_BURST_08BT   : STD_LOGIC_VECTOR(1 downto 0) := "10"; -- 8 Beat Wrap Burst
+	constant WB_BURST_16BT   : STD_LOGIC_VECTOR(1 downto 0) := "11"; -- 16 Beat Wrap Burst
 
   -- OPERAND ADR BUS LOCATIONS --------------------------------------------------------------
   -- -------------------------------------------------------------------------------------------
@@ -647,6 +654,7 @@ package STORM_core_package is
 				IC_MSS_ACK_O       : out STD_LOGIC;
 				WB_ADR_O           : out STD_LOGIC_VECTOR(31 downto 0);
 				WB_CTI_O           : out STD_LOGIC_VECTOR(02 downto 0);
+				WB_BTE_O           : out STD_LOGIC_VECTOR(01 downto 0);
 				WB_DATA_O          : out STD_LOGIC_VECTOR(31 downto 0);
 				WB_SEL_O           : out STD_LOGIC_VECTOR(03 downto 0);
 				WB_TGC_O           : out STD_LOGIC_VECTOR(06 downto 0);
