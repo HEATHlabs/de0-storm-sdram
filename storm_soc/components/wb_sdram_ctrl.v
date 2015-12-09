@@ -24,20 +24,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+// change to 13 bit SDRAM Address
 
 `timescale 1ns/100ps
 module wb_sdram_ctrl #(
 	parameter	HIGHZ		= 0,
 	parameter	CL		= 2,
 	parameter	ADDRESS		= 25,
-	parameter	MODEREGVALUES	= CL == 2 ?	14'b0000_0_00_010_0_001 :
-							14'b0000_0_00_011_0_001,
+	parameter	MODEREGVALUES	= CL == 2 ?	15'b00000_0_00_010_0_001 :
+							15'b00000_0_00_011_0_001, //updated for SDR address
 	parameter	ASB		= ADDRESS - 1,
 	
-	// parameter	RFC_PERIOD	= 1560;	// Every 15.625 us at about 100 MHz
+	 parameter	RFC_PERIOD	= 1560;	// Every 15.625 us at about 100 MHz
 	// parameter	RFC_PERIOD	= 780;	// Every 15.625 us at about 50 MHz
 	// The following are timings for operation at 50 MHz.
-	parameter	RFC_PERIOD	= 520,	// Every 15.625 us at about 33 MHz
+	//parameter	RFC_PERIOD	= 520,	// Every 15.625 us at about 33 MHz
 	parameter	tRAS		= 3,	// Min. is 42 ns
 	parameter	tRC		= 3,	// Min. row cycle time is 60 ns
 	parameter	tRP		= 1,	// TODO: Unchecked ATM
@@ -71,7 +72,7 @@ module wb_sdram_ctrl #(
 	output		CAS_n,		// synthesis attribute iob of CAS_n is true ;
 	output		WE_n,		// synthesis attribute iob of WE_n is true ;
 	output		[1:0]	BA,	// synthesis attribute iob of BA is true ;
-	output		[11:0]	A,	// synthesis attribute iob of A is true ;
+	output		[12:0]	A,	// synthesis attribute iob of A is true ; // UPDATED
 	output	[1:0]	DM,		// synthesis attribute iob of DM is true ;
 	inout	[15:0]	DQ		// synthesis attribute iob of DQ is true ;
 );
@@ -98,7 +99,7 @@ reg	read_inhibit	= 0;
 reg	actv	= 0;
 reg	wb_end	= 0;
 reg	rd_one	= 1;
-reg	[6:0]	col_adr;
+reg	[8:0]	col_adr;
 reg	[13:0]	row_adr;
 reg	[2:0]	rp_cnt	= 0;
 reg	[2:0]	ras_cnt	= 0;
@@ -113,7 +114,7 @@ wire	ready;
 wire	[31:0]	rd_dat;
 reg	[31:0]	wb_dat;
 
-
+//UPDATE these are not from command truth table!
 `define	SDR_INIT	6'b00_0000
 `define	SDR_IDLE	6'b00_0001
 `define	SDR_ACTV	6'b00_0010
@@ -223,7 +224,7 @@ always @(posedge wb_clk_i)
 		rd_one	<= #2 0;
 	else if (state == `SDR_IDLE)
 		rd_one	<= #2 1;
-	else if (col_adr == 7'h7f && (cmd_rd || cmd_wr))
+	else if (col_adr == 9'h1ff && (cmd_rd || cmd_wr)) //UPDATE (stop reading after RD/WR all positions in a row.
 		rd_one	<= #2 0;
 	else if (wb_ack && !burst)
 		rd_one	<= #2 1;
@@ -275,23 +276,23 @@ always @(posedge wb_clk_i)
 
 always @(posedge wb_clk_i)
 	if (state == `SDR_IDLE && wb_stb_i)
-		{row_adr, col_adr}	<= #2 wb_adr_i [20:0];
+		{row_adr, col_adr}	<= #2 wb_adr_i [22:0]; //UPDATE
 	else if ((cmd_wr || cmd_rd) && burst)
 		col_adr	<= #2 col_adr + 1;
 	else if (wb_stb_i && !wb_ack)
-		col_adr	<= #2 wb_adr_i [6:0];
+		col_adr	<= #2 wb_adr_i [8:0]; //UPDATE
 
 
 reg	[1:0]	ba;
-reg	[11:0]	a;
+reg	[12:0]	a; //UPDATE
 always @(cmd_pre, cmd_lmr, cmd_actv, wb_adr_i, col_adr)
-	if (cmd_pre)
-		{ba, a}	<= #2 {2'b00, 4'b0100, col_adr, 1'b0};
-	else if (cmd_lmr)
+	if (cmd_pre) //Precharge all
+		{ba, a}	<= #2 {2'b00, 4'b0010, col_adr}; //UPDATE
+	else if (cmd_lmr) //Load mode register
 		{ba, a}	<= #2 MODEREGVALUES;
-	else if (cmd_actv)
-		{ba, a}	<= #2 wb_adr_i [20:7];
-	else
+	else if (cmd_actv) //Banck activeate
+		{ba, a}	<= #2 wb_adr_i [24:9]; //UPDATE
+	else //?Dont know what this is
 		{ba, a}	<= #2 {2'b00, 4'b0, col_adr, 1'b0};
 
 
@@ -377,6 +378,58 @@ wire	#2 cke	= dramdelay [5] | dramdelay [6];
 `else
 wire	#2 cke	= dramdelay [18] | dramdelay [19];
 `endif
+
+/*OFDDRTRSE
+Primitive: Dual Data Rate D Flip-Flop with Active -Low 3-State Output Buffer, Synchronous Reset
+and Set, and Clock Enable
+D0, D1 inputs
+C0, C1 clocks (respective to D0, D1 inputs)
+CE clock Enable
+O output (selected via C0, C1)
+T Tristate select (T=1 Z ouput)
+R reset
+S Set
+
+All ofddrtrse compnent does not use the tristate output (T=0)
+Looks like with single clock SDRAM, then it becomes only a FF Single rate
+
+*/
+
+//-----------------------------------------------------
+// Design Name : dff_async_reset
+// File Name   : dff_async_reset.v
+// Function    : D flip-flop async reset active high
+// Coder       : Deepak Kumar Tala
+//-----------------------------------------------------
+module OFDDRTRSE (
+	D0  , // Data Input
+	D1  , // FAKE Data Input
+	C0    , // Clock Input
+	C1    , // FAKE Clock Input
+	CE    , // FAKE Clock Enable
+	O     ,    // Q output
+	T , // FAKE trisate
+	R , // Reset input active high
+	S  // FAKE Set input
+);
+	//-----------Input Ports---------------
+	input D0,D1,C0,C1,O,T,R,S ; 
+	
+	//-----------Output Ports---------------
+	output O;
+
+	//------------Internal Variables--------
+	reg q;
+
+	//-------------Code Starts Here---------
+	always @ ( posedge C0 or posedge R)
+	if (R) begin
+	  O <= 1'b0;
+	end  else begin
+	  O <= D0;
+	end
+
+endmodule //End Of Module dff_async_reset
 OFDDRTRSE CKE_OFDDR (
 	.D0	(cke),
 	.D1	(cke),
@@ -441,7 +494,7 @@ OFDDRTRSE WE_OFDDR (
 );
 
 
-wire	[13:0]	sdr_adr	= {ba, a};
+wire	[15:0]	sdr_adr	= {ba, a};
 OFDDRTRSE A_FDDR [13:0] (
 	.D0	(sdr_adr),
 	.D1	(sdr_adr),
