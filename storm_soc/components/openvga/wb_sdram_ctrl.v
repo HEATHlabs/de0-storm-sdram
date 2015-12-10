@@ -25,7 +25,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 // change to 13 bit SDRAM Address
-
+`define __icarus
 `timescale 1ns/100ps
 module wb_sdram_ctrl #(
 	parameter	HIGHZ		= 0,
@@ -35,7 +35,7 @@ module wb_sdram_ctrl #(
 							15'b00000_0_00_011_0_001, //updated for SDR address
 	parameter	ASB		= ADDRESS - 1,
 	
-	 parameter	RFC_PERIOD	= 1560;	// Every 15.625 us at about 100 MHz
+	 parameter	RFC_PERIOD	= 1560,	// Every 15.625 us at about 100 MHz
 	// parameter	RFC_PERIOD	= 780;	// Every 15.625 us at about 50 MHz
 	// The following are timings for operation at 50 MHz.
 	//parameter	RFC_PERIOD	= 520,	// Every 15.625 us at about 33 MHz
@@ -100,7 +100,7 @@ reg	actv	= 0;
 reg	wb_end	= 0;
 reg	rd_one	= 1;
 reg	[8:0]	col_adr;
-reg	[13:0]	row_adr;
+reg	[12:0]	row_adr;
 reg	[2:0]	rp_cnt	= 0;
 reg	[2:0]	ras_cnt	= 0;
 
@@ -276,6 +276,7 @@ always @(posedge wb_clk_i)
 
 always @(posedge wb_clk_i)
 	if (state == `SDR_IDLE && wb_stb_i)
+//		{row_adr, col_adr}	<= #2 wb_adr_i [20:0];
 		{row_adr, col_adr}	<= #2 wb_adr_i [22:0]; //UPDATE
 	else if ((cmd_wr || cmd_rd) && burst)
 		col_adr	<= #2 col_adr + 1;
@@ -290,8 +291,9 @@ always @(cmd_pre, cmd_lmr, cmd_actv, wb_adr_i, col_adr)
 		{ba, a}	<= #2 {2'b00, 4'b0010, col_adr}; //UPDATE
 	else if (cmd_lmr) //Load mode register
 		{ba, a}	<= #2 MODEREGVALUES;
-	else if (cmd_actv) //Banck activeate
-		{ba, a}	<= #2 wb_adr_i [24:9]; //UPDATE
+	else if (cmd_actv) //Bank activeate
+//		{ba, a}	<= #2 wb_adr_i [20:7];
+		{ba, a}	<= #2 wb_adr_i [22:9]; //UPDATE
 	else //?Dont know what this is
 		{ba, a}	<= #2 {2'b00, 4'b0, col_adr, 1'b0};
 
@@ -379,57 +381,7 @@ wire	#2 cke	= dramdelay [5] | dramdelay [6];
 wire	#2 cke	= dramdelay [18] | dramdelay [19];
 `endif
 
-/*OFDDRTRSE
-Primitive: Dual Data Rate D Flip-Flop with Active -Low 3-State Output Buffer, Synchronous Reset
-and Set, and Clock Enable
-D0, D1 inputs
-C0, C1 clocks (respective to D0, D1 inputs)
-CE clock Enable
-O output (selected via C0, C1)
-T Tristate select (T=1 Z ouput)
-R reset
-S Set
 
-All ofddrtrse compnent does not use the tristate output (T=0)
-Looks like with single clock SDRAM, then it becomes only a FF Single rate
-
-*/
-
-//-----------------------------------------------------
-// Design Name : dff_async_reset
-// File Name   : dff_async_reset.v
-// Function    : D flip-flop async reset active high
-// Coder       : Deepak Kumar Tala
-//-----------------------------------------------------
-module OFDDRTRSE (
-	D0  , // Data Input
-	D1  , // FAKE Data Input
-	C0    , // Clock Input
-	C1    , // FAKE Clock Input
-	CE    , // FAKE Clock Enable
-	O     ,    // Q output
-	T , // FAKE trisate
-	R , // Reset input active high
-	S  // FAKE Set input
-);
-	//-----------Input Ports---------------
-	input D0,D1,C0,C1,O,T,R,S ; 
-	
-	//-----------Output Ports---------------
-	output O;
-
-	//------------Internal Variables--------
-	reg q;
-
-	//-------------Code Starts Here---------
-	always @ ( posedge C0 or posedge R)
-	if (R) begin
-	  O <= 1'b0;
-	end  else begin
-	  O <= D0;
-	end
-
-endmodule //End Of Module dff_async_reset
 OFDDRTRSE CKE_OFDDR (
 	.D0	(cke),
 	.D1	(cke),
@@ -494,8 +446,8 @@ OFDDRTRSE WE_OFDDR (
 );
 
 
-wire	[15:0]	sdr_adr	= {ba, a};
-OFDDRTRSE A_FDDR [13:0] (
+wire	[14:0]	sdr_adr	= {ba, a};
+OFDDRTRSE A_FDDR [14:0] (
 	.D0	(sdr_adr),
 	.D1	(sdr_adr),
 	.CE	(1'b1),
