@@ -1,0 +1,94 @@
+C:\tmp\iverilog\mem>vvp mydesign
+VCD info: dumpfile tb.vcd opened for output.
+wb_sdram_ctrl_tb.MEM0 : at time     593.0 ns AREF : Auto Refresh
+wb_sdram_ctrl_tb.MEM0 : at time     673.0 ns AREF : Auto Refresh
+wb_sdram_ctrl_tb.MEM0 : at time     753.0 ns AREF : Auto Refresh
+wb_sdram_ctrl_tb.MEM0 : at time     833.0 ns LMR  : Load Mode Register
+wb_sdram_ctrl_tb.MEM0 :                             CAS Latency      = 2
+wb_sdram_ctrl_tb.MEM0 :                             Burst Length     = 2
+wb_sdram_ctrl_tb.MEM0 :                             Burst Type       = Sequential
+wb_sdram_ctrl_tb.MEM0 :                             Write Burst Mode = Programmed Burst Length
+wb_sdram_ctrl_tb.MEM0 : at time     913.0 ns ACT  : Bank = 0 Row = 0000
+wb_sdram_ctrl_tb.MEM0 : at time     968.0 ns READ : Bank = 0 Row = 0000, Col = 000, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time     978.0 ns READ : Bank = 0 Row = 0000, Col = 001, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    1093.0 ns ACT  : Bank = 0 Row = 0000
+wb_sdram_ctrl_tb.MEM0 : at time    1133.0 ns WRITE: Bank = 0 Row = 0000, Col = 000, Data = 3524
+wb_sdram_ctrl_tb.MEM0 : at time    1143.0 ns WRITE: Bank = 0 Row = 0000, Col = 001, Data = 1215
+wb_sdram_ctrl_tb.MEM0 : at time    1153.0 ns WRITE: Bank = 0 Row = 0000, Col = 002, Data = 5e81
+wb_sdram_ctrl_tb.MEM0 : at time    1163.0 ns WRITE: Bank = 0 Row = 0000, Col = 003, Data = c089
+wb_sdram_ctrl_tb.MEM0 : at time    1173.0 ns WRITE: Bank = 0 Row = 0000, Col = 004, Data = d609
+wb_sdram_ctrl_tb.MEM0 : at time    1183.0 ns WRITE: Bank = 0 Row = 0000, Col = 005, Data = 8484
+wb_sdram_ctrl_tb.MEM0 : at time    1193.0 ns WRITE: Bank = 0 Row = 0000, Col = 006, Data = 5663
+wb_sdram_ctrl_tb.MEM0 : at time    1203.0 ns WRITE: Bank = 0 Row = 0000, Col = 007, Data = b1f0
+wb_sdram_ctrl_tb.MEM0 : at time    1213.0 ns WRITE: Bank = 0 Row = 0000, Col = 008, Data = 7b0d
+wb_sdram_ctrl_tb.MEM0 : at time    1223.0 ns WRITE: Bank = 0 Row = 0000, Col = 009, Data = 06b9
+wb_sdram_ctrl_tb.MEM0 : at time    1233.0 ns WRITE: Bank = 0 Row = 0000, Col = 00a, Data = 998d
+wb_sdram_ctrl_tb.MEM0 : at time    1243.0 ns WRITE: Bank = 0 Row = 0000, Col = 00b, Data = 46df
+wb_sdram_ctrl_tb.MEM0 : at time    1253.0 ns WRITE: Bank = 0 Row = 0000, Col = 00c, Data = 8465
+wb_sdram_ctrl_tb.MEM0 : at time    1263.0 ns WRITE: Bank = 0 Row = 0000, Col = 00d, Data = b2c2
+wb_sdram_ctrl_tb.MEM0 : at time    1273.0 ns WRITE: Bank = 0 Row = 0000, Col = 00e, Data = 5212
+wb_sdram_ctrl_tb.MEM0 : at time    1283.0 ns WRITE: Bank = 0 Row = 0000, Col = 00f, Data = 8937
+wb_sdram_ctrl_tb.MEM0 : at time    1293.0 ns WRITE: Bank = 0 Row = 0000, Col = 010, Data = e301
+wb_sdram_ctrl_tb.MEM0 : at time    1303.0 ns WRITE: Bank = 0 Row = 0000, Col = 011, Data = 00f3
+wb_sdram_ctrl_tb.MEM0 : at time    1313.0 ns WRITE: Bank = 0 Row = 0000, Col = 012, Data = cd0d
+wb_sdram_ctrl_tb.MEM0 : at time    1323.0 ns WRITE: Bank = 0 Row = 0000, Col = 013, Data = 06d7
+wb_sdram_ctrl_tb.MEM0 : at time    1333.0 ns WRITE: Bank = 0 Row = 0000, Col = 014, Data = f176
+wb_sdram_ctrl_tb.MEM0 : at time    1343.0 ns WRITE: Bank = 0 Row = 0000, Col = 015, Data = 3b23
+wb_sdram_ctrl_tb.MEM0 : at time    1353.0 ns WRITE: Bank = 0 Row = 0000, Col = 016, Data = cd3d
+wb_sdram_ctrl_tb.MEM0 : at time    1363.0 ns WRITE: Bank = 0 Row = 0000, Col = 017, Data = 1e8d
+wb_sdram_ctrl_tb.MEM0 : at time    1373.0 ns WRITE: Bank = 0 Row = 0000, Col = 018, Data = 57ed
+wb_sdram_ctrl_tb.MEM0 : at time    1383.0 ns WRITE: Bank = 0 Row = 0000, Col = 019, Data = 76d4
+wb_sdram_ctrl_tb.MEM0 : at time    1393.0 ns WRITE: Bank = 0 Row = 0000, Col = 01a, Data = f78c
+wb_sdram_ctrl_tb.MEM0 : at time    1403.0 ns WRITE: Bank = 0 Row = 0000, Col = 01b, Data = 462d
+wb_sdram_ctrl_tb.MEM0 : at time    1413.0 ns WRITE: Bank = 0 Row = 0000, Col = 01c, Data = e9f9
+wb_sdram_ctrl_tb.MEM0 : at time    1423.0 ns WRITE: Bank = 0 Row = 0000, Col = 01d, Data = 7cfd
+wb_sdram_ctrl_tb.MEM0 : at time    1433.0 ns WRITE: Bank = 0 Row = 0000, Col = 01e, Data = 24c6
+wb_sdram_ctrl_tb.MEM0 : at time    1443.0 ns WRITE: Bank = 0 Row = 0000, Col = 01f, Data = e337
+wb_sdram_ctrl_tb.MEM0 : at time    1493.0 ns AREF : Auto Refresh
+wb_sdram_ctrl_tb.MEM0 : at time    1593.0 ns ACT  : Bank = 0 Row = 0000
+wb_sdram_ctrl_tb.MEM0 : at time    1648.0 ns READ : Bank = 0 Row = 0000, Col = 000, Data = 3524
+wb_sdram_ctrl_tb.MEM0 : at time    1658.0 ns READ : Bank = 0 Row = 0000, Col = 001, Data = 1215
+wb_sdram_ctrl_tb.MEM0 : at time    1668.0 ns READ : Bank = 0 Row = 0000, Col = 002, Data = 5e81
+wb_sdram_ctrl_tb.MEM0 : at time    1678.0 ns READ : Bank = 0 Row = 0000, Col = 003, Data = c089
+wb_sdram_ctrl_tb.MEM0 : at time    1688.0 ns READ : Bank = 0 Row = 0000, Col = 004, Data = d609
+wb_sdram_ctrl_tb.MEM0 : at time    1698.0 ns READ : Bank = 0 Row = 0000, Col = 005, Data = 8484
+wb_sdram_ctrl_tb.MEM0 : at time    1708.0 ns READ : Bank = 0 Row = 0000, Col = 006, Data = 5663
+wb_sdram_ctrl_tb.MEM0 : at time    1718.0 ns READ : Bank = 0 Row = 0000, Col = 007, Data = b1f0
+wb_sdram_ctrl_tb.MEM0 : at time    1728.0 ns READ : Bank = 0 Row = 0000, Col = 008, Data = 7b0d
+wb_sdram_ctrl_tb.MEM0 : at time    1738.0 ns READ : Bank = 0 Row = 0000, Col = 009, Data = 06b9
+wb_sdram_ctrl_tb.MEM0 : at time    1748.0 ns READ : Bank = 0 Row = 0000, Col = 00a, Data = 998d
+wb_sdram_ctrl_tb.MEM0 : at time    1758.0 ns READ : Bank = 0 Row = 0000, Col = 00b, Data = 46df
+wb_sdram_ctrl_tb.MEM0 : at time    1768.0 ns READ : Bank = 0 Row = 0000, Col = 00c, Data = 8465
+wb_sdram_ctrl_tb.MEM0 : at time    1778.0 ns READ : Bank = 0 Row = 0000, Col = 00d, Data = b2c2
+wb_sdram_ctrl_tb.MEM0 : at time    1788.0 ns READ : Bank = 0 Row = 0000, Col = 00e, Data = 5212
+wb_sdram_ctrl_tb.MEM0 : at time    1798.0 ns READ : Bank = 0 Row = 0000, Col = 00f, Data = 8937
+wb_sdram_ctrl_tb.MEM0 : at time    1808.0 ns READ : Bank = 0 Row = 0000, Col = 010, Data = e301
+wb_sdram_ctrl_tb.MEM0 : at time    1818.0 ns READ : Bank = 0 Row = 0000, Col = 011, Data = 00f3
+wb_sdram_ctrl_tb.MEM0 : at time    1828.0 ns READ : Bank = 0 Row = 0000, Col = 012, Data = cd0d
+wb_sdram_ctrl_tb.MEM0 : at time    1838.0 ns READ : Bank = 0 Row = 0000, Col = 013, Data = 06d7
+wb_sdram_ctrl_tb.MEM0 : at time    1848.0 ns READ : Bank = 0 Row = 0000, Col = 014, Data = f176
+wb_sdram_ctrl_tb.MEM0 : at time    1858.0 ns READ : Bank = 0 Row = 0000, Col = 015, Data = 3b23
+wb_sdram_ctrl_tb.MEM0 : at time    1868.0 ns READ : Bank = 0 Row = 0000, Col = 016, Data = cd3d
+wb_sdram_ctrl_tb.MEM0 : at time    1878.0 ns READ : Bank = 0 Row = 0000, Col = 017, Data = 1e8d
+wb_sdram_ctrl_tb.MEM0 : at time    1888.0 ns READ : Bank = 0 Row = 0000, Col = 018, Data = 57ed
+wb_sdram_ctrl_tb.MEM0 : at time    1898.0 ns READ : Bank = 0 Row = 0000, Col = 019, Data = 76d4
+wb_sdram_ctrl_tb.MEM0 : at time    1908.0 ns READ : Bank = 0 Row = 0000, Col = 01a, Data = f78c
+wb_sdram_ctrl_tb.MEM0 : at time    1918.0 ns READ : Bank = 0 Row = 0000, Col = 01b, Data = 462d
+wb_sdram_ctrl_tb.MEM0 : at time    1928.0 ns READ : Bank = 0 Row = 0000, Col = 01c, Data = e9f9
+wb_sdram_ctrl_tb.MEM0 : at time    1938.0 ns READ : Bank = 0 Row = 0000, Col = 01d, Data = 7cfd
+wb_sdram_ctrl_tb.MEM0 : at time    1948.0 ns READ : Bank = 0 Row = 0000, Col = 01e, Data = 24c6
+wb_sdram_ctrl_tb.MEM0 : at time    1958.0 ns READ : Bank = 0 Row = 0000, Col = 01f, Data = e337
+wb_sdram_ctrl_tb.MEM0 : at time    1968.0 ns READ : Bank = 0 Row = 0000, Col = 020, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    1978.0 ns READ : Bank = 0 Row = 0000, Col = 021, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    1988.0 ns READ : Bank = 0 Row = 0000, Col = 022, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    1998.0 ns READ : Bank = 0 Row = 0000, Col = 023, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    2008.0 ns READ : Bank = 0 Row = 0000, Col = 024, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    2018.0 ns READ : Bank = 0 Row = 0000, Col = 025, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    2028.0 ns READ : Bank = 0 Row = 0000, Col = 026, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    2038.0 ns READ : Bank = 0 Row = 0000, Col = 027, Data = xxxx
+wb_sdram_ctrl_tb.MEM0 : at time    2073.0 ns AREF : Auto Refresh
+wb_sdram_ctrl_tb.MEM0 : at time    2173.0 ns ACT  : Bank = 0 Row = 0000
+wb_sdram_ctrl_tb.MEM0 : at time    2228.0 ns READ : Bank = 0 Row = 0000, Col = 000, Data = 3524
+wb_sdram_ctrl_tb.MEM0 : at time    2238.0 ns READ : Bank = 0 Row = 0000, Col = 001, Data = 1215
+wb_sdram_ctrl_tb.MEM0 : at time    2453.0 ns AREF : Auto Refresh
+Test completed.
