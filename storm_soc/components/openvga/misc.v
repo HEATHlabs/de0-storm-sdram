@@ -53,7 +53,8 @@ output Q1;
  
 reg Q0= INIT [0];
 reg Q1= INIT [1];
- 
+
+`ifdef __iverilog
 always @(posedge C0)
 if (R)Q0<= #DELAY 0;
 else if (S)Q0<= #DELAY 1;
@@ -63,7 +64,19 @@ always @(posedge C1)
 if (R)Q1<= #DELAY 0;
 else if (S)Q1<= #DELAY 1;
 else if (CE)Q1<= #DELAY D;
+
+`else
+always @(posedge C0)
+if (R)Q0<=  0;
+else if (S)Q0<=  1;
+else if (CE)Q0<=  D;
  
+always @(posedge C1)
+if (R)Q1<=  0;
+else if (S)Q1<=  1;
+else if (CE)Q1<=  D;
+
+`endif
 endmodule// IFDDRRSE
 
 /***************************************************************************
@@ -95,39 +108,40 @@ endmodule// IFDDRRSE
 // TODO: Implement parameterizable delays.
 `timescale 1ns/100ps
 module OFDDRRSE (
-C0,
-C1,
-CE,
-D0,
-D1,
-Q,
-R,
-S
+	C0,
+	C1,
+	CE,
+	D0,
+	D1,
+	Q,
+	R,
+	S
 );
  
-parameter INIT= 1'b0;
-parameter DELAY= 0.0;
+	parameter INIT= 1'b0;
+	parameter DELAY= 0.0;
  
-input C0;// Clock 0
-input C1;
-input CE;// Clock enable
+	input C0;// Clock 0
+	input C1;
+	input CE;// Clock enable
  
-input D0;// Data after a posedge
-input D1;
+	input D0;// Data after a posedge
+	input D1;
  
-input R;// Reset
-input S;
+	input R;// Reset
+	input S;
  
-output Q;// DDR output
- 
-reg Q= INIT;
-always @(posedge C0 or posedge C1)
-begin
-	if (R)
-		Q<= #DELAY 0;
-	else if (S)
-		Q		<= #DELAY 1;
-	else
+	output Q;// DDR output
+
+	reg Q= INIT;
+`ifdef __iverilog
+ 	always @(posedge C0 or posedge C1)
+	begin
+		if (R)
+			Q<= #DELAY 0;
+		else if (S)
+			Q<= #DELAY 1;
+		else
 	begin
 		if (C0)
 			Q<= #DELAY D0;
@@ -135,36 +149,23 @@ begin
 			Q<= #DELAY D1;
 		end
 	end
+`else
+ always @(posedge C0 or posedge C1)
+begin
+	if (R)
+		Q<=  0;
+	else if (S)
+		Q		<=  1;
+	else
+	begin
+		if (C0)
+			Q<=  D0;
+		else
+			Q<=  D1;
+		end
+	end
+`endif
 endmodule// OFDDRRSE
-
-// module flipflopd (
-	// D0  , // Data Input
-	// D1  , // FAKE Data Input
-	// C0    , // Clock Input
-	// C1    , // FAKE Clock Input
-	// CE    , // FAKE Clock Enable
-	// O     ,    // Q output
-	// T , // FAKE trisate
-	// R , // Reset input active high
-	// S  // FAKE Set input
-// );
-	// //-----------Input Ports---------------
-	// input D0,D1,C0,C1,CE,T,R,S ; 
-	
-	// //-----------Output Ports---------------
-	// output O;
-
-	// //------------Internal Variables--------
-	// reg O;
-
-	// //-------------Code Starts Here---------
-	// always @ ( posedge C0 or posedge R)
-	// if (R) begin
-	  // O <= 1'b0;
-	// end  else begin
-	  // O <= D0;
-	// end
-// endmodule //End Of Module dff_async_reset
 
 
 /***************************************************************************
@@ -196,31 +197,41 @@ endmodule// OFDDRRSE
  // TODO: Finish parameterizable delays.
 `timescale 1ns/100ps
 module OFDDRTRSE #(
-parameter INIT= 1'b0,
-parameter ODELAY= 7.0,
-parameter ZDELAY= 1.0
+	parameter INIT= 1'b0,
+	parameter ODELAY= 7.0,
+	parameter ZDELAY= 1.0
 ) (
-input C0,
-input C1,
-input CE,
-input D0,// Data after a posedge
-input D1,
-input T,
-output O,// DDR output
-input R,
-input S
+	input C0,
+	input C1,
+	input CE,
+	input D0,// Data after a posedge
+	input D1,
+	input T,
+	output O,// DDR output
+	input R,
+	input S
 );
  
-reg O_r= INIT;
+	reg O_r= INIT;
+`ifdef __iverilog 
+	assign #ZDELAY O= T ? 'bz : O_r ;
  
-assign #ZDELAY O= T ? 'bz : O_r ;
+	always @(posedge C0 or posedge C1)
+		if (CE) begin
+		if (R) O_r<= #ODELAY 0;
+		else if (S) O_r<= #ODELAY 1;
+		else if (C0) O_r<= #ODELAY D0;
+		else O_r<= #ODELAY D1;
+	end
+`else
+	assign  O= T ? 'bz : O_r ;
  
-always @(posedge C0 or posedge C1)
-if (CE) begin
-if (R) O_r<= #ODELAY 0;
-else if (S) O_r<= #ODELAY 1;
-else if (C0) O_r<= #ODELAY D0;
-else O_r<= #ODELAY D1;
-end
- 
+	always @(posedge C0 or posedge C1)
+		if (CE) begin
+			if (R) O_r<=  0;
+			else if (S) O_r<=  1;
+			else if (C0) O_r<=  D0;
+		else O_r<=  D1;
+	end
+`endif
 endmodule// OFDDRTRSE
