@@ -351,13 +351,6 @@ always @(posedge wb_clk_i)
 	else if (!ready)
 		read_inhibit	<= #2 0;
 
-/*  always @(posedge wb_clk_i)
-	if (wb_rst_i)
-		 RAS_n	= #2 0;
-	else
- 		 assign RAS_n	<= ras_n;
- */	
-
 // Set the control pins driving the SDRAM IC.
 `define	CMD_INHIBIT	4'b1111
 `define	CMD_NOP		4'b0111
@@ -369,17 +362,18 @@ always @(posedge wb_clk_i)
 `define	CMD_REFRESH	4'b0001
 `define	CMD_LOADMODE	4'b0000
 
-OFDDRTRSE CLK_OFDDR (
-	.D0	(1'b0),
-	.D1	(1'b1),
-	.CE	(1'b1),
-	.C0	(sdr_clk_i),
-	.C1	(~sdr_clk_i),
-	.O	(CLK),
-	.T	(1'b0),
-	.R	(wb_rst_i),
-	.S	(1'b0)
-);
+assign CLK = ~sdr_clk_i;	
+// OFDDRTRSE CLK_OFDDR (
+	// .D0	(1'b0),
+	// .D1	(1'b1),
+	// .CE	(1'b1),
+	// .C0	(sdr_clk_i),
+	// .C1	(~sdr_clk_i),
+	// .O	(CLK),
+	// .T	(1'b0),
+	// .R	(wb_rst_i),
+	// .S	(1'b0)
+// );
 
 `ifdef __icarus
 wire	#2 cke	= dramdelay [5] | dramdelay [6];
@@ -387,39 +381,41 @@ wire	#2 cke	= dramdelay [5] | dramdelay [6];
 wire	#2 cke	= dramdelay [18] | dramdelay [19];
 `endif
 
+assign CKE = 1'b1;
+// OFDDRTRSE CKE_OFDDR (
+	// .D0	(cke),
+	// .D1	(cke),
+	// .CE	(1'b1),
+	// .C0	(sdr_clk_i),	// Required due to PCB messup
+	// .C1	(~sdr_clk_i),
+	// .O	(CKE),
+	// .T	(1'b0),
+	// .R	(wb_rst_i),
+	// .S	(1'b0)
+// );
 
-OFDDRTRSE CKE_OFDDR (
-	.D0	(cke),
-	.D1	(cke),
-	.CE	(1'b1),
-	.C0	(sdr_clk_i),	// Required due to PCB messup
-	.C1	(~sdr_clk_i),
-	.O	(CKE),
-	.T	(1'b0),
-	.R	(wb_rst_i),
-	.S	(1'b0)
-);
+assign CS_n = 0'b1;
 
-OFDDRTRSE CS_OFDDR (
-	.D0	(1'b1),
-	.D1	(1'b1),
-	.CE	(1'b1),
-	.C0	(wb_clk_i),
-	.C1	(wb_clk_ni),
-	.O	(CS_n),
-	.T	(1'b0),
-	.R	(cke),
-	.S	(wb_rst_i)
-);
+// OFDDRTRSE CS_OFDDR (
+	// .D0	(1'b1),
+	// .D1	(1'b1),
+	// .CE	(1'b1),
+	// .C0	(wb_clk_i),
+	// .C1	(wb_clk_ni),
+	// .O	(CS_n),
+	// .T	(1'b0),
+	// .R	(cke),
+	// .S	(wb_rst_i)
+// );
 // assign RAS_n = !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
-/*  mux2to1 ras_mux (
-	.din_0(ras_n),
-	.din_1(1'b1),
+  mux2to1 ras_mux (
+	.din_0(1'b1),
+	.din_1(ras_n),
 	.sel(wb_clk_i),
 	.mux_out(RAS_n)
-); */
- OFDDRTRSE RAS_OFDDR (
+); 
+ /*OFDDRTRSE RAS_OFDDR (
 	.D0	(ras_n),
 	.D1	(1'b1),
 	.CE	(1'b1),
@@ -429,7 +425,7 @@ wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 	.T	(1'b0),
 	.R	(1'b0),
 	.S	(wb_rst_i)
-) ; 
+) ; */
 
 //assign CAS_n= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
  wire	#2 cas_n	= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
@@ -439,17 +435,24 @@ wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 	.sel(wb_clk_i),
 	.mux_out(CAS_n)
 ); */
-OFDDRTRSE CAS_OFDDR (
-	.D0	(cas_n),
-	.D1	(1'b1),
-	.CE	(1'b1),
-	.C0	(wb_clk_i),
-	.C1	(wb_clk_ni),
-	.O	(CAS_n),
-	.T	(1'b0),
-	.R	(1'b0),
-	.S	(wb_rst_i)
-);
+
+ mux2to1 cas_mux (
+	.din_0(1'b1),
+	.din_1(cas_n),
+	.sel(wb_clk_i),
+	.mux_out(CAS_n)
+); 
+// OFDDRTRSE CAS_OFDDR (
+	// .D0	(cas_n),
+	// .D1	(1'b1),
+	// .CE	(1'b1),
+	// .C0	(wb_clk_i),
+	// .C1	(wb_clk_ni),
+	// .O	(CAS_n),
+	// .T	(1'b0),
+	// .R	(1'b0),
+	// .S	(wb_rst_i)
+// );
 
 wire	#2 we_n		= !(cmd_wr || cmd_pre || cmd_lmr);
 
