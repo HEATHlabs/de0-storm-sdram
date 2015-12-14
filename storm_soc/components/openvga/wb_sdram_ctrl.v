@@ -351,6 +351,12 @@ always @(posedge wb_clk_i)
 	else if (!ready)
 		read_inhibit	<= #2 0;
 
+/*  always @(posedge wb_clk_i)
+	if (wb_rst_i)
+		 RAS_n	= #2 0;
+	else
+ 		 assign RAS_n	<= ras_n;
+ */	
 
 // Set the control pins driving the SDRAM IC.
 `define	CMD_INHIBIT	4'b1111
@@ -405,9 +411,15 @@ OFDDRTRSE CS_OFDDR (
 	.R	(cke),
 	.S	(wb_rst_i)
 );
-
+// assign RAS_n = !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
-OFDDRTRSE RAS_OFDDR (
+/*  mux2to1 ras_mux (
+	.din_0(ras_n),
+	.din_1(1'b1),
+	.sel(wb_clk_i),
+	.mux_out(RAS_n)
+); */
+ OFDDRTRSE RAS_OFDDR (
 	.D0	(ras_n),
 	.D1	(1'b1),
 	.CE	(1'b1),
@@ -417,9 +429,16 @@ OFDDRTRSE RAS_OFDDR (
 	.T	(1'b0),
 	.R	(1'b0),
 	.S	(wb_rst_i)
-);
+) ; 
 
-wire	#2 cas_n	= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
+//assign CAS_n= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
+ wire	#2 cas_n	= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
+/*  mux2to1 cas_mux (
+	.din_0(cas_n),
+	.din_1(1'b1),
+	.sel(wb_clk_i),
+	.mux_out(CAS_n)
+); */
 OFDDRTRSE CAS_OFDDR (
 	.D0	(cas_n),
 	.D1	(1'b1),
@@ -433,7 +452,15 @@ OFDDRTRSE CAS_OFDDR (
 );
 
 wire	#2 we_n		= !(cmd_wr || cmd_pre || cmd_lmr);
-OFDDRTRSE WE_OFDDR (
+
+  mux2to1 we_mux (
+	.din_0(1'b1),
+	.din_1(we_n),
+	.sel(wb_clk_i),
+	.mux_out(WE_n)
+); 
+
+/* OFDDRTRSE WE_OFDDR (
 	.D0	(we_n),
 	.D1	(1'b1),
 	.CE	(1'b1),
@@ -443,7 +470,7 @@ OFDDRTRSE WE_OFDDR (
 	.T	(1'b0),
 	.R	(1'b0),
 	.S	(wb_rst_i)
-);
+); */
 
 
 wire	[14:0]	sdr_adr	= {ba, a};

@@ -1,7 +1,8 @@
-..\mem\wb_sdram_ctrl_tb.v
-..\mem\sdram256mbit.v
-..\mem\fib20.v
-..\mem\ddr_datapath.v
-..\mem\rfc.v
-..\mem\wb_sdram_ctrl.v
-..\mem\misc.v
+sdram256mbit.v
+fib20.v
+rfc.v
+ddr_datapath.v
+wb_sdram_ctrl.v
+wb_sdram_ctrl_tb.v
+misc.v
+
