@@ -25,7 +25,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 // change to 13 bit SDRAM Address
-`define __icarus
+//`define __icarus
+`define __altera
 `timescale 1ns/100ps
 module wb_sdram_ctrl #(
 	parameter	HIGHZ		= 0,
@@ -351,6 +352,13 @@ always @(posedge wb_clk_i)
 	else if (!ready)
 		read_inhibit	<= #2 0;
 
+/*  always @(posedge wb_clk_i)
+	if (wb_rst_i)
+		 RAS_n	= #2 0;
+	else
+ 		 assign RAS_n	<= ras_n;
+ */	
+
 // Set the control pins driving the SDRAM IC.
 `define	CMD_INHIBIT	4'b1111
 `define	CMD_NOP		4'b0111
@@ -362,60 +370,86 @@ always @(posedge wb_clk_i)
 `define	CMD_REFRESH	4'b0001
 `define	CMD_LOADMODE	4'b0000
 
-assign CLK = ~sdr_clk_i;	
-// OFDDRTRSE CLK_OFDDR (
-	// .D0	(1'b0),
-	// .D1	(1'b1),
-	// .CE	(1'b1),
-	// .C0	(sdr_clk_i),
-	// .C1	(~sdr_clk_i),
-	// .O	(CLK),
-	// .T	(1'b0),
-	// .R	(wb_rst_i),
-	// .S	(1'b0)
-// );
-
+`ifdef __iverlog
+OFDDRTRSE CLK_OFDDR (
+	.D0	(1'b0),
+	.D1	(1'b1),
+	.CE	(1'b1),
+	.C0	(sdr_clk_i),
+	.C1	(~sdr_clk_i),
+	.O	(CLK),
+	.T	(1'b0),
+	.R	(wb_rst_i),
+	.S	(1'b0)
+);
+`endif
+`ifdef __altera
+ddroutwitht CLK_OFDDR (
+	.din_0		(1'b0),
+	.din_1		(1'b0),
+	.clkin		(sdr_clk_i),
+	.tristate	(1'b0),
+	.rst		(wb_rst_i),
+	.dout			(CLK)
+);
+`endif
 `ifdef __icarus
 wire	#2 cke	= dramdelay [5] | dramdelay [6];
 `else
 wire	#2 cke	= dramdelay [18] | dramdelay [19];
 `endif
 
-assign CKE = 1'b1;
-// OFDDRTRSE CKE_OFDDR (
-	// .D0	(cke),
-	// .D1	(cke),
-	// .CE	(1'b1),
-	// .C0	(sdr_clk_i),	// Required due to PCB messup
-	// .C1	(~sdr_clk_i),
-	// .O	(CKE),
-	// .T	(1'b0),
-	// .R	(wb_rst_i),
-	// .S	(1'b0)
-// );
+`ifdef __iverlog
+OFDDRTRSE CKE_OFDDR (
+	.D0	(cke),
+	.D1	(cke),
+	.CE	(1'b1),
+	.C0	(sdr_clk_i),	// Required due to PCB messup
+	.C1	(~sdr_clk_i),
+	.O	(CKE),
+	.T	(1'b0),
+	.R	(wb_rst_i),
+	.S	(1'b0)
+);
+`endif
+`ifdef __altera
+ddroutwitht CKE_OFDDR (
+	.din_0		(cke),
+	.din_1		(cke),
+	.clkin		(sdr_clk_i),
+	.tristate	(1'b0),
+	.rst		(wb_rst_i),
+	.dout			(CKE)
+);
+`endif
 
-assign CS_n = 0'b1;
+`ifdef __iverlog
+OFDDRTRSE CS_OFDDR (
+	.D0	(1'b1),
+	.D1	(1'b1),
+	.CE	(1'b1),
+	.C0	(wb_clk_i),
+	.C1	(wb_clk_ni),
+	.O	(CS_n),
+	.T	(1'b0),
+	.R	(cke),
+	.S	(wb_rst_i)
+);
+`endif
+`ifdef __altera
+ddroutwitht CS_OFDDR (
+	.din_0		(1'b1),
+	.din_1		(1'b1),
+	.clkin		(wb_clk_i),
+	.tristate	(1'b0),
+	.rst		(cke),
+	.dout			(CS_n)
+);
+`endif
 
-// OFDDRTRSE CS_OFDDR (
-	// .D0	(1'b1),
-	// .D1	(1'b1),
-	// .CE	(1'b1),
-	// .C0	(wb_clk_i),
-	// .C1	(wb_clk_ni),
-	// .O	(CS_n),
-	// .T	(1'b0),
-	// .R	(cke),
-	// .S	(wb_rst_i)
-// );
-// assign RAS_n = !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
-  mux2to1 ras_mux (
-	.din_0(1'b1),
-	.din_1(ras_n),
-	.sel(wb_clk_i),
-	.mux_out(RAS_n)
-); 
- /*OFDDRTRSE RAS_OFDDR (
+`ifdef __iverlog
+ OFDDRTRSE RAS_OFDDR (
 	.D0	(ras_n),
 	.D1	(1'b1),
 	.CE	(1'b1),
@@ -425,45 +459,47 @@ wire	#2 ras_n	= !(cmd_actv || cmd_pre || cmd_rfc || cmd_lmr);
 	.T	(1'b0),
 	.R	(1'b0),
 	.S	(wb_rst_i)
-) ; */
-
-//assign CAS_n= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
+) ; 
+`endif
+`ifdef __altera
+ ddroutwitht RAS_OFDDR (
+	.din_0		(ras_n),
+	.din_1		(1'b1),
+	.clkin		(wb_clk_i),
+	.tristate	(1'b0),
+	.rst		(wb_rst_i),
+	.dout		(RAS_n)
+) ; 
+`endif
  wire	#2 cas_n	= !(cmd_rd || cmd_wr || cmd_rfc || cmd_lmr);
-/*  mux2to1 cas_mux (
-	.din_0(cas_n),
-	.din_1(1'b1),
-	.sel(wb_clk_i),
-	.mux_out(CAS_n)
-); */
-
- mux2to1 cas_mux (
-	.din_0(1'b1),
-	.din_1(cas_n),
-	.sel(wb_clk_i),
-	.mux_out(CAS_n)
-); 
-// OFDDRTRSE CAS_OFDDR (
-	// .D0	(cas_n),
-	// .D1	(1'b1),
-	// .CE	(1'b1),
-	// .C0	(wb_clk_i),
-	// .C1	(wb_clk_ni),
-	// .O	(CAS_n),
-	// .T	(1'b0),
-	// .R	(1'b0),
-	// .S	(wb_rst_i)
-// );
+`ifdef __iverlog
+OFDDRTRSE CAS_OFDDR (
+	.D0	(cas_n),
+	.D1	(1'b1),
+	.CE	(1'b1),
+	.C0	(wb_clk_i),
+	.C1	(wb_clk_ni),
+	.O	(CAS_n),
+	.T	(1'b0),
+	.R	(1'b0),
+	.S	(wb_rst_i)
+);
+`endif
+`ifdef __altera
+ ddroutwitht CAS_OFDDR (
+	.din_0		(cas_n),
+	.din_1		(1'b1),
+	.clkin		(wb_clk_i),
+	.tristate	(1'b0),
+	.rst		(wb_rst_i),
+	.dout		(cas_n)
+) ; 
+`endif
 
 wire	#2 we_n		= !(cmd_wr || cmd_pre || cmd_lmr);
 
-  mux2to1 we_mux (
-	.din_0(1'b1),
-	.din_1(we_n),
-	.sel(wb_clk_i),
-	.mux_out(WE_n)
-); 
-
-/* OFDDRTRSE WE_OFDDR (
+`ifdef __iverlog
+OFDDRTRSE WE_OFDDR (
 	.D0	(we_n),
 	.D1	(1'b1),
 	.CE	(1'b1),
@@ -473,10 +509,21 @@ wire	#2 we_n		= !(cmd_wr || cmd_pre || cmd_lmr);
 	.T	(1'b0),
 	.R	(1'b0),
 	.S	(wb_rst_i)
-); */
-
+);
+`endif
+`ifdef __altera
+ ddroutwitht WE_OFDDR (
+	.din_0		(we_n),
+	.din_1		(1'b1),
+	.clkin		(wb_clk_i),
+	.tristate	(1'b0),
+	.rst		(wb_rst_i),
+	.dout		(WE_n)
+) ; 
+`endif
 
 wire	[14:0]	sdr_adr	= {ba, a};
+`ifdef __iverlog
 OFDDRTRSE A_FDDR [14:0] (
 	.D0	(sdr_adr),
 	.D1	(sdr_adr),
@@ -488,6 +535,17 @@ OFDDRTRSE A_FDDR [14:0] (
 	.R	(1'b0),
 	.S	(1'b0)
 );
+`endif
+`ifdef __altera
+ ddroutwitht A_FDDR [14:0]  (
+	.din_0		(sdr_adr),
+	.din_1		(sdr_adr),
+	.clkin		(wb_clk_i),
+	.tristate	(1'b0),
+	.rst		(1'b0),
+	.dout		({BA, A})
+) ; 
+`endif
 
 
 ddr_datapath #(

@@ -112,7 +112,16 @@ always @(posedge clk_i)
 always @(posedge clk_ni)
 	data_o	<= #2 rd_dat;
 
-
+`ifdef __altera
+ddroutwitht DM_OFDDR [DSB:0] (
+	.din_0		(bes_n [DSB:0]),
+	.din_1		(bes_n [ESB:ENABLES/2]),
+	.clkin		(clk_i),
+	.tristate	(1'b0),
+	.dout			(DM_o)
+);
+`endif
+`ifdef __iverlog
 OFDDRTRSE DM_OFDDR [DSB:0] (
 	.C0	(clk_i),
 	.C1	(clk_ni),
@@ -124,8 +133,8 @@ OFDDRTRSE DM_OFDDR [DSB:0] (
 	.S	(dm_set),
 	.T	(1'b0)
 );
-
-
+`endif
+`ifdef __iverlog
 OFDDRTRSE DQ_OFDDR [QSB:0] (
 	.C0	(clk_i),
 	.C1	(clk_ni),
@@ -137,7 +146,17 @@ OFDDRTRSE DQ_OFDDR [QSB:0] (
 	.S	(1'b0),
 	.T	(oe_n)
 );
-
+`endif
+`ifdef __altera
+ddroutwitht DQ_OFDDR [QSB:0] (
+	.din_0		(data_i [QSB:0]),
+	.din_1		(data_r [MSB:WIDTH/2]),
+	.clkin		(clk_i),
+	.tristate	(oe_n),
+	.dout			(DQ_io)
+);
+`endif
+`ifdef __iverlog
 IFDDRRSE IFDDR [QSB:0] (
 	 .C0	(clk_ni),
 	 .C1	(clk_i ),
@@ -152,6 +171,14 @@ IFDDRRSE IFDDR [QSB:0] (
 	.R	(1'b0),
 	.S	(1'b0)
 );
-
-
+`endif
+`ifdef __altera
+ddrin DQ_OFDDR [QSB:0] (
+	.datain		(clk_i ),
+	.inclocken	(rd_en),
+	.datain		(DQ_io),
+	.dataout_l	(rd_dat [QSB:0]),
+	.dataout_h	(rd_dat [MSB:WIDTH/2])
+);
+`endif
 endmodule	// ddr_datapath

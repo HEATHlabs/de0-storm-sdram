@@ -35,6 +35,7 @@ integer	ii;
 initial begin : Sim
 	$dumpfile ("tb.vcd");
 	$dumpvars;
+	$display ("Test begin.");
 	
 	#2	reset	= 1;
 	#20	reset	= 0;
@@ -113,7 +114,7 @@ wb_sdram_ctrl #(
 ) SDRCTRL (
 	.sdr_clk_i	(clk100),
 	.wb_clk_i	(clk50),
-//	.wb_clk_ni	(~clk50),
+	.wb_clk_ni	(~clk50),
 	.wb_rst_i	(reset),
 	.wb_cyc_i	(m_cyc),
 	.wb_stb_i	(m_stb),

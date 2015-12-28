@@ -1,26 +1,38 @@
-//-----------------------------------------------------
-// Design Name : mux_using_assign
-// File Name   : mux_using_assign.v
-// Function    : 2:1 Mux using Assign
-// Coder       : Deepak Kumar Tala
-//-----------------------------------------------------
-module  mux2to1(
+
+`ifdef __altera
+module  ddroutwitht(
 din_0      , // Mux first input
 din_1      , // Mux Second input
-sel        , // Select input
-mux_out      // Mux output
+clkin        , // Select input
+tristate, //tristate control
+rst,		//reset
+dout      // Mux output
 );
 //-----------Input Ports---------------
-input din_0, din_1, sel ;
+input din_0, din_1, clkin,tristate,rst ;
 //-----------Output Ports---------------
-output mux_out;
+output dout;
 //------------Internal Variables--------
-wire  mux_out;
+wire  q;
 //-------------Code Start-----------------
-assign mux_out = (sel) ? din_1 : din_0;
+//assign b = (enable) ? a : 1'bz;
+assign dout = (tristate) ? 1'bz : q;
+// ddrout (
+	// aclr,
+	// datain_h,
+	// datain_l,
+	// outclock,
+	// dataout);
+ddrout ddrout_int (
+	.outclock	(clkin),
+	.aclr		(rst),
+	.datain_l	(din_0),
+	.datain_h	(din_1),
+	.dataout	(q)
+);
 
 endmodule //End Of Module mux
-
+`endif
 
 /***************************************************************************
  *                                                                         *
