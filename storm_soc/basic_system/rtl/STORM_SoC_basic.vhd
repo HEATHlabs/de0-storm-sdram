@@ -1017,8 +1017,9 @@ begin
 
 		SDRAM_DQ_IO <= internal_dqo when (internal_dqoe = '1') else "ZZZZZZZZZZZZZZZZ";
 		internal_dqi <= SDRAM_DQ_IO when (internal_dqoe = '0') else "ZZZZZZZZZZZZZZZZ";
-
-		SDRAM_MEM_HALT_O <= '0';-- nothing can go wrong - never ever!
+		--SDRAM to deal with Pipelined request from Storme CPU.
+		SDRAM_MEM_HALT_O <= '0' when CORE_WB_CYC_O='0' else not SDRAM_MEM_ACK_O;
+		--SDRAM_MEM_HALT_O <= '0';-- nothing can go wrong - never ever!
 		SDRAM_MEM_ERR_O <= '0';-- nothing can go wrong - never ever!
 --		SDRAM_MEM_CTI_I <= '0';
 --		XMEM_RST <= MAIN_RST ;
