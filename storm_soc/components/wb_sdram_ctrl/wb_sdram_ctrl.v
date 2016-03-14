@@ -23,23 +23,20 @@
  * WORK, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- /* Jeremy H. these parameters are for the DE0-nano.  Consult your SDRAM
- Datasheet. 
- */
 module wb_sdram_ctrl #(
-	parameter TECHNOLOGY	= "ALTERA",
+	parameter TECHNOLOGY	= "GENERIC",
 	parameter CLK_FREQ_MHZ	= 100,	// sdram_clk freq in MHZ
 	parameter POWERUP_DELAY	= 200,	// power up delay in us
 	parameter BURST_LENGTH	= 8,	// 0, 1, 2, 4 or 8 (0 = full page)
-	parameter WB_PORTS	= 1,	// Number of wishbone ports
+	parameter WB_PORTS	= 3,	// Number of wishbone ports
 	parameter BUF_WIDTH	= 3,	// Buffer size = 2^BUF_WIDTH
 	parameter ROW_WIDTH	= 13,	// Row width
 	parameter COL_WIDTH	= 9,	// Column width
 	parameter BA_WIDTH	= 2,	// Ba width
-	parameter tCAC		= 3,	// CAS Latency
+	parameter tCAC		= 2,	// CAS Latency
 	parameter tRAC		= 5,	// RAS Latency
 	parameter tRP		= 2,	// Command Period (PRE to ACT)
-	parameter tRC		= 9,	// Command Period (REF to REF / ACT to ACT)
+	parameter tRC		= 7,	// Command Period (REF to REF / ACT to ACT)
 	parameter tMRD		= 2	// Mode Register Set To Command Delay time
 )
 (
@@ -123,12 +120,12 @@ module wb_sdram_ctrl #(
 		.we_i		(sdram_if_we)
 	);
 
-	arbiter #(
+	wb_port_arbiter #(
 		.TECHNOLOGY	(TECHNOLOGY),
 		.WB_PORTS	(WB_PORTS),
 		.BUF_WIDTH	(BUF_WIDTH)
 	)
-	arbiter (
+	wb_port_arbiter (
 		.wb_clk		(wb_clk),
 		.wb_rst		(wb_rst),
 
