@@ -40,7 +40,7 @@ module wb_port #(
 	input		[3:0]	wb_sel_i,
 	input		[31:0]	wb_dat_i,
 	output		[31:0]	wb_dat_o,
-	output reg		wb_ack_o,
+	output			wb_ack_o,
 
 	// Internal interface
 	input			sdram_rst,
@@ -64,6 +64,8 @@ module wb_port #(
 	reg  [31:0]			wb_adr;
 	reg  [31:0]			wb_dat;
 	reg  [3:0]			wb_sel;
+	reg				wb_read_ack;
+	reg				wb_write_ack;
 	wire [31:0]			next_wb_adr;
 
 	reg				wb_write_bufram;
@@ -101,31 +103,34 @@ module wb_port #(
 	wire				wrfifo_full;
 	wire				wrfifo_empty;
 	wire				wrfifo_rdreq;
-	reg				wrfifo_wrreq;
+	wire				wrfifo_wrreq;
 	wire [71:0]			wrfifo_rddata;
 
 	wire [3:0]			sdram_sel;
 	wire [31:0]			sdram_dat;
 	wire [31:0]			sdram_adr;
 
-	parameter [2:0]
+	localparam [2:0]
 		IDLE	= 3'd0,
 		READ	= 3'd1,
 		WRITE	= 3'd2,
 		REFILL	= 3'd3;
 
 
-	parameter [2:0]
+	localparam [2:0]
 		CLASSIC      = 3'b000,
 		CONST_BURST  = 3'b001,
 		INC_BURST    = 3'b010,
 		END_BURST    = 3'b111;
 
-	parameter [1:0]
+	localparam [1:0]
 		LINEAR_BURST = 2'b00,
 		WRAP4_BURST  = 2'b01,
 		WRAP8_BURST  = 2'b10,
 		WRAP16_BURST = 2'b11;
+
+	assign wrfifo_wrreq  = wb_write_ack & !wrfifo_full;
+	assign wb_ack_o      = wb_read_ack | wrfifo_wrreq;
 
 	assign next_wb_adr   = (wb_bte_i == LINEAR_BURST) ?
 			       (wb_adr_i[31:0] + 32'd4) :
@@ -218,9 +223,9 @@ dual_clock_fifo #(
 
 	always @(posedge wb_clk)
 		if (wb_rst) begin
-			wb_ack_o <= 1'b0;
+			wb_read_ack <= 1'b0;
+			wb_write_ack <= 1'b0;
 			wb_write_bufram <= 1'b0;
-			wrfifo_wrreq <= 1'b0;
 			read_req_wb <= 1'b0;
 			first_req <= 1'b1;
 			wb_adr <= 0;
@@ -228,9 +233,9 @@ dual_clock_fifo #(
 			wb_sel <= 0;
 			wb_state <= IDLE;
 		end else begin
-			wb_ack_o <= 1'b0;
+			wb_read_ack <= 1'b0;
+			wb_write_ack <= 1'b0;
 			wb_write_bufram <= 1'b0;
-			wrfifo_wrreq <= 1'b0;
 			case (wb_state)
 			IDLE: begin
 				wb_sel <= wb_sel_i;
@@ -238,7 +243,7 @@ dual_clock_fifo #(
 				wb_adr <= wb_adr_i;
 				if (wb_cyc_i & wb_stb_i & !wb_we_i) begin
 					if (bufhit) begin
-						wb_ack_o <= 1'b1;
+						wb_read_ack <= 1'b1;
 						wb_state <= READ;
 					/*
 					 * wait for the ongoing refill to finish
@@ -250,11 +255,11 @@ dual_clock_fifo #(
 						read_req_wb <= 1'b1;
 						wb_state <= REFILL;
 					end
-				end else if (wb_cyc_i & wb_stb_i & wb_we_i) begin
-					if (!wrfifo_full) begin
-						wrfifo_wrreq <= 1'b1;
-						wb_ack_o <= 1'b1;
-					end
+				end else if (wb_cyc_i & wb_stb_i & wb_we_i &
+					     (bufhit & (&buf_clean_wb) | first_req |
+					      buf_adr != wb_adr_i[31:BUF_WIDTH+2])) begin
+					if (!wrfifo_full)
+						wb_write_ack <= 1'b1;
 
 					if (bufhit)
 						wb_write_bufram <= 1'b1;
@@ -266,7 +271,7 @@ dual_clock_fifo #(
 			READ: begin
 				if (wb_cyc_i & wb_stb_i & !wb_we_i &
 				   (wb_cti_i == INC_BURST) & next_bufhit) begin
-					wb_ack_o <= 1'b1;
+					wb_read_ack <= 1'b1;
 				end else begin
 					wb_state <= IDLE;
 				end
@@ -281,18 +286,24 @@ dual_clock_fifo #(
 			end
 
 			WRITE: begin
-				if (wb_cyc_i & wb_stb_i & wb_we_i &
-				  ((wb_cti_i == INC_BURST) | !wb_ack_o)) begin
+				if (wb_cyc_i & wb_stb_i & wb_we_i) begin
 
-					if (!wrfifo_full) begin
-						wrfifo_wrreq <= 1'b1;
-						wb_ack_o <= 1'b1;
-					end
+					if (!wrfifo_full)
+						wb_write_ack <= 1'b1;
 
-					if (bufhit)
+					if (bufhit) begin
+						wb_sel <= wb_sel_i;
+						wb_dat <= wb_dat_i;
+						wb_adr <= wb_adr_i;
 						wb_write_bufram <= 1'b1;
-				end else begin
+					end
+				end
+
+				// TODO: burst writes
+				if (wb_ack_o) begin
 					wb_state <= IDLE;
+					wb_write_ack <= 0;
+					wb_write_bufram <= 0;
 				end
 			end
 			endcase
