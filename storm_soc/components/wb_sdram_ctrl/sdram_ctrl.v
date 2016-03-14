@@ -26,7 +26,7 @@
 module sdram_ctrl #(
 	parameter CLK_FREQ_MHZ	= 100,	// sdram_clk freq in MHZ
 	parameter POWERUP_DELAY	= 200,	// power up delay in us
-	parameter BURST_LENGTH	= 8,	// 0, 1, 2, 4 or 8 (0 = full page)
+	parameter BURST_LENGTH	= 2,	// 0, 1, 2, 4 or 8 (0 = full page)
 	parameter ROW_WIDTH	= 13,	// Row width
 	parameter COL_WIDTH	= 9,	// Column width
 	parameter BA_WIDTH	= 2,	// Ba width
@@ -64,24 +64,24 @@ module sdram_ctrl #(
 	input			we_i
 );
 	// Active Command To Read/Write Command Delay Time
-	parameter tRCD = tRAC - tCAC;
+	localparam tRCD = tRAC - tCAC;
 
-	parameter POWERUP_CNT = CLK_FREQ_MHZ*POWERUP_DELAY;
+	localparam POWERUP_CNT = CLK_FREQ_MHZ*POWERUP_DELAY;
 	// refresh should be done for each row every 64 ms => 64e-3/2^ROW_WIDTH
-	parameter REFRESH_TIMEOUT = (CLK_FREQ_MHZ*64000)/(1<<ROW_WIDTH);
+	localparam REFRESH_TIMEOUT = (CLK_FREQ_MHZ*64000)/(1<<ROW_WIDTH);
 
 	// Burst types
-	parameter
+	localparam
 		SEQUENTIAL  = 1'b0,
 		INTERLEAVED = 1'b1;
 
 	// Write burst modes
-	parameter
+	localparam
 		PROGRAMMED_BL   = 1'b0,
 		SINGLE_LOCATION = 1'b1;
 
 	// FSM states
-	parameter [3:0]
+	localparam [3:0]
 		INIT_POWERUP  = 4'h0,
 		INIT_PRE      = 4'h1,
 		INIT_REF      = 4'h2,
@@ -95,7 +95,7 @@ module sdram_ctrl #(
 		REF           = 4'ha;
 
 	// SDRAM commands (a10_oe,a10,ras,cas,we)
-	parameter [4:0]
+	localparam [4:0]
 		CMD_NOP      = 5'b10111,
 		CMD_BST      = 5'b10110,
 		CMD_READ     = 5'b10101,
@@ -154,6 +154,7 @@ module sdram_ctrl #(
 			cmd <= CMD_NOP;
 			state <= INIT_POWERUP;
 			a <= 0;
+			ba <= 0;
 			ack_o <= 1'b0;
 			cycle_count <= 0;
 			we_r <= 0;
