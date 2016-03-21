@@ -23,383 +23,134 @@
  * WORK, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module wb_port #(
-	parameter TECHNOLOGY = "GENERIC",
-	parameter BUF_WIDTH = 3
+module wb_sdram_ctrl #(
+	parameter TECHNOLOGY	= "GENERIC",
+	parameter CLK_FREQ_MHZ	= 100,	// sdram_clk freq in MHZ
+	parameter POWERUP_DELAY	= 200,	// power up delay in us
+	parameter BURST_LENGTH	= 8,	// 0, 1, 2, 4 or 8 (0 = full page)
+	parameter WB_PORTS	= 3,	// Number of wishbone ports
+	parameter BUF_WIDTH	= 3,	// Buffer size = 2^BUF_WIDTH
+	parameter ROW_WIDTH	= 13,	// Row width
+	parameter COL_WIDTH	= 9,	// Column width
+	parameter BA_WIDTH	= 2,	// Ba width
+	parameter tCAC		= 2,	// CAS Latency
+	parameter tRAC		= 5,	// RAS Latency
+	parameter tRP		= 2,	// Command Period (PRE to ACT)
+	parameter tRC		= 7,	// Command Period (REF to REF / ACT to ACT)
+	parameter tMRD		= 2	// Mode Register Set To Command Delay time
 )
 (
-	// Wishbone
-	input			wb_clk,
-	input			wb_rst,
-	input		[31:0]	wb_adr_i,
-	input			wb_stb_i,
-	input			wb_cyc_i,
-	input		[2:0]	wb_cti_i,
-	input		[1:0]	wb_bte_i,
-	input			wb_we_i,
-	input		[3:0]	wb_sel_i,
-	input		[31:0]	wb_dat_i,
-	output		[31:0]	wb_dat_o,
-	output			wb_ack_o,
+	// SDRAM interface
+	input				sdram_rst,
+	input				sdram_clk,
+	output [BA_WIDTH-1:0]		ba_pad_o,
+	output [12:0]			a_pad_o,
+	output				cs_n_pad_o,
+	output				ras_pad_o,
+	output				cas_pad_o,
+	output				we_pad_o,
+	output [15:0]			dq_o,
+	output [1:0]			dqm_pad_o,
+	input  [15:0]			dq_i,
+	output				dq_oe,
+	output				cke_pad_o,
 
-	// Internal interface
-	input			sdram_rst,
-	input			sdram_clk,
-	input		[31:0]	adr_i,
-	output		[31:0]	adr_o,
-	input		[15:0]	dat_i,
-	output		[15:0]	dat_o,
-	output		[1:0]	sel_o,
-	output reg		acc_o,
-	input			ack_i,
-	output reg		we_o,
-
-	// Buffer write
-	input [31:0]		bufw_adr_i,
-	input [31:0]		bufw_dat_i,
-	input [3:0]		bufw_sel_i,
-	input			bufw_we_i
+	// Wishbone interface
+	input				wb_clk,
+	input				wb_rst,
+	input  [WB_PORTS*32-1:0]	wb_adr_i,
+	input  [WB_PORTS-1:0]		wb_stb_i,
+	input  [WB_PORTS-1:0]		wb_cyc_i,
+	input  [WB_PORTS*3-1:0]		wb_cti_i,
+	input  [WB_PORTS*2-1:0]		wb_bte_i,
+	input  [WB_PORTS-1:0]		wb_we_i,
+	input  [WB_PORTS*4-1:0]		wb_sel_i,
+	input  [WB_PORTS*32-1:0]	wb_dat_i,
+	output [WB_PORTS*32-1:0]	wb_dat_o,
+	output [WB_PORTS-1:0]		wb_ack_o
 );
 
-	reg  [31:0]			wb_adr;
-	reg  [31:0]			wb_dat;
-	reg  [3:0]			wb_sel;
-	reg				wb_read_ack;
-	reg				wb_write_ack;
-	wire [31:0]			next_wb_adr;
+	wire			sdram_if_idle;
+	wire [31:0]		sdram_if_adr_i;
+	wire [31:0]		sdram_if_adr_o;
+	wire [15:0]		sdram_if_dat_i;
+	wire [15:0]		sdram_if_dat_o;
+	wire [1:0]		sdram_if_sel_i;
+	wire			sdram_if_acc;
+	wire			sdram_if_we;
+	wire			sdram_if_ack;
 
-	reg				wb_write_bufram;
-	reg				sdram_write_bufram;
-	wire [3:0]			wb_bufram_we;
-	wire [BUF_WIDTH-1:0]		wb_bufram_addr;
-	wire [31:0]			wb_bufram_di;
-	wire [3:0]			sdram_bufram_we;
+	sdram_ctrl #(
+		.CLK_FREQ_MHZ	(CLK_FREQ_MHZ),
+		.POWERUP_DELAY	(POWERUP_DELAY),
+		.BURST_LENGTH	(BURST_LENGTH),
+		.ROW_WIDTH	(ROW_WIDTH),
+		.COL_WIDTH	(COL_WIDTH),
+		.BA_WIDTH	(BA_WIDTH),
+		.tCAC		(tCAC),
+		.tRAC		(tRAC),
+		.tRP		(tRP),
+		.tRC		(tRC),
+		.tMRD		(tMRD)
+	)
+	sdram_ctrl (
+		// SDRAM interface
+		.sdram_rst	(sdram_rst),
+		.sdram_clk	(sdram_clk),
+		.ba_o		(ba_pad_o),
+		.a_o		(a_pad_o),
+		.cs_n_o		(cs_n_pad_o),
+		.ras_o		(ras_pad_o),
+		.cas_o		(cas_pad_o),
+		.we_o		(we_pad_o),
+		.dq_o		(dq_o),
+		.dqm_o		(dqm_pad_o),
+		.dq_i		(dq_i),
+		.dq_oe_o	(dq_oe),
+		.cke_o		(cke_pad_o),
+		// Internal interface
+		.idle_o		(sdram_if_idle),
+		.adr_i		(sdram_if_adr_i),
+		.adr_o		(sdram_if_adr_o),
+		.dat_i		(sdram_if_dat_i),
+		.dat_o		(sdram_if_dat_o),
+		.sel_i		(sdram_if_sel_i),
+		.acc_i		(sdram_if_acc),
+		.ack_o		(sdram_if_ack),
+		.we_i		(sdram_if_we)
+	);
 
-	reg  [31:BUF_WIDTH+2]		buf_adr;
-	reg  [(1<<BUF_WIDTH)-1:0]	buf_clean;
-	reg  [(1<<BUF_WIDTH)-1:0]	buf_clean_r;
-	reg  [(1<<BUF_WIDTH)-1:0]	buf_clean_wb;
-	wire				bufhit;
-	wire				next_bufhit;
-	wire				bufw_hit;
+	wb_port_arbiter #(
+		.TECHNOLOGY	(TECHNOLOGY),
+		.WB_PORTS	(WB_PORTS),
+		.BUF_WIDTH	(BUF_WIDTH)
+	)
+	wb_port_arbiter (
+		.wb_clk		(wb_clk),
+		.wb_rst		(wb_rst),
 
-	reg				read_req_wb;
-	reg				read_req;
-	reg				read_req_sdram;
-	reg				read_done;
-	reg				read_done_ack;
+		.wb_adr_i	(wb_adr_i),
+		.wb_stb_i	(wb_stb_i),
+		.wb_cyc_i	(wb_cyc_i),
+		.wb_cti_i	(wb_cti_i),
+		.wb_bte_i	(wb_bte_i),
+		.wb_we_i	(wb_we_i),
+		.wb_sel_i	(wb_sel_i),
+		.wb_dat_i	(wb_dat_i),
+		.wb_dat_o	(wb_dat_o),
+		.wb_ack_o	(wb_ack_o),
 
-	reg  [31:0]			dat_r;
-	reg  [31:0]			adr_o_r;
-	wire				even_adr;
-	reg  [31:0]			cycle_count;
-	reg  [31:0]			ack_count;
-
-	reg				first_req;
-
-	reg  [2:0]			sdram_state;
-	reg  [2:0]			wb_state;
-
-	wire				wrfifo_full;
-	wire				wrfifo_empty;
-	wire				wrfifo_rdreq;
-	wire				wrfifo_wrreq;
-	wire [71:0]			wrfifo_rddata;
-
-	wire [3:0]			sdram_sel;
-	wire [31:0]			sdram_dat;
-	wire [31:0]			sdram_adr;
-
-	localparam [2:0]
-		IDLE	= 3'd0,
-		READ	= 3'd1,
-		WRITE	= 3'd2,
-		REFILL	= 3'd3;
-
-
-	localparam [2:0]
-		CLASSIC      = 3'b000,
-		CONST_BURST  = 3'b001,
-		INC_BURST    = 3'b010,
-		END_BURST    = 3'b111;
-
-	localparam [1:0]
-		LINEAR_BURST = 2'b00,
-		WRAP4_BURST  = 2'b01,
-		WRAP8_BURST  = 2'b10,
-		WRAP16_BURST = 2'b11;
-
-	assign wrfifo_wrreq  = wb_write_ack & !wrfifo_full;
-	assign wb_ack_o      = wb_read_ack | wrfifo_wrreq;
-
-	assign next_wb_adr   = (wb_bte_i == LINEAR_BURST) ?
-			       (wb_adr_i[31:0] + 32'd4) :
-			       (wb_bte_i == WRAP4_BURST ) ?
-			       {wb_adr_i[31:4], wb_adr_i[3:0] + 4'd4} :
-			       (wb_bte_i == WRAP8_BURST ) ?
-			       {wb_adr_i[31:5], wb_adr_i[4:0] + 5'd4} :
-			     /*(wb_bte_i == WRAP16_BURST) ?*/
-			       {wb_adr_i[31:6], wb_adr_i[5:0] + 6'd4};
-
-	assign bufhit	     = (buf_adr == wb_adr_i[31:BUF_WIDTH+2]) &
-			       buf_clean_wb[wb_adr_i[BUF_WIDTH+1:2]];
-	assign next_bufhit   = (buf_adr == next_wb_adr[31:BUF_WIDTH+2]) &
-			       buf_clean_wb[next_wb_adr[BUF_WIDTH+1:2]];
-	assign bufw_hit      = (bufw_adr_i[31:BUF_WIDTH+2] ==
-				buf_adr[31:BUF_WIDTH+2]);
-
-	assign even_adr      = (adr_i[1] == 1'b0);
-	// output lower 16 bits after first write ack
-	assign adr_o	     = (sdram_state == WRITE) ?
-			       (ack_i) ? sdram_adr + 2 : sdram_adr :
-			       adr_o_r;
-	assign dat_o	     = ((sdram_state == WRITE) & ack_i) ?
-			       sdram_dat[15:0] : sdram_dat[31:16];
-	assign sel_o	     = ((sdram_state == WRITE) & ack_i) ?
-			       sdram_sel[1:0]  : sdram_sel[3:2];
-
-	assign wrfifo_rdreq  = (sdram_state == IDLE) & !wrfifo_empty;
-
-	assign wb_bufram_we  = bufw_we_i & bufw_hit ? bufw_sel_i :
-			       wb_write_bufram ? wb_sel : 4'b0;
-
-	assign wb_bufram_addr = bufw_we_i & bufw_hit ?
-			        bufw_adr_i[BUF_WIDTH+1:2] :
-			        wb_write_bufram ?
-			        wb_adr[BUF_WIDTH+1:2] :
-			        (wb_cti_i == INC_BURST) & wb_ack_o ?
-			        next_wb_adr[BUF_WIDTH+1:2] :
-			        wb_adr_i[BUF_WIDTH+1:2];
-	assign wb_bufram_di   = bufw_we_i & bufw_hit ? bufw_dat_i : wb_dat;
-	assign sdram_bufram_we = {4{sdram_write_bufram}};
-
-	assign sdram_sel      = wrfifo_rddata[3:0];
-	assign sdram_dat      = wrfifo_rddata[35:4];
-	assign sdram_adr      = {wrfifo_rddata[65:36], 2'b00};
-
-bufram #(
-	.TECHNOLOGY(TECHNOLOGY),
-	.ADDR_WIDTH(BUF_WIDTH)
-) bufram (
-	.clk_a		(wb_clk),
-	.addr_a		(wb_bufram_addr),
-	.we_a		(wb_bufram_we),
-	.di_a		(wb_bufram_di),
-	.do_a		(wb_dat_o),
-
-	.clk_b		(sdram_clk),
-	.addr_b		(adr_i[BUF_WIDTH+1:2]),
-	.we_b		(sdram_bufram_we),
-	.di_b		({dat_r[31:16], dat_i}),
-	.do_b		()
-);
-
-dual_clock_fifo #(
-	.ADDR_WIDTH(3),
-	.DATA_WIDTH(72)
-) wrfifo (
-	.wr_rst_i	(wb_rst),
-	.wr_clk_i	(wb_clk),
-	.wr_en_i	(wrfifo_wrreq),
-	.wr_data_i	({6'b0, wb_adr_i[31:2],  wb_dat_i,  wb_sel_i}),
-
-	.rd_rst_i	(sdram_rst),
-	.rd_clk_i	(sdram_clk),
-	.rd_en_i	(wrfifo_rdreq),
-	.rd_data_o	(wrfifo_rddata),
-
-	.full_o		(wrfifo_full),
-	.empty_o	(wrfifo_empty)
-);
-
-	//
-	// WB clock domain
-	//
-	always @(posedge wb_clk)
-		if (read_done)
-			read_done_ack <= 1'b1;
-		else
-			read_done_ack <= 1'b0;
-
-	always @(posedge wb_clk)
-		if (wb_rst) begin
-			wb_read_ack <= 1'b0;
-			wb_write_ack <= 1'b0;
-			wb_write_bufram <= 1'b0;
-			read_req_wb <= 1'b0;
-			first_req <= 1'b1;
-			wb_adr <= 0;
-			wb_dat <= 0;
-			wb_sel <= 0;
-			wb_state <= IDLE;
-		end else begin
-			wb_read_ack <= 1'b0;
-			wb_write_ack <= 1'b0;
-			wb_write_bufram <= 1'b0;
-			case (wb_state)
-			IDLE: begin
-				wb_sel <= wb_sel_i;
-				wb_dat <= wb_dat_i;
-				wb_adr <= wb_adr_i;
-				if (wb_cyc_i & wb_stb_i & !wb_we_i) begin
-					if (bufhit) begin
-						wb_read_ack <= 1'b1;
-						wb_state <= READ;
-					/*
-					 * wait for the ongoing refill to finish
-					 * until issuing a new request
-					 */
-					end else if (buf_clean_wb[wb_adr_i[BUF_WIDTH+1:2]] |
-						     first_req) begin
-						first_req <= 1'b0;
-						read_req_wb <= 1'b1;
-						wb_state <= REFILL;
-					end
-				end else if (wb_cyc_i & wb_stb_i & wb_we_i &
-					     (bufhit & (&buf_clean_wb) | first_req |
-					      buf_adr != wb_adr_i[31:BUF_WIDTH+2])) begin
-					if (!wrfifo_full)
-						wb_write_ack <= 1'b1;
-
-					if (bufhit)
-						wb_write_bufram <= 1'b1;
-
-					wb_state <= WRITE;
-				end
-			end
-
-			READ: begin
-				if (wb_cyc_i & wb_stb_i & !wb_we_i &
-				   (wb_cti_i == INC_BURST) & next_bufhit) begin
-					wb_read_ack <= 1'b1;
-				end else begin
-					wb_state <= IDLE;
-				end
-			end
-
-			REFILL: begin
-				buf_adr <= wb_adr[31:BUF_WIDTH+2];
-				if (read_done) begin
-					read_req_wb <= 1'b0;
-					wb_state <= IDLE;
-				end
-			end
-
-			WRITE: begin
-				if (wb_cyc_i & wb_stb_i & wb_we_i) begin
-
-					if (!wrfifo_full)
-						wb_write_ack <= 1'b1;
-
-					if (bufhit) begin
-						wb_sel <= wb_sel_i;
-						wb_dat <= wb_dat_i;
-						wb_adr <= wb_adr_i;
-						wb_write_bufram <= 1'b1;
-					end
-				end
-
-				// TODO: burst writes
-				if (wb_ack_o) begin
-					wb_state <= IDLE;
-					wb_write_ack <= 0;
-					wb_write_bufram <= 0;
-				end
-			end
-			endcase
-		end
-
-	always @(posedge wb_clk) begin
-		buf_clean_r <= buf_clean;
-		buf_clean_wb <= buf_clean_r;
-	end
-
-	//
-	// SDRAM clock domain
-	//
-	always @(posedge sdram_clk) begin
-		read_req <= read_req_wb;
-		read_req_sdram <= read_req;
-	end
-
-	always @(posedge sdram_clk) begin
-		if (sdram_rst) begin
-			sdram_state <= IDLE;
-			acc_o <= 1'b0;
-			we_o <= 1'b0;
-			cycle_count <= 0;
-			ack_count <= 0;
-			read_done <= 1'b0;
-			buf_clean <= {(1<<BUF_WIDTH){1'b0}};
-			sdram_write_bufram <= 1'b0;
-		end else begin
-			sdram_write_bufram <= 1'b0;
-
-			if (ack_i)
-				ack_count <= ack_count + 1;
-
-			cycle_count <= cycle_count + 1;
-
-			case (sdram_state)
-			IDLE: begin
-				we_o <= 1'b0;
-				ack_count <= 0;
-				if (!wrfifo_empty) begin
-					sdram_state <= WRITE;
-					acc_o <= 1'b1;
-					we_o <= 1'b1;
-				end else if (read_req_sdram) begin
-					buf_clean <= {(1<<BUF_WIDTH){1'b0}};
-					sdram_state <= READ;
-					adr_o_r <= {wb_adr[31:2], 2'b00};
-					acc_o <= 1'b1;
-				end
-			end
-
-			READ: begin
-				if (ack_i) begin
-					cycle_count <= 0;
-					acc_o <= 1'b0;
-				end
-
-				if (ack_i | (ack_count != 0 & cycle_count != 7)) begin
-					if (even_adr) begin
-						dat_r[31:16] <= dat_i;
-						sdram_write_bufram <= 1'b1;
-					end else begin
-						dat_r[15:0] <= dat_i;
-						buf_clean[adr_i[BUF_WIDTH+1:2]] <= 1'b1;
-						// signal read done on first burst
-						if (ack_count != 2 & cycle_count == 0) begin
-							read_done <= 1'b1;
-						end
-					end
-				end
-
-				/* FIXME: Hardcoded to 2*burst of 8 */
-				if (ack_count == 1 & cycle_count == 2) begin
-					adr_o_r[BUF_WIDTH+1:2] <= adr_o_r[BUF_WIDTH+1:2] + 4;
-					acc_o <= 1'b1;
-				end else if (ack_count == 2 & cycle_count == 7) begin
-					acc_o <= 1'b0;
-					sdram_state <= IDLE;
-				end
-			end
-
-			WRITE: begin
-				if (ack_i) begin
-					acc_o <= 1'b0;
-					sdram_state <= IDLE;
-				end
-			end
-
-			default: begin
-				sdram_state <= IDLE;
-			end
-			endcase
-
-			if (read_done_ack)
-				read_done <= 1'b0;
-		end
-	end
+		// Internal interface
+		.sdram_rst	(sdram_rst),
+		.sdram_clk	(sdram_clk),
+		.sdram_idle_i	(sdram_if_idle),
+		.adr_i		(sdram_if_adr_o),
+		.adr_o		(sdram_if_adr_i),
+		.dat_i		(sdram_if_dat_o),
+		.dat_o		(sdram_if_dat_i),
+		.sel_o		(sdram_if_sel_i),
+		.acc_o		(sdram_if_acc),
+		.ack_i		(sdram_if_ack),
+		.we_o		(sdram_if_we)
+	);
 endmodule
