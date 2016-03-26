@@ -40,6 +40,9 @@ module dpram_generic #(
 	output reg [31:0]	do_b
 );
 
+// Error (276001)
+//Error (276001): Cannot synthesize dual-port RAM logic "wb_sdram_ctrl:SDRAM_CTRL_0|arbiter:arbiter|wb_port:wbports[0].wb_port|bufram:bufram|dpram_generic:dpram_generic.dpram_generic|mem0"
+
 	reg [7:0]	mem0[(1<<ADDR_WIDTH)-1:0];
 	reg [7:0]	mem1[(1<<ADDR_WIDTH)-1:0];
 	reg [7:0]	mem2[(1<<ADDR_WIDTH)-1:0];

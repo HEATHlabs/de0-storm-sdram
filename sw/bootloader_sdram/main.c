@@ -5,7 +5,7 @@
 #include "../lib/utilities.c"
 
 //#define JUMPADDRESS 0x00000000
-#define JUMPADDRESS 0x01000000
+#define JUMPADDRESS 0x04000000
 
 unsigned long int hex_string_to_long ( char *hexstr, int charlen )
 {
@@ -148,15 +148,17 @@ main_menu:
 				uart0_printf("\r\n\r\nAbort dumping by pressing any key.\r\nPress any key to continue.\r\n\r\n");
 				while(io_uart0_read_byte() == -1);
 				while(io_uart0_read_byte() != -1);
-//				data_pointer = 0;
 				data_pointer = (volatile unsigned long *)JUMPADDRESS;
-
-				while(data_pointer != JUMPADDRESS +2532){
+				
+				while(data_pointer < JUMPADDRESS +2532){
 					word_buffer = *data_pointer;
-					io_uart0_send_byte(word_buffer >> 24);
-					io_uart0_send_byte(word_buffer >> 16);
-					io_uart0_send_byte(word_buffer >>  8);
-					io_uart0_send_byte(word_buffer >>  0);
+					long_to_hex_string(word_buffer, temp_string,8);
+					i=0;
+					while (temp_string[i] != 0) {
+						io_uart0_send_byte(temp_string[i]);
+						i++;
+					}
+					io_uart0_send_byte(' ');
 					data_pointer++;
 					if(io_uart0_read_byte() != -1){
 						break;

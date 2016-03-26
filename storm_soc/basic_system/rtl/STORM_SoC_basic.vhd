@@ -97,7 +97,7 @@ architecture Structure of STORM_SoC_basic is
 		constant INT_MEM_SIZE_C    : natural := 32*1024; -- byte       x00008000
 		constant BOOT_ROM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0) := x"00010000";
 		constant BOOT_ROM_SIZE_C   : natural := 16*1024; -- byte       x00014000
-		constant SDRAM_MEM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0):= x"01000000";
+		constant SDRAM_MEM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0):= x"04000000";
 		constant SDRAM_MEM_SIZE_C   : natural := 32*1024*1024; -- byte x02ffffff
 --		constant BOOT_ROM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0) := x"FFF00000";
 		-- Begin of IO area ------------------------------------------------------
@@ -325,6 +325,7 @@ architecture Structure of STORM_SoC_basic is
 						-- Wishbone Bus --
 						WB_ADR_O      : out STD_LOGIC_VECTOR(31 downto 0); -- address
 						WB_CTI_O      : out STD_LOGIC_VECTOR(02 downto 0); -- cycle type
+						WB_BTE_O      : out STD_LOGIC_VECTOR(01 downto 0); -- cycle type
 						WB_TGC_O      : out STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
 						WB_SEL_O      : out STD_LOGIC_VECTOR(03 downto 0); -- byte select
 						WB_WE_O       : out STD_LOGIC;                     -- write enable
@@ -594,7 +595,7 @@ architecture Structure of STORM_SoC_basic is
 						wb_ack_o      : out std_logic;                    -- Bus cycle acknowledge output
 						wb_inta_o     : out std_logic;                    -- interrupt request output signal
 						
-						-- I�C lines --
+						-- Iï¿½C lines --
 						scl_pad_i     : in  std_logic;                    -- i2c clock line input
 						scl_pad_o     : out std_logic;                    -- i2c clock line output
 						scl_padoen_o  : out std_logic;                    -- i2c clock line output enable, active low
@@ -1017,10 +1018,8 @@ begin
 
 		SDRAM_DQ_IO <= internal_dqo when (internal_dqoe = '1') else "ZZZZZZZZZZZZZZZZ";
 		internal_dqi <= SDRAM_DQ_IO when (internal_dqoe = '0') else "ZZZZZZZZZZZZZZZZ";
-		--SDRAM to deal with Pipelined request from Storme CPU.
-		SDRAM_MEM_HALT_O <= '0' when CORE_WB_CYC_O='0' else not SDRAM_MEM_ACK_O;
-		--SDRAM_MEM_HALT_O <= SDRAM_MEM_STB_I and (not SDRAM_MEM_ACK_O);
-		--SDRAM_MEM_HALT_O <= '0';-- nothing can go wrong - never ever!
+
+		SDRAM_MEM_HALT_O <= '0';-- nothing can go wrong - never ever!
 		SDRAM_MEM_ERR_O <= '0';-- nothing can go wrong - never ever!
 --		SDRAM_MEM_CTI_I <= '0';
 --		XMEM_RST <= MAIN_RST ;

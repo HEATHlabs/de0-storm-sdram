@@ -4,7 +4,7 @@ JedecChain;
 	DefaultMfr(6E);
 
 	P ActionCode(Cfg)
-		Device PartName(EP4CE22F17) Path("D:/arm-storm-sdram1/") File("storm-add-amber-devs.sof") MfrSpec(OpMask(1));
+		Device PartName(EP4CE22F17) Path("D:/de0-storm-sdram3/") File("storm-add-amber-devs.sof") MfrSpec(OpMask(1));
 
 ChainEnd;
 
