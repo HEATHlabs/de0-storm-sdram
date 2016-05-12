@@ -52,7 +52,7 @@ void print_intro(){
 // ############################################################################################
 {
 	int function_sel, data, i, start_app = 0;
-	unsigned long *data_pointer, word_buffer, adr_buffer, cnt;
+	unsigned long *data_pointer, word_buffer, adr_buffer, cnt, watch_buf;
 	unsigned char buffer[5], temp_string[9], char_tmp, *char_pointer, device_id;
 
 	// show reset ack
@@ -86,9 +86,14 @@ void print_intro(){
 	uart0_printf(" Load Address: ");
 	long_to_hex_string(JUMPADDRESS, temp_string, 8);
 	uart0_printf(temp_string);
+
+	//-----------------------------
+	uart0_printf("\r\n");
+	long_to_hex_string(&watch_buf, temp_string, 8);
+	uart0_printf(temp_string);
+	//----------------------------------
 	uart0_printf("\n\r");
 	print_intro();
-	
 	while(1){
 
 		// console input
@@ -130,7 +135,9 @@ main_menu:
 					data_pointer = (volatile unsigned long *)JUMPADDRESS;
 					while(data_pointer != JUMPADDRESS+(adr_buffer+4) ){
 						uart0_scanf(buffer,4,0); // get word
-						*data_pointer = qbytes_to_long(buffer); // store memory entry
+						watch_buf = qbytes_to_long(buffer);
+						*data_pointer = watch_buf;
+//						*data_pointer = qbytes_to_long(buffer); // store memory entry
 						data_pointer = data_pointer + 1;
 					}
 					uart0_printf("\n\r");
@@ -373,16 +380,17 @@ main_menu:
 
 	// disable write-through strategy
 	set_syscpreg(get_syscpreg(SYS_CTRL_0) & ~(1<<DC_WTHRU), SYS_CTRL_0);
-
+	long_to_hex_string(get_syscpreg(SYS_CTRL_0), temp_string, 8);
+	uart0_printf(temp_string);
 	// clear D-cache
-	set_syscpreg(get_syscpreg(SYS_CTRL_0) | ~(1<<DC_CLEAR), SYS_CTRL_0);
 	
+	//set_syscpreg(get_syscpreg(SYS_CTRL_0) | ~(1<<DC_CLEAR), SYS_CTRL_0);
+	uart0_printf("\r\n\r\n-Clear D$\r\n\r\n");
 	// clear I-cache
-//	set_syscpreg(get_syscpreg(SYS_CTRL_0) | ~(1<<IC_CLEAR), SYS_CTRL_0);
-
-//	set_syscpreg(((get_syscpreg(SYS_CTRL_0) & (0x0000FFFF)) | (0x00080000)) , SYS_CTRL_0);
+	
+	//set_syscpreg(get_syscpreg(SYS_CTRL_0) | ~(1<<IC_CLEAR), SYS_CTRL_0);
+    uart0_printf("\r\n\r\n-Clear I$\r\n\r\n");
 	// jump to application
-	//asm volatile ("mov pc, #0");
 	_jump_to_program(JUMPADDRESS);
 	while(1);
 }

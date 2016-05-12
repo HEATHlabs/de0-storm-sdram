@@ -138,8 +138,8 @@ architecture Structure of STORM_SoC_basic is
 		constant UART0_BAUD_C        : natural := 38400;
 		constant UART0_BAUD_VAL_C    : natural := CORE_CLOCK_C/(4*UART0_BAUD_C);
 		constant USE_OUTPUT_GATES_C  : boolean := FALSE;
-		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := SDRAM_MEM_BASE_C;
---		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := IO_AREA_BEGIN;
+--		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := SDRAM_MEM_BASE_C;
+		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := IO_AREA_BEGIN;
 		constant UNCACHABLE_END 	  : STD_LOGIC_VECTOR(31 downto 0)  := IO_AREA_END;
 		
 
