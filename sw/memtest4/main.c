@@ -2,7 +2,9 @@
  *
  * Function:    memTest()
  *
- * Description: Test a 4-k chunk of SRAM.
+ * Description: Test a  chunk of SRAM.
+				Set BASE_ADDRESS below to the starting address (in hex) of the memory
+				Set NUM_BYTES below to the number to bytes (in dec) to test in memory 
  *
  * Notes:       
  *
@@ -19,10 +21,10 @@
 #include "memtest_run.c"
 
 
-#define BASE_ADDRESS  (volatile datum *) 0x01000000 //beginning of SDRAM memory
+#define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 //#define NUM_BYTES     ( 32 * 1024 )
-#define CYCLES	1
+#define CYCLES	25
 
 // ############################################################################################
 // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
@@ -78,7 +80,7 @@ main(void)
      uart0_printf("Number of Bytes to test:  ");
      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
      uart0_printf(str);uart0_printf("\r\n");
-  for (i=1; i<=CYCLES; i++) {	
+  for (i=0; i<CYCLES; i++) {	
     memtest_run();
    } //for
    

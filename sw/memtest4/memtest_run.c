@@ -5,7 +5,7 @@
 //#include "memtest.h"
 //#include "memtest.c"
 
-#define BASE_ADDRESS  (volatile datum *) 0x01000000 //beginning of SDRAM memory
+#define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 
 void memtest_run () {
@@ -65,4 +65,5 @@ void memtest_run () {
         uart0_printf("memTestDevice2 Passed\r\n");
 		//return (0);
     }
+	 uart0_printf("Mem test complete \r\n");
 } //memtest_run()

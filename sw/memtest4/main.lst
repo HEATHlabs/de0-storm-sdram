@@ -1222,165 +1222,181 @@
  838              	.LVL88:
  839              		ldmfd	sp!, {r4, pc}
  840              	.LFE25:
- 842              		.align	2
- 843              		.global	uart0_scanf
+ 842              		.section	.rodata
+ 843              		.align	2
+ 844 04c0 E1A04000 	.LC0:
    8:../lib/uart.c **** 	char ch;
    9:../lib/uart.c **** 
   10:../lib/uart.c **** 	while ((ch = *string)){
- 845              	canf:
- 846 04c4 E5D00000 	.LFB26:
- 847              		.loc 2 22 0
- 848 04c8 E3500000 		@ args = 0, pretend = 0, frame = 0
- 849 04cc 1A000003 		@ frame_needed = 0, uses_anonymous_args = 0
- 850 04d0 EA000005 	.LVL89:
- 851              		stmfd	sp!, {r4, r5, r6, lr}
- 852              	.LCFI3:
- 853 04d4 E5F40001 		.loc 2 25 0
- 854              		subs	r4, r1, #0
- 855 04d8 E3500000 		.loc 2 22 0
- 856 04dc 0A000002 		mov	r5, r0
- 857              		and	r6, r2, #255
+ 845              		"\000\000"
+ 846 04c4 E5D00000 		.text
+ 847              		.align	2
+ 848 04c8 E3500000 		.global	uart0_scanf
+ 850 04d0 EA000005 	uart0_scanf:
+ 851              	.LFB26:
+ 852              		.loc 2 22 0
+ 853 04d4 E5F40001 		@ args = 0, pretend = 0, frame = 0
+ 854              		@ frame_needed = 0, uses_anonymous_args = 0
+ 855 04d8 E3500000 	.LVL89:
+ 856 04dc 0A000002 		stmfd	sp!, {r4, r5, r6, lr}
+ 857              	.LCFI3:
   11:../lib/uart.c **** 		if (io_uart0_send_byte(ch)<=0)
- 858              		ldmlefd	sp!, {r4, r5, r6, pc}
- 859 04e0 EBFFFFFE 	.LVL90:
- 860              	.L155:
- 861 04e4 E3500000 		.loc 2 26 0
- 862 04e8 CAFFFFF9 		bl	io_uart0_read_byte
- 863              	.LVL91:
- 864              	.LVL92:
+ 858              		subs	r4, r1, #0
+ 859 04e0 EBFFFFFE 		.loc 2 22 0
+ 860              		mov	r5, r0
+ 861 04e4 E3500000 		and	r6, r2, #255
+ 862 04e8 CAFFFFF9 		.loc 2 25 0
+ 863              		ble	.L148
+ 864              	.LVL90:
   12:../lib/uart.c **** 			break;
   13:../lib/uart.c **** 		string++;
   14:../lib/uart.c **** 	}
   15:../lib/uart.c **** 	return string;
   16:../lib/uart.c **** }
- 865              	 27 0
- 866 04ec E1A00004 		cmn	r0, #1
- 867              		.loc 2 28 0
- 868 04f0 E8BD8010 		and	r3, r0, #255
- 869              	.LVL93:
- 870              		.loc 2 27 0
- 871              		beq	.L150
- 872              		.loc 2 30 0
- 873              		cmp	r6, #1
- 874              	.LVL94:
- 875              		.loc 2 29 0
+ 865              		.loc 2 26 0
+ 866 04ec E1A00004 		bl	io_uart0_read_byte
+ 867              	.LVL91:
+ 868 04f0 E8BD8010 	.LVL92:
+ 869              		.loc 2 27 0
+ 870              		cmn	r0, #1
+ 871              		.loc 2 28 0
+ 872              		and	r3, r0, #255
+ 873              	.LVL93:
+ 874 0000 0000     		.loc 2 27 0
+ 875 0002 0000     		beq	.L150
+ 876              		.loc 2 30 0
+ 877              		cmp	r6, #1
+ 878              	.LVL94:
+ 879              		.loc 2 29 0
+ 880              		strb	r3, [r5, #0]
   17:../lib/uart.c **** 
   18:../lib/uart.c **** // ############################################################################################
   19:../lib/uart.c **** // Read text string via UART 0
   20:../lib/uart.c ****    void uart0_scanf(unsigned char *buffer, int length, unsigned char en_echo)
   21:../lib/uart.c **** // ############################################################################################
   22:../lib/uart.c **** {
- 876              	r5, #0]
- 877              	.LVL95:
- 878              		.loc 2 31 0
- 879              		mov	r0, r3
- 880 04f4 E92D4070 	.LVL96:
- 881              		.loc 2 29 0
+ 881              	31 0
+ 882              		mov	r0, r3
+ 883              	.LVL96:
+ 884              		.loc 2 29 0
+ 885 04f4 E92D4070 		add	r5, r5, #1
+ 886              		.loc 2 30 0
   23:../lib/uart.c **** 	int temp = 0;
   24:../lib/uart.c **** 
   25:../lib/uart.c **** 	while(length > 0){
- 882              	5, r5, #1
- 883 04f8 E2514000 		.loc 2 30 0
- 884              		beq	.L157
- 885 04fc E1A05000 	.LVL97:
- 886 0500 E20260FF 	.L152:
- 887              		.loc 2 32 0
- 888 0504 D8BD8070 		sub	r4, r4, #1
- 889              	.LVL98:
- 890              	.L150:
+ 887              	L157
+ 888 04f8 E2514000 	.LVL97:
+ 889              	.L152:
+ 890 04fc E1A05000 		.loc 2 32 0
+ 891 0500 E20260FF 		sub	r4, r4, #1
+ 892              	.LVL98:
+ 893 0504 DA00000B 	.L150:
+ 894              		.loc 2 25 0
+ 895              		cmp	r4, #0
   26:../lib/uart.c **** 		temp = io_uart0_read_byte();
- 891              	5 0
- 892 0508 EBFFFFFE 		cmp	r4, #0
- 893              		bgt	.L155
- 894              		ldmfd	sp!, {r4, r5, r6, pc}
+ 896              	5
+ 897 0508 EBFFFFFE 	.LVL99:
+ 898              	.L148:
+ 899              		.loc 2 35 0
   27:../lib/uart.c **** 		if(temp != -1){
- 895              	99:
- 896 050c E3700001 	.L157:
+ 900              		r3, .L158
+ 901 050c E3700001 	.LVL100:
   28:../lib/uart.c **** 			temp = (unsigned char)(temp & 0x000000FF);
- 897              	loc 2 31 0
- 898 0510 E20030FF 		bl	io_uart0_send_byte
- 899              	.LVL100:
- 900              		b	.L152
- 901 0514 0A000005 	.LFE26:
+ 902              	trb	r3, [r5, #0]
+ 903 0510 E20030FF 		.loc 2 36 0
+ 904              		ldmfd	sp!, {r4, r5, r6, pc}
+ 905              	.LVL101:
+ 906 0514 0A000005 	.L157:
   29:../lib/uart.c **** 			*buffer++ = temp;
   30:../lib/uart.c **** 			if(en_echo == 1)
- 902              	e	uart0_scanf, .-uart0_scanf
- 903 0518 E3560001 		.align	2
- 904              		.global	uart0_print_buffer
- 906 051c E5C53000 	uart0_print_buffer:
- 907              	.LFB27:
+ 907              	 2 31 0
+ 908 0518 E3560001 		bl	io_uart0_send_byte
+ 909              	.LVL102:
+ 910              		b	.L152
+ 911 051c E5C53000 	.L159:
+ 912              		.align	2
   31:../lib/uart.c **** 				io_uart0_send_byte(temp); // echo
- 908              	2 41 0
- 909 0520 E1A00003 		@ args = 0, pretend = 0, frame = 0
- 910              		@ frame_needed = 0, uses_anonymous_args = 0
- 911              	.LVL101:
- 912 0524 E2855001 		stmfd	sp!, {r4, r5, lr}
- 913              	.LCFI4:
- 914 0528 0A000003 		.loc 2 43 0
- 915              		subs	r4, r1, #0
- 916              		.loc 2 41 0
+ 913              	
+ 914 0520 E1A00003 		.word	.LC0
+ 915              	.LFE26:
+ 917 0524 E2855001 		.align	2
+ 918              		.global	uart0_print_buffer
+ 920              	uart0_print_buffer:
+ 921              	.LFB27:
   32:../lib/uart.c **** 			length--;
- 917              	r0
- 918 052c E2444001 		.loc 2 43 0
- 919              		ldmlefd	sp!, {r4, r5, pc}
- 920              	.LVL102:
- 921              	.L162:
- 922 0530 E3540000 		.loc 2 45 0
- 923 0534 CAFFFFF3 		ldrb	r0, [r5], #1	@ zero_extendqisi2
- 924 0538 E8BD8070 	.LVL103:
- 925              		bl	io_uart0_send_byte
- 926              	.LVL104:
- 927              		.loc 2 43 0
- 928 053c EBFFFFFE 		subs	r4, r4, #1
- 929              		bne	.L162
- 930 0540 EAFFFFF9 		ldmfd	sp!, {r4, r5, pc}
- 931              	.LFE27:
- 933              		.align	2
- 934              		.global	memTestDataBus
- 936              	memTestDataBus:
- 937              	.LFB28:
+ 922              	42 0
+ 923 052c E2444001 		@ args = 0, pretend = 0, frame = 0
+ 924              		@ frame_needed = 0, uses_anonymous_args = 0
+ 925              	.LVL103:
+ 926              		stmfd	sp!, {r4, r5, lr}
+ 927 0530 E3540000 	.LCFI4:
+ 928 0534 CAFFFFF3 		.loc 2 44 0
+ 929              		subs	r4, r1, #0
+ 930              		.loc 2 42 0
   33:../lib/uart.c **** 		}
   34:../lib/uart.c **** 	}
-  35:../lib/uart.c **** }
-  36:../lib/uart.c **** 
-  37:../lib/uart.c **** // ############################################################################################
-  38:../lib/uart.c **** // Print character buffer via UART 0
-  39:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
-  40:../lib/uart.c **** // ############################################################################################
-  41:../lib/uart.c **** {
- 938              		.loc 3 38 0
- 939              		@ args = 0, pretend = 0, frame = 0
- 940              		@ frame_needed = 0, uses_anonymous_args = 0
- 941              		@ link register save eliminated.
- 942 0544 E92D4030 	.LVL105:
- 943              		mov	r2, r0
-  42:../lib/uart.c **** 	unsigned char char_buffer = 0;
-  43:../lib/uart.c **** 	while(size > 0){
- 944              	needed for prologue
- 945 0548 E2514000 		.loc 3 38 0
- 946              		mov	r0, #1
- 947 054c E1A05000 	.LVL106:
- 948              	.L165:
- 949 0550 D8BD8030 		.loc 3 50 0
- 950              		str	r0, [r2, #0]
- 951              		.loc 3 55 0
-  44:../lib/uart.c **** 		char_buffer = *buffer++;
-  45:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
- 952              	 [r2, #0]
- 953 0554 E4D50001 		cmp	r3, r0
- 954              		bxne	lr
- 955 0558 EBFFFFFE 		.loc 3 45 0
- 956              		movs	r0, r0, asl #1
- 957              		bne	.L165
- 958 055c E2544001 	.LVL107:
- 959 0560 1AFFFFFB 		.loc 3 63 0
- 960 0564 E8BD8030 		bx	lr
- 961              	.LFE28:
- 963              		.align	2
- 964              		.global	memTestAddressBus
- 966              	memTestAddressBus:
- 967              	.LFB29:
- 968              		.loc 3 93 0
+  35:../lib/uart.c **** 	*buffer="\0";
+ 931              	r0
+ 932 0538 E59F300C 		.loc 2 44 0
+ 933              		ldmlefd	sp!, {r4, r5, pc}
+ 934 053c E5C53000 	.LVL104:
+  36:../lib/uart.c **** }
+ 935              	4:
+ 936 0540 E8BD8070 		.loc 2 46 0
+ 937              		ldrb	r0, [r5], #1	@ zero_extendqisi2
+ 938              	.LVL105:
+ 939              		bl	io_uart0_send_byte
+ 940 0544 EBFFFFFE 	.LVL106:
+ 941              		.loc 2 44 0
+ 942 0548 EAFFFFF7 		subs	r4, r4, #1
+ 943              		bne	.L164
+ 944              		ldmfd	sp!, {r4, r5, pc}
+ 945              	.LFE27:
+ 947              		.align	2
+ 948              		.global	memTestDataBus
+ 950              	memTestDataBus:
+ 951              	.LFB28:
+ 952              		.file 3 "memtest.c"
+ 953              		.loc 3 38 0
+  37:../lib/uart.c **** 
+  38:../lib/uart.c **** // ############################################################################################
+  39:../lib/uart.c **** // Print character buffer via UART 0
+  40:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
+  41:../lib/uart.c **** // ############################################################################################
+  42:../lib/uart.c **** {
+ 954              	d = 0, frame = 0
+ 955              		@ frame_needed = 0, uses_anonymous_args = 0
+ 956              		@ link register save eliminated.
+ 957              	.LVL107:
+ 958 0550 E92D4030 		mov	r2, r0
+ 959              		@ lr needed for prologue
+  43:../lib/uart.c **** 	unsigned char char_buffer = 0;
+  44:../lib/uart.c **** 	while(size > 0){
+ 960              	3 38 0
+ 961 0554 E2514000 		mov	r0, #1
+ 962              	.LVL108:
+ 963 0558 E1A05000 	.L167:
+ 964              		.loc 3 50 0
+ 965 055c D8BD8030 		str	r0, [r2, #0]
+ 966              		.loc 3 55 0
+ 967              		ldr	r3, [r2, #0]
+  45:../lib/uart.c **** 		char_buffer = *buffer++;
+  46:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
+ 968              	 r0
+ 969 0560 E4D50001 		bxne	lr
+ 970              		.loc 3 45 0
+ 971 0564 EBFFFFFE 		movs	r0, r0, asl #1
+ 972              		bne	.L167
+ 973              	.LVL109:
+ 974 0568 E2544001 		.loc 3 63 0
+ 975 056c 1AFFFFFB 		bx	lr
+ 976 0570 E8BD8030 	.LFE28:
+ 978              		.align	2
+ 979              		.global	memTestAddressBus
+ 981              	memTestAddressBus:
+ 982              	.LFB29:
+ 983              		.loc 3 93 0
+ 984              		@ args = 0, pretend = 0, frame = 0
    1:memtest.c     **** /**********************************************************************
    2:memtest.c     ****  *
    3:memtest.c     ****  * Filename:    memtest.c
@@ -1419,743 +1435,739 @@
   36:memtest.c     **** datum
   37:memtest.c     **** memTestDataBus(volatile datum * address)
   38:memtest.c     **** {
- 969              	end = 0, frame = 0
- 970              		@ frame_needed = 0, uses_anonymous_args = 0
- 971              	.LVL108:
- 972              		.loc 3 94 0
- 973              		mov	r1, r1, lsr #2
- 974 0568 E1A02000 	.LVL109:
- 975              		.loc 3 93 0
- 976              		stmfd	sp!, {r4, r5, lr}
- 977 056c E3A00001 	.LCFI5:
- 978              		.loc 3 94 0
- 979              		sub	lr, r1, #1
-  39:memtest.c     **** form a walking 1's test at the given address.
-  40:memtest.c     ****      */
-  41:memtest.c     ****     for (pattern = 1; pattern != 0; pattern <<= 1)
-  42:memtest.c     ****     {
-  43:memtest.c     ****         /*
-  44:memtest.c     ****          * Write the test pattern.
-  45:memtest.c     ****          */
-  46:memtest.c     ****         *address = pattern;
-  47:memtest.c     **** 
-  48:memtest.c     ****         /*
-  49:memtest.c     ****          * Read it back (immediately is okay for this test).
-  50:memtest.c     ****          */
- 980              	loc 3 105 0
- 981 0570 E5820000 		ands	r1, lr, #1
-  51:memtest.c     **** *address != pattern) 
-  52:memtest.c     ****         {
-  53:memtest.c     ****             return (pattern);
-  54:memtest.c     ****         }
-  55:memtest.c     ****     }
- 982              	eq	.L171
- 983 0574 E5923000 		mov	r1, #43520
- 984 0578 E1530000 		add	r1, r1, #170
- 985 057c 112FFF1E 		orr	r1, r1, r1, asl #16
- 986              		mov	r2, #1
- 987 0580 E1B00080 	.LVL111:
- 988 0584 1AFFFFF9 	.L173:
- 989              		.loc 3 107 0
-  56:memtest.c     **** return (0);
-  57:memtest.c     **** 
-  58:memtest.c     **** }   /* memTestDataBus() */
-  59:memtest.c     **** 
+ 985              	 0, uses_anonymous_args = 0
+ 986              	.LVL110:
+ 987              		.loc 3 94 0
+ 988              		mov	r1, r1, lsr #2
+ 989              	.LVL111:
+ 990 0574 E1A02000 		.loc 3 93 0
+ 991              		stmfd	sp!, {r4, r5, lr}
+ 992              	.LCFI5:
+ 993 0578 E3A00001 		.loc 3 94 0
+ 994              		sub	lr, r1, #1
+ 995              	.LVL112:
+  39:memtest.c     ****     datum pattern;
+  40:memtest.c     **** 
+  41:memtest.c     **** 
+  42:memtest.c     ****     /*
+  43:memtest.c     ****      * Perform a walking 1's test at the given address.
+  44:memtest.c     ****      */
+  45:memtest.c     ****     for (pattern = 1; pattern != 0; pattern <<= 1)
+  46:memtest.c     ****     {
+  47:memtest.c     ****         /*
+  48:memtest.c     ****          * Write the test pattern.
+  49:memtest.c     ****          */
+  50:memtest.c     ****         *address = pattern;
+ 996              	 0
+ 997 057c E5820000 		ands	r1, lr, #1
+  51:memtest.c     **** 
+  52:memtest.c     ****         /*
+  53:memtest.c     ****          * Read it back (immediately is okay for this test).
+  54:memtest.c     ****          */
+  55:memtest.c     ****         if (*address != pattern) 
+ 998              	eq	.L173
+ 999 0580 E5923000 		mov	r1, #43520
+ 1000 0584 E1530000 		add	r1, r1, #170
+ 1001 0588 112FFF1E 		orr	r1, r1, r1, asl #16
+ 1002              		mov	r2, #1
+ 1003 058c E1B00080 	.LVL113:
+ 1004 0590 1AFFFFF9 	.L175:
+ 1005              		.loc 3 107 0
+  56:memtest.c     ****         {
+  57:memtest.c     ****             return (pattern);
+  58:memtest.c     ****         }
+  59:memtest.c     ****     }
   60:memtest.c     **** 
-  61:memtest.c     **** /**********************************************************************
-  62:memtest.c     ****  *
-  63:memtest.c     ****  * Function:    memTestAddressBus()
- 990              	 r2, asl #2
- 991 0588 E12FFF1E 		.loc 3 105 0
- 992              		mov	r2, r2, asl #1
- 993              		tst	lr, r2
- 994              		.loc 3 107 0
- 995              		str	r1, [r0, r3]
- 996              		.loc 3 105 0
- 997              		bne	.L173
- 998              		.loc 3 114 0
-  64:memtest.c     **** scription: Test the address bus wiring in a memory region by
-  65:memtest.c     ****  *              performing a walking 1's test on the relevant bits
-  66:memtest.c     ****  *              of the address and checking for aliasing. This test
-  67:memtest.c     ****  *              will find single-bit address failures such as stuck
-  68:memtest.c     ****  *              -high, stuck-low, and shorted pins.  The base address
-  69:memtest.c     ****  *              and size of the region are selected by the caller.
-  70:memtest.c     ****  *
-  71:memtest.c     ****  * Notes:       For best results, the selected base address should
-  72:memtest.c     ****  *              have enough LSB 0's to guarantee single address bit
-  73:memtest.c     ****  *              changes.  For example, to test a 64-Kbyte region, 
-  74:memtest.c     ****  *              select a base address on a 64-Kbyte boundary.  Also, 
-  75:memtest.c     ****  *              select the region size as a power-of-two--if at all 
-  76:memtest.c     ****  *              possible.
-  77:memtest.c     ****  *
-  78:memtest.c     ****  * Returns:     NULL if the test succeeds.  
-  79:memtest.c     ****  *              A non-zero result is the first address at which an
-  80:memtest.c     ****  *              aliasing problem was uncovered.  By examining the
-  81:memtest.c     ****  *              contents of memory, it may be possible to gather
-  82:memtest.c     ****  *              additional information about the problem.
+  61:memtest.c     ****     return (0);
+  62:memtest.c     **** 
+  63:memtest.c     **** }   /* memTestDataBus() */
+ 1006              	 r2, asl #2
+ 1007 0594 E12FFF1E 		.loc 3 105 0
+ 1008              		mov	r2, r2, asl #1
+ 1009              		tst	lr, r2
+ 1010              		.loc 3 107 0
+ 1011              		str	r1, [r0, r3]
+ 1012              		.loc 3 105 0
+ 1013              		bne	.L175
+ 1014              		.loc 3 114 0
+  64:memtest.c     **** 
+  65:memtest.c     **** 
+  66:memtest.c     **** /**********************************************************************
+  67:memtest.c     ****  *
+  68:memtest.c     ****  * Function:    memTestAddressBus()
+  69:memtest.c     ****  *
+  70:memtest.c     ****  * Description: Test the address bus wiring in a memory region by
+  71:memtest.c     ****  *              performing a walking 1's test on the relevant bits
+  72:memtest.c     ****  *              of the address and checking for aliasing. This test
+  73:memtest.c     ****  *              will find single-bit address failures such as stuck
+  74:memtest.c     ****  *              -high, stuck-low, and shorted pins.  The base address
+  75:memtest.c     ****  *              and size of the region are selected by the caller.
+  76:memtest.c     ****  *
+  77:memtest.c     ****  * Notes:       For best results, the selected base address should
+  78:memtest.c     ****  *              have enough LSB 0's to guarantee single address bit
+  79:memtest.c     ****  *              changes.  For example, to test a 64-Kbyte region, 
+  80:memtest.c     ****  *              select a base address on a 64-Kbyte boundary.  Also, 
+  81:memtest.c     ****  *              select the region size as a power-of-two--if at all 
+  82:memtest.c     ****  *              possible.
   83:memtest.c     ****  *
-  84:memtest.c     ****  **********************************************************************/
-  85:memtest.c     **** datum * 
-  86:memtest.c     **** memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
-  87:memtest.c     **** {
-  88:memtest.c     ****     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
-  89:memtest.c     ****     unsigned long offset;
-  90:memtest.c     ****     unsigned long testOffset;
-  91:memtest.c     **** 
-  92:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
-  93:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 999              	#21760
- 1000              		add	r3, r3, #85
- 1001              		mov	r5, r0
- 1002              		orr	r3, r3, r3, asl #16
-  94:memtest.c     **** ult pattern at each of the power-of-two offsets.
- 1003              		r3, [r5], #4
- 1004 058c E1A01121 		.loc 3 118 0
- 1005              		ldr	r2, [r0, #4]
- 1006              	.LVL112:
- 1007 0590 E92D4030 		cmp	r2, r1
- 1008              		movne	ip, r5
- 1009              		bne	.L177
- 1010 0594 E241E001 		.loc 3 120 0
- 1011              		mov	r1, #1
-  95:memtest.c     ****  0xAAAAAAAA;
-  96:memtest.c     ****     datum antipattern = (datum) 0x55555555;
+  84:memtest.c     ****  * Returns:     NULL if the test succeeds.  
+  85:memtest.c     ****  *              A non-zero result is the first address at which an
+  86:memtest.c     ****  *              aliasing problem was uncovered.  By examining the
+  87:memtest.c     ****  *              contents of memory, it may be possible to gather
+  88:memtest.c     ****  *              additional information about the problem.
+  89:memtest.c     ****  *
+  90:memtest.c     ****  **********************************************************************/
+  91:memtest.c     **** datum * 
+  92:memtest.c     **** memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
+  93:memtest.c     **** {
+ 1015              	#21760
+ 1016              		add	r3, r3, #85
+ 1017              		mov	r5, r0
+ 1018              		orr	r3, r3, r3, asl #16
+  94:memtest.c     ****     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
+ 1019              		r3, [r5], #4
+ 1020 0598 E1A01121 		.loc 3 118 0
+ 1021              		ldr	r2, [r0, #4]
+ 1022              	.LVL114:
+ 1023 059c E92D4030 		cmp	r2, r1
+ 1024              		movne	ip, r5
+ 1025              		bne	.L179
+ 1026 05a0 E241E001 		.loc 3 120 0
+ 1027              		mov	r1, #1
+  95:memtest.c     ****     unsigned long offset;
+  96:memtest.c     ****     unsigned long testOffset;
   97:memtest.c     **** 
-  98:memtest.c     **** 
-  99:memtest.c     ****     /*
- 100:memtest.c     ****      * Write the default pattern at each of the power-of-two offsets.
- 101:memtest.c     ****      */
- 102:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 103:memtest.c     ****     {
- 104:memtest.c     ****         baseAddress[offset] = pattern;
- 105:memtest.c     ****     }
- 1012              		b	.L179
- 1013 0598 E21E1001 	.L178:
- 1014 059c 0A00004A 		.loc 3 118 0
- 1015 05a0 E3A01CAA 		ldr	r3, [r0, r3]
- 1016 05a4 E28110AA 		cmp	r3, r2
- 1017 05a8 E1811801 		bne	.L177
- 1018 05ac E3A02001 	.L179:
- 1019              		.loc 3 116 0
- 1020              		mov	r1, r1, asl #1
- 106:memtest.c     **** ffsets.
- 107:memtest.c     ****      */
- 1021              	18 0
- 1022 05b0 E1A03102 		mov	r2, #43520
- 1023              		add	r2, r2, #170
- 1024 05b4 E1A02082 		mov	r3, r1, asl #2
- 1025 05b8 E11E0002 		.loc 3 116 0
- 1026              		tst	lr, r1
- 1027 05bc E7801003 		.loc 3 118 0
- 1028              		orr	r2, r2, r2, asl #16
- 1029 05c0 1AFFFFFA 		add	ip, r0, r3
- 108:memtest.c     **** AA;
- 109:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 110:memtest.c     **** 
- 111:memtest.c     **** 
- 112:memtest.c     ****     /*
- 113:memtest.c     ****      * Write the default pattern at each of the power-of-two offsets.
- 114:memtest.c     ****      */
- 1030              	16 0
- 1031 05c4 E3A03C55 		bne	.L178
- 1032 05c8 E2833055 		.loc 3 124 0
- 1033 05cc E1A05000 		mov	r3, #43520
- 1034 05d0 E1833803 		.loc 3 131 0
- 1035 05d4 E4853004 		mov	r2, #21760
- 115:memtest.c     **** AA;
- 116:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 117:memtest.c     **** 
- 118:memtest.c     **** 
- 1036              	3 124 0
- 1037 05d8 E5902004 		add	r3, r3, #170
- 1038              		.loc 3 131 0
- 1039 05dc E1520001 		add	r2, r2, #85
- 1040 05e0 11A0C005 		.loc 3 124 0
- 1041 05e4 1A000035 		orr	r3, r3, r3, asl #16
- 119:memtest.c     **** ned long offset;
- 120:memtest.c     ****     unsigned long testOffset;
- 1042              	3 131 0
- 1043 05e8 E3A01001 		orr	r2, r2, r2, asl #16
- 1044              		.loc 3 124 0
- 1045 05ec EA000002 		str	r3, [r0, #0]
- 1046              		.loc 3 131 0
- 1047              		str	r2, [r5, #0]
- 1048 05f0 E7903003 		.loc 3 133 0
- 1049 05f4 E1530002 		ldr	r1, [r0, #0]
- 1050 05f8 1A000030 	.LVL114:
- 1051              		cmp	r1, r3
- 1052              		moveq	r4, #1
- 1053 05fc E1A01081 	.LVL115:
- 1054              		bne	.L193
- 1055 0600 E3A02CAA 	.L184:
- 1056 0604 E28220AA 		mov	r1, #1
- 1057 0608 E1A03101 	.LVL116:
- 1058              	.L185:
- 1059 060c E11E0001 		.loc 3 140 0
- 1060              		mov	r3, r1, asl #2
- 1061 0610 E1822802 		mov	ip, #43520
- 1062 0614 E080C003 		ldr	r2, [r0, r3]
- 1063              		add	ip, ip, #170
- 1064 0618 1AFFFFF4 		orr	ip, ip, ip, asl #16
- 121:memtest.c     **** s, unsigned long nBytes)
- 122:memtest.c     **** {
- 123:memtest.c     ****     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
- 124:memtest.c     ****     unsigned long offset;
- 1065              		cmp	r1, r4
- 1066 061c E3A03CAA 		bne	.L193
- 125:memtest.c     **** Bus(volatile datum * baseAddress, unsigned long nBytes)
- 126:memtest.c     **** {
- 127:memtest.c     ****     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
- 128:memtest.c     ****     unsigned long offset;
- 129:memtest.c     ****     unsigned long testOffset;
- 130:memtest.c     **** 
- 131:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
- 1067              	186:
- 1068 0620 E3A02C55 		.loc 3 138 0
- 1069              		mov	r1, r1, asl #1
- 1070 0624 E28330AA 		tst	lr, r1
- 1071              		bne	.L185
- 1072 0628 E2822055 		.loc 3 129 0
- 1073              		mov	r4, r4, asl #1
- 1074 062c E1833803 		ands	r2, lr, r4
- 1075              		.loc 3 146 0
- 1076 0630 E1822802 		str	ip, [r5, #0]
- 1077              		.loc 3 129 0
- 1078 0634 E5803000 		beq	.L200
- 1079              		.loc 3 131 0
- 1080 0638 E5852000 		mov	r3, #21760
- 132:memtest.c     **** dressMask = (nBytes/sizeof(datum) - 1);
- 133:memtest.c     ****     unsigned long offset;
- 1081              	85
- 1082 063c E5901000 		mov	r1, r4, asl #2
- 1083              	.LVL117:
- 1084 0640 E1510003 		orr	r3, r3, r3, asl #16
- 1085 0644 03A04001 		str	r3, [r0, r1]
- 1086              		.loc 3 133 0
- 1087 0648 1A000019 		ldr	r2, [r0, #0]
- 1088              		cmp	r2, ip
- 1089 064c E3A01001 		.loc 3 131 0
- 1090              		add	r5, r0, r1
- 1091              		.loc 3 133 0
- 134:memtest.c     **** Bus(volatile datum * baseAddress, unsigned long nBytes)
- 135:memtest.c     **** {
- 136:memtest.c     ****     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
- 137:memtest.c     ****     unsigned long offset;
- 138:memtest.c     ****     unsigned long testOffset;
- 139:memtest.c     **** 
- 140:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
- 1092              	.LVL118:
- 1093 0650 E1A03101 	.L193:
- 1094 0654 E3A0CCAA 		.loc 3 142 0
- 1095 0658 E7902003 		mov	r1, r5
- 1096 065c E28CC0AA 	.LVL119:
- 1097 0660 E18CC80C 	.L180:
- 1098 0664 E152000C 		.loc 3 151 0
- 1099 0668 0A000001 		mov	r0, r1
- 1100 066c E1510004 	.LVL120:
- 1101 0670 1A00000F 		ldmfd	sp!, {r4, r5, pc}
- 1102              	.LVL121:
- 1103              	.L177:
- 1104 0674 E1A01081 		.loc 3 120 0
- 1105 0678 E11E0001 		mov	r1, ip
- 1106 067c 1AFFFFF3 	.LVL122:
- 1107              		.loc 3 151 0
- 1108 0680 E1A04084 		mov	r0, r1
- 1109 0684 E01E2004 	.LVL123:
- 141:memtest.c     **** dressMask = (nBytes/sizeof(datum) - 1);
- 142:memtest.c     ****     unsigned long offset;
- 143:memtest.c     ****     unsigned long testOffset;
- 144:memtest.c     **** 
- 145:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
- 146:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 1110              	5, pc}
- 1111 0688 E585C000 	.LVL124:
- 1112              	.L171:
- 1113 068c 0A000018 		.loc 3 114 0
- 1114              		mov	r3, #21760
- 1115 0690 E3A03C55 		.loc 3 124 0
- 1116 0694 E2833055 		mov	r2, #43520
- 1117 0698 E1A01104 		.loc 3 114 0
- 1118              		add	r3, r3, #85
- 1119 069c E1833803 		.loc 3 124 0
- 1120 06a0 E7803001 		add	r2, r2, #170
- 1121              		.loc 3 114 0
- 1122 06a4 E5902000 		orr	r3, r3, r3, asl #16
- 1123 06a8 E152000C 		.loc 3 124 0
- 1124              		orr	r2, r2, r2, asl #16
- 1125 06ac E0805001 		.loc 3 114 0
- 1126              		str	r3, [r0, #0]
- 1127 06b0 0AFFFFE5 		.loc 3 124 0
- 1128              		str	r2, [r0, #0]
- 1129              		.loc 3 151 0
- 1130              		mov	r0, r1
- 1131 06b4 E1A01005 	.LVL125:
- 1132              		ldmfd	sp!, {r4, r5, pc}
- 1133              	.LVL126:
- 147:memtest.c     **** nsigned long offset;
- 148:memtest.c     ****     unsigned long testOffset;
- 149:memtest.c     **** 
- 150:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
- 151:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 1134              	v	r1, r2
- 1135 06b8 E1A00001 	.LVL127:
- 1136              		b	.L180
- 1137 06bc E8BD8030 	.LFE29:
- 1139              		.align	2
- 1140              		.global	memTestDevice1
- 1142              	memTestDevice1:
- 1143              	.LFB30:
- 1144 06c4 E1A00001 		.loc 3 177 0
- 1145              		@ args = 0, pretend = 0, frame = 0
- 1146 06c8 E8BD8030 		@ frame_needed = 0, uses_anonymous_args = 0
- 1147              		@ link register save eliminated.
- 1148              	.LVL128:
- 1149              		.loc 3 188 0
- 1150 06cc E3A03C55 		movs	r1, r1, lsr #2
- 1151              	.LVL129:
- 1152 06d0 E3A02CAA 		.loc 3 177 0
- 1153              		@ lr needed for prologue
- 1154 06d4 E2833055 		.loc 3 188 0
- 1155              		beq	.L202
- 1156 06d8 E28220AA 		mov	r3, #1
- 1157              	.LVL130:
- 1158 06dc E1833803 		mov	r2, r0
- 1159              	.LVL131:
- 1160 06e0 E1822802 		add	ip, r1, r3
- 1161              	.L204:
- 1162 06e4 E5803000 	.LVL132:
- 1163              		.loc 3 190 0
- 1164 06e8 E5802000 		str	r3, [r2], #4
+  98:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
+  99:memtest.c     ****     datum antipattern = (datum) 0x55555555;
+ 100:memtest.c     **** 
+ 101:memtest.c     **** 
+ 102:memtest.c     ****     /*
+ 103:memtest.c     ****      * Write the default pattern at each of the power-of-two offsets.
+ 104:memtest.c     ****      */
+ 105:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
+ 1028              		b	.L181
+ 1029 05a4 E21E1001 	.L180:
+ 1030 05a8 0A00004A 		.loc 3 118 0
+ 1031 05ac E3A01CAA 		ldr	r3, [r0, r3]
+ 1032 05b0 E28110AA 		cmp	r3, r2
+ 1033 05b4 E1811801 		bne	.L179
+ 1034 05b8 E3A02001 	.L181:
+ 1035              		.loc 3 116 0
+ 1036              		mov	r1, r1, asl #1
+ 106:memtest.c     ****     {
+ 107:memtest.c     ****         baseAddress[offset] = pattern;
+ 1037              	18 0
+ 1038 05bc E1A03102 		mov	r2, #43520
+ 1039              		add	r2, r2, #170
+ 1040 05c0 E1A02082 		mov	r3, r1, asl #2
+ 1041 05c4 E11E0002 		.loc 3 116 0
+ 1042              		tst	lr, r1
+ 1043 05c8 E7801003 		.loc 3 118 0
+ 1044              		orr	r2, r2, r2, asl #16
+ 1045 05cc 1AFFFFFA 		add	ip, r0, r3
+ 108:memtest.c     ****     }
+ 109:memtest.c     **** 
+ 110:memtest.c     ****     /* 
+ 111:memtest.c     ****      * Check for address bits stuck high.
+ 112:memtest.c     ****      */
+ 113:memtest.c     ****     testOffset = 0;
+ 114:memtest.c     ****     baseAddress[testOffset] = antipattern;
+ 1046              	16 0
+ 1047 05d0 E3A03C55 		bne	.L180
+ 1048 05d4 E2833055 		.loc 3 124 0
+ 1049 05d8 E1A05000 		mov	r3, #43520
+ 1050 05dc E1833803 		.loc 3 131 0
+ 1051 05e0 E4853004 		mov	r2, #21760
+ 115:memtest.c     **** 
+ 116:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
+ 117:memtest.c     ****     {
+ 118:memtest.c     ****         if (baseAddress[offset] != pattern)
+ 1052              	3 124 0
+ 1053 05e4 E5902004 		add	r3, r3, #170
+ 1054              		.loc 3 131 0
+ 1055 05e8 E1520001 		add	r2, r2, #85
+ 1056 05ec 11A0C005 		.loc 3 124 0
+ 1057 05f0 1A000035 		orr	r3, r3, r3, asl #16
+ 119:memtest.c     ****         {
+ 120:memtest.c     ****             return ((datum *) &baseAddress[offset]);
+ 1058              	3 131 0
+ 1059 05f4 E3A01001 		orr	r2, r2, r2, asl #16
+ 1060              		.loc 3 124 0
+ 1061 05f8 EA000002 		str	r3, [r0, #0]
+ 1062              		.loc 3 131 0
+ 1063              		str	r2, [r5, #0]
+ 1064 05fc E7903003 		.loc 3 133 0
+ 1065 0600 E1530002 		ldr	r1, [r0, #0]
+ 1066 0604 1A000030 	.LVL116:
+ 1067              		cmp	r1, r3
+ 1068              		moveq	r4, #1
+ 1069 0608 E1A01081 	.LVL117:
+ 1070              		bne	.L195
+ 1071 060c E3A02CAA 	.L186:
+ 1072 0610 E28220AA 		mov	r1, #1
+ 1073 0614 E1A03101 	.LVL118:
+ 1074              	.L187:
+ 1075 0618 E11E0001 		.loc 3 140 0
+ 1076              		mov	r3, r1, asl #2
+ 1077 061c E1822802 		mov	ip, #43520
+ 1078 0620 E080C003 		ldr	r2, [r0, r3]
+ 1079              		add	ip, ip, #170
+ 1080 0624 1AFFFFF4 		orr	ip, ip, ip, asl #16
+ 121:memtest.c     ****         }
+ 122:memtest.c     ****     }
+ 123:memtest.c     **** 
+ 124:memtest.c     ****     baseAddress[testOffset] = pattern;
+ 1081              		cmp	r1, r4
+ 1082 0628 E3A03CAA 		bne	.L195
+ 125:memtest.c     **** 
+ 126:memtest.c     ****     /*
+ 127:memtest.c     ****      * Check for address bits stuck low or shorted.
+ 128:memtest.c     ****      */
+ 129:memtest.c     ****     for (testOffset = 1; (testOffset & addressMask) != 0; testOffset <<= 1)
+ 130:memtest.c     ****     {
+ 131:memtest.c     ****         baseAddress[testOffset] = antipattern;
+ 1083              	188:
+ 1084 062c E3A02C55 		.loc 3 138 0
+ 1085              		mov	r1, r1, asl #1
+ 1086 0630 E28330AA 		tst	lr, r1
+ 1087              		bne	.L187
+ 1088 0634 E2822055 		.loc 3 129 0
+ 1089              		mov	r4, r4, asl #1
+ 1090 0638 E1833803 		ands	r2, lr, r4
+ 1091              		.loc 3 146 0
+ 1092 063c E1822802 		str	ip, [r5, #0]
+ 1093              		.loc 3 129 0
+ 1094 0640 E5803000 		beq	.L202
+ 1095              		.loc 3 131 0
+ 1096 0644 E5852000 		mov	r3, #21760
+ 132:memtest.c     **** 
+ 133:memtest.c     **** 		if (baseAddress[0] != pattern)
+ 1097              	85
+ 1098 0648 E5901000 		mov	r1, r4, asl #2
+ 1099              	.LVL119:
+ 1100 064c E1510003 		orr	r3, r3, r3, asl #16
+ 1101 0650 03A04001 		str	r3, [r0, r1]
+ 1102              		.loc 3 133 0
+ 1103 0654 1A000019 		ldr	r2, [r0, #0]
+ 1104              		cmp	r2, ip
+ 1105 0658 E3A01001 		.loc 3 131 0
+ 1106              		add	r5, r0, r1
+ 1107              		.loc 3 133 0
+ 134:memtest.c     **** 		{
+ 135:memtest.c     **** 			return ((datum *) &baseAddress[testOffset]);
+ 136:memtest.c     **** 		}
+ 137:memtest.c     **** 
+ 138:memtest.c     ****         for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
+ 139:memtest.c     ****         {
+ 140:memtest.c     ****             if ((baseAddress[offset] != pattern) && (offset != testOffset))
+ 1108              	.LVL120:
+ 1109 065c E1A03101 	.L195:
+ 1110 0660 E3A0CCAA 		.loc 3 142 0
+ 1111 0664 E7902003 		mov	r1, r5
+ 1112 0668 E28CC0AA 	.LVL121:
+ 1113 066c E18CC80C 	.L182:
+ 1114 0670 E152000C 		.loc 3 151 0
+ 1115 0674 0A000001 		mov	r0, r1
+ 1116 0678 E1510004 	.LVL122:
+ 1117 067c 1A00000F 		ldmfd	sp!, {r4, r5, pc}
+ 1118              	.LVL123:
+ 1119              	.L179:
+ 1120 0680 E1A01081 		.loc 3 120 0
+ 1121 0684 E11E0001 		mov	r1, ip
+ 1122 0688 1AFFFFF3 	.LVL124:
+ 1123              		.loc 3 151 0
+ 1124 068c E1A04084 		mov	r0, r1
+ 1125 0690 E01E2004 	.LVL125:
+ 141:memtest.c     ****             {
+ 142:memtest.c     ****                 return ((datum *) &baseAddress[testOffset]);
+ 143:memtest.c     ****             }
+ 144:memtest.c     ****         }
+ 145:memtest.c     **** 
+ 146:memtest.c     ****         baseAddress[testOffset] = pattern;
+ 1126              	5, pc}
+ 1127 0694 E585C000 	.LVL126:
+ 1128              	.L173:
+ 1129 0698 0A000018 		.loc 3 114 0
+ 1130              		mov	r3, #21760
+ 1131 069c E3A03C55 		.loc 3 124 0
+ 1132 06a0 E2833055 		mov	r2, #43520
+ 1133 06a4 E1A01104 		.loc 3 114 0
+ 1134              		add	r3, r3, #85
+ 1135 06a8 E1833803 		.loc 3 124 0
+ 1136 06ac E7803001 		add	r2, r2, #170
+ 1137              		.loc 3 114 0
+ 1138 06b0 E5902000 		orr	r3, r3, r3, asl #16
+ 1139 06b4 E152000C 		.loc 3 124 0
+ 1140              		orr	r2, r2, r2, asl #16
+ 1141 06b8 E0805001 		.loc 3 114 0
+ 1142              		str	r3, [r0, #0]
+ 1143 06bc 0AFFFFE5 		.loc 3 124 0
+ 1144              		str	r2, [r0, #0]
+ 1145              		.loc 3 151 0
+ 1146              		mov	r0, r1
+ 1147 06c0 E1A01005 	.LVL127:
+ 1148              		ldmfd	sp!, {r4, r5, pc}
+ 1149              	.LVL128:
+ 147:memtest.c     ****     }
+ 148:memtest.c     **** 
+ 149:memtest.c     ****     return (NULL);
+ 150:memtest.c     **** 
+ 151:memtest.c     **** }   /* memTestAddressBus() */
+ 1150              	v	r1, r2
+ 1151 06c4 E1A00001 	.LVL129:
+ 1152              		b	.L182
+ 1153 06c8 E8BD8030 	.LFE29:
+ 1155              		.align	2
+ 1156              		.global	memTestDevice1
+ 1158              	memTestDevice1:
+ 1159              	.LFB30:
+ 1160 06d0 E1A00001 		.loc 3 177 0
+ 1161              		@ args = 0, pretend = 0, frame = 0
+ 1162 06d4 E8BD8030 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1163              		@ link register save eliminated.
+ 1164              	.LVL130:
  1165              		.loc 3 188 0
- 1166 06ec E1A00001 		add	r3, r3, #1
- 1167              		cmp	ip, r3
- 1168 06f0 E8BD8030 		bne	.L204
- 1169              		.loc 3 198 0
- 1170              		ldr	r3, [r0, #0]
- 1171              	.LVL133:
- 1172 06f4 E1A01002 		cmp	r3, #1
- 1173              		bxne	lr
- 1174 06f8 EAFFFFEE 		.loc 3 200 0
- 1175              		add	r2, r0, #4
- 1176              		mov	ip, r3
- 1177              	.LVL134:
- 1178              		b	.L209
- 1179              	.L208:
- 1180              		.loc 3 198 0
- 1181              		ldr	r3, [r2], #4
- 152:memtest.c     **** nsigned long offset;
- 153:memtest.c     ****     unsigned long testOffset;
- 154:memtest.c     **** 
- 155:memtest.c     ****     datum pattern     = (datum) 0xAAAAAAAA;
- 156:memtest.c     ****     datum antipattern = (datum) 0x55555555;
- 157:memtest.c     **** 
- 158:memtest.c     **** 
- 159:memtest.c     ****     /*
- 160:memtest.c     ****      * Write the default pattern at each of the power-of-two offsets.
- 161:memtest.c     ****      */
- 162:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 163:memtest.c     ****     {
- 164:memtest.c     ****         baseAddress[offset] = pattern;
- 165:memtest.c     ****     }
- 166:memtest.c     **** 
- 167:memtest.c     ****     /* 
- 168:memtest.c     ****      * Check for address bits stuck high.
- 169:memtest.c     ****      */
- 170:memtest.c     ****     testOffset = 0;
- 171:memtest.c     ****     baseAddress[testOffset] = antipattern;
- 172:memtest.c     **** 
- 173:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 174:memtest.c     ****     {
- 175:memtest.c     ****         if (baseAddress[offset] != pattern)
- 176:memtest.c     ****         {
- 177:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 1182              		r1, ip
- 1183              		mov	r0, r2
- 1184              		add	ip, ip, #1
- 1185              		bne	.L208
- 1186              	.L202:
- 178:memtest.c     **** <= 1)
- 179:memtest.c     ****     {
- 180:memtest.c     ****         if (baseAddress[offset] != pattern)
- 181:memtest.c     ****         {
- 182:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 183:memtest.c     ****         }
- 184:memtest.c     ****     }
- 185:memtest.c     **** 
- 186:memtest.c     ****     baseAddress[testOffset] = pattern;
- 187:memtest.c     **** 
- 188:memtest.c     ****     /*
- 1187              	r0, #0
- 1188 06fc E1B01121 	.LVL135:
- 1189              		.loc 3 206 0
- 1190              		bx	lr
- 1191              	.LVL136:
- 1192              	.L216:
- 1193 0700 0A000013 		bx	lr
- 1194 0704 E3A03001 	.LFE30:
- 1196 0708 E1A02000 		.align	2
- 1197              		.global	memTestDevice2
- 1199              	memTestDevice2:
- 1200              	.LFB31:
- 189:memtest.c     ****         return ((datum *) &baseAddress[offset]);
- 190:memtest.c     ****         }
- 1201              		@ args = 0, pretend = 0, frame = 0
- 1202 0710 E4823004 		@ frame_needed = 0, uses_anonymous_args = 0
- 1203              	.LVL137:
- 1204 0714 E2833001 		.loc 3 219 0
- 1205 0718 E15C0003 		movs	r1, r1, lsr #2
- 1206 071c 1AFFFFFB 	.LVL138:
- 191:memtest.c     **** 
- 192:memtest.c     ****         if (baseAddress[offset] != pattern)
- 193:memtest.c     ****         {
- 194:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 195:memtest.c     ****         }
- 196:memtest.c     ****     }
- 197:memtest.c     **** 
- 198:memtest.c     ****     baseAddress[testOffset] = pattern;
- 1207              	3 209 0
- 1208 0720 E5903000 		str	lr, [sp, #-4]!
- 1209              	.LCFI6:
- 1210 0724 E3530001 		.loc 3 219 0
- 1211 0728 112FFF1E 		beq	.L218
- 199:memtest.c     ****     {
+ 1166 06d8 E3A03C55 		movs	r1, r1, lsr #2
+ 1167              	.LVL131:
+ 1168 06dc E3A02CAA 		.loc 3 177 0
+ 1169              		@ lr needed for prologue
+ 1170 06e0 E2833055 		.loc 3 188 0
+ 1171              		beq	.L204
+ 1172 06e4 E28220AA 		mov	r3, #1
+ 1173              	.LVL132:
+ 1174 06e8 E1833803 		mov	r2, r0
+ 1175              	.LVL133:
+ 1176 06ec E1822802 		add	ip, r1, r3
+ 1177              	.L206:
+ 1178 06f0 E5803000 	.LVL134:
+ 1179              		.loc 3 190 0
+ 1180 06f4 E5802000 		str	r3, [r2], #4
+ 1181              		.loc 3 188 0
+ 1182 06f8 E1A00001 		add	r3, r3, #1
+ 1183              		cmp	ip, r3
+ 1184 06fc E8BD8030 		bne	.L206
+ 1185              		.loc 3 198 0
+ 1186              		ldr	r3, [r0, #0]
+ 1187              	.LVL135:
+ 1188 0700 E1A01002 		cmp	r3, #1
+ 1189              		bxne	lr
+ 1190 0704 EAFFFFEE 		.loc 3 200 0
+ 1191              		add	r2, r0, #4
+ 1192              		mov	ip, r3
+ 1193              	.LVL136:
+ 1194              		b	.L211
+ 1195              	.L210:
+ 1196              		.loc 3 198 0
+ 1197              		ldr	r3, [r2], #4
+ 152:memtest.c     **** 
+ 153:memtest.c     **** 
+ 154:memtest.c     **** /**********************************************************************
+ 155:memtest.c     ****  *
+ 156:memtest.c     ****  * Function:    memTestDevice()
+ 157:memtest.c     ****  *
+ 158:memtest.c     ****  * Description: Test the integrity of a physical memory device by
+ 159:memtest.c     ****  *              performing an increment/decrement test over the
+ 160:memtest.c     ****  *              entire region.  In the process every storage bit 
+ 161:memtest.c     ****  *              in the device is tested as a zero and a one.  The
+ 162:memtest.c     ****  *              base address and the size of the region are
+ 163:memtest.c     ****  *              selected by the caller.
+ 164:memtest.c     ****  *
+ 165:memtest.c     ****  * Notes:       
+ 166:memtest.c     ****  *
+ 167:memtest.c     ****  * Returns:     NULL if the test succeeds.
+ 168:memtest.c     ****  *
+ 169:memtest.c     ****  *              A non-zero result is the first address at which an
+ 170:memtest.c     ****  *              incorrect value was read back.  By examining the
+ 171:memtest.c     ****  *              contents of memory, it may be possible to gather
+ 172:memtest.c     ****  *              additional information about the problem.
+ 173:memtest.c     ****  *
+ 174:memtest.c     ****  **********************************************************************/
+ 175:memtest.c     **** datum * 
+ 176:memtest.c     **** memTestDevice1(volatile datum * baseAddress, unsigned long nBytes)	
+ 177:memtest.c     **** {
+ 1198              		r1, ip
+ 1199              		mov	r0, r2
+ 1200              		add	ip, ip, #1
+ 1201              		bne	.L210
+ 1202              	.L204:
+ 178:memtest.c     ****     unsigned long offset;
+ 179:memtest.c     ****     unsigned long nWords = nBytes / sizeof(datum);
+ 180:memtest.c     **** 
+ 181:memtest.c     ****     datum pattern;
+ 182:memtest.c     ****     datum antipattern;
+ 183:memtest.c     **** 
+ 184:memtest.c     **** 
+ 185:memtest.c     ****     /*
+ 186:memtest.c     ****      * Fill memory with a known pattern.
+ 187:memtest.c     ****      */
+ 188:memtest.c     ****     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
+ 1203              	r0, #0
+ 1204 0708 E1B01121 	.LVL137:
+ 1205              		.loc 3 206 0
+ 1206              		bx	lr
+ 1207              	.LVL138:
+ 1208              	.L218:
+ 1209 070c 0A000013 		bx	lr
+ 1210 0710 E3A03001 	.LFE30:
+ 1212 0714 E1A02000 		.align	2
+ 1213              		.global	memTestDevice2
+ 1215              	memTestDevice2:
+ 1216              	.LFB31:
+ 189:memtest.c     ****     {
+ 190:memtest.c     ****         baseAddress[offset] = pattern;
+ 1217              		@ args = 0, pretend = 0, frame = 0
+ 1218 071c E4823004 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1219              	.LVL139:
+ 1220 0720 E2833001 		.loc 3 219 0
+ 1221 0724 E15C0003 		movs	r1, r1, lsr #2
+ 1222 0728 1AFFFFFB 	.LVL140:
+ 191:memtest.c     ****     }
+ 192:memtest.c     **** 
+ 193:memtest.c     ****     /*
+ 194:memtest.c     ****      * Check each location and invert it for the second pass.
+ 195:memtest.c     ****      */
+ 196:memtest.c     ****     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
+ 197:memtest.c     ****     {
+ 198:memtest.c     ****         if (baseAddress[offset] != pattern)
+ 1223              	3 209 0
+ 1224 072c E5903000 		str	lr, [sp, #-4]!
+ 1225              	.LCFI6:
+ 1226 0730 E3530001 		.loc 3 219 0
+ 1227 0734 112FFF1E 		beq	.L220
+ 199:memtest.c     ****         {
  200:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 1212              	r2, #1
- 1213 072c E2802004 	.LVL139:
- 1214 0730 E1A0C003 		mov	ip, r0
- 1215              	.LVL140:
- 1216 0734 EA000002 		add	lr, r1, r2
- 1217              	.L220:
- 1218              	.LVL141:
- 1219 0738 E4923004 		.loc 3 221 0
- 1220 073c E153000C 		mvn	r3, r2
- 1221 0740 1A000005 	.LVL142:
- 1222              		.loc 3 219 0
- 1223              		add	r2, r2, #1
- 1224 0744 E151000C 		cmp	lr, r2
- 1225 0748 E1A00002 		.loc 3 222 0
- 1226 074c E28CC001 		str	r3, [ip], #4
- 1227 0750 1AFFFFF8 		.loc 3 219 0
- 1228              		bne	.L220
- 1229 0754 E3A00000 		.loc 3 231 0
- 1230              		ldr	r3, [r0, #0]
- 201:memtest.c     **** <= 1)
- 202:memtest.c     ****     {
- 203:memtest.c     ****         if (baseAddress[offset] != pattern)
- 204:memtest.c     ****         {
- 205:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 206:memtest.c     ****         }
- 1231              	2
- 1232 0758 E12FFF1E 		ldrne	pc, [sp], #4
- 1233              		.loc 3 233 0
- 1234              		add	r2, r0, #4
- 1235 075c E12FFF1E 	.LVL144:
- 1236              		mov	lr, #1
- 1237              	.LVL145:
- 1238              		b	.L225
- 1239              	.L224:
- 1240              		.loc 3 231 0
- 1241              		ldr	r3, [r2], #4
- 1242              		cmp	ip, r3
- 207:memtest.c     **** 
- 208:memtest.c     ****         if (baseAddress[offset] != pattern)
- 209:memtest.c     ****         {
- 1243              	L225:
- 1244              		.loc 3 228 0
- 1245              		cmp	r1, lr
- 1246              		add	lr, lr, #1
- 210:memtest.c     **** for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 211:memtest.c     ****     {
- 212:memtest.c     ****         if (baseAddress[offset] != pattern)
- 213:memtest.c     ****         {
- 214:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 215:memtest.c     ****         }
- 216:memtest.c     ****     }
- 217:memtest.c     **** 
- 218:memtest.c     ****     baseAddress[testOffset] = pattern;
- 219:memtest.c     **** 
- 1247              		r0, r2
- 1248 0760 E1B01121 		.loc 3 231 0
- 1249              		mvn	ip, lr
- 1250              		.loc 3 228 0
- 1251 0764 E52DE004 		bne	.L224
- 1252              	.L218:
- 1253              		mov	r0, #0
- 1254 0768 0A000015 	.LVL146:
- 1255 076c E3A02001 		.loc 3 239 0
- 1256              		ldr	pc, [sp], #4
- 1257 0770 E1A0C000 	.LVL147:
- 1258              	.L232:
- 1259 0774 E081E002 		ldr	pc, [sp], #4
- 1260              	.LFE31:
- 220:memtest.c     ****   {
- 221:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 1262              	bal	long_to_hex_string
- 1264              	long_to_hex_string:
- 1265              	.LFB33:
- 1266 077c E2822001 		.file 4 "main.c"
- 1267 0780 E15E0002 		.loc 4 33 0
- 222:memtest.c     **** <= 1)
- 1268              	s = 0, pretend = 0, frame = 0
- 1269 0784 E48C3004 		@ frame_needed = 0, uses_anonymous_args = 0
- 1270              	.LVL148:
- 1271 0788 1AFFFFFA 		stmfd	sp!, {r4, lr}
- 223:memtest.c     **** estOffset = 0;
- 224:memtest.c     ****     baseAddress[testOffset] = antipattern;
- 225:memtest.c     **** 
- 226:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 227:memtest.c     ****     {
- 228:memtest.c     ****         if (baseAddress[offset] != pattern)
- 229:memtest.c     ****         {
- 230:memtest.c     ****             return ((datum *) &baseAddress[offset]);
- 231:memtest.c     ****         }
- 1272              	I7:
- 1273 078c E5903000 		.loc 4 33 0
- 1274              		and	r4, r2, #255
- 1275 0790 E3730002 		.loc 4 38 0
- 1276 0794 149DF004 		cmp	r4, #8
- 232:memtest.c     **** 
- 233:memtest.c     ****         if (baseAddress[offset] != pattern)
- 1277              	i	r4, #8
- 1278 0798 E2802004 		bhi	.L236
- 1279              	.LVL149:
- 1280 079c E3A0E001 		.loc 4 40 0
- 1281              		cmp	r4, #0
- 1282 07a0 EA000002 		.loc 4 63 0
- 1283              		moveq	r4, #1
- 1284              	.L236:
- 1285 07a4 E4923004 		mov	r2, r1
- 1286 07a8 E15C0003 	.LVL150:
- 1287 07ac 1A000006 		mov	lr, r4
- 1288              	.LVL151:
- 1289              	.L238:
- 1290 07b0 E151000E 		.loc 4 46 0
- 1291 07b4 E28EE001 		mov	r3, lr, asl #2
- 1292 07b8 E1A00002 		.loc 4 45 0
- 1293              		cmp	lr, #1
- 1294 07bc E1E0C00E 		.loc 4 46 0
- 1295              		sub	r3, r3, #4
- 1296 07c0 1AFFFFF7 		.loc 4 45 0
- 1297              		mov	ip, r0
- 1298 07c4 E3A00000 	.LVL152:
- 1299              		.loc 4 46 0
- 234:memtest.c     **** tern;
- 235:memtest.c     **** 
- 236:memtest.c     ****     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 237:memtest.c     ****     {
- 238:memtest.c     ****         if (baseAddress[offset] != pattern)
- 239:memtest.c     ****         {
- 1300              	.loc 4 50 0
- 1301 07c8 E49DF004 		sub	r3, lr, #1
- 1302              		.loc 4 49 0
- 1303              		and	ip, ip, #15
- 1304 07cc E49DF004 	.LVL153:
- 1305              		.loc 4 50 0
- 1306              		and	lr, r3, #255
- 1307              		.loc 4 53 0
- 1308              		cmp	ip, #9
- 1309              		.loc 4 54 0
- 1310              		add	r3, ip, #48
- 1311              	.LVL154:
- 1312              		.loc 4 56 0
+ 1228              	r2, #1
+ 1229 0738 E2802004 	.LVL141:
+ 1230 073c E1A0C003 		mov	ip, r0
+ 1231              	.LVL142:
+ 1232 0740 EA000002 		add	lr, r1, r2
+ 1233              	.L222:
+ 1234              	.LVL143:
+ 1235 0744 E4923004 		.loc 3 221 0
+ 1236 0748 E153000C 		mvn	r3, r2
+ 1237 074c 1A000005 	.LVL144:
+ 1238              		.loc 3 219 0
+ 1239              		add	r2, r2, #1
+ 1240 0750 E151000C 		cmp	lr, r2
+ 1241 0754 E1A00002 		.loc 3 222 0
+ 1242 0758 E28CC001 		str	r3, [ip], #4
+ 1243 075c 1AFFFFF8 		.loc 3 219 0
+ 1244              		bne	.L222
+ 1245 0760 E3A00000 		.loc 3 231 0
+ 1246              		ldr	r3, [r0, #0]
+ 201:memtest.c     ****         }
+ 202:memtest.c     ****  
+ 203:memtest.c     ****     }
+ 204:memtest.c     ****     return (NULL);
+ 205:memtest.c     **** 
+ 206:memtest.c     **** }   /* memTestDevice1() */
+ 1247              	2
+ 1248 0764 E12FFF1E 		ldrne	pc, [sp], #4
+ 1249              		.loc 3 233 0
+ 1250              		add	r2, r0, #4
+ 1251 0768 E12FFF1E 	.LVL146:
+ 1252              		mov	lr, #1
+ 1253              	.LVL147:
+ 1254              		b	.L227
+ 1255              	.L226:
+ 1256              		.loc 3 231 0
+ 1257              		ldr	r3, [r2], #4
+ 1258              		cmp	ip, r3
+ 207:memtest.c     **** datum * 
+ 208:memtest.c     **** memTestDevice2(volatile datum * baseAddress, unsigned long nBytes)	
+ 209:memtest.c     **** {
+ 1259              	L227:
+ 1260              		.loc 3 228 0
+ 1261              		cmp	r1, lr
+ 1262              		add	lr, lr, #1
+ 210:memtest.c     ****     unsigned long offset;
+ 211:memtest.c     ****     unsigned long nWords = nBytes / sizeof(datum);
+ 212:memtest.c     **** 
+ 213:memtest.c     ****     datum pattern;
+ 214:memtest.c     ****     datum antipattern;
+ 215:memtest.c     **** 
+ 216:memtest.c     ****     /*
+ 217:memtest.c     ****      * Check each location and invert it for the second pass.
+ 218:memtest.c     ****      */
+ 219:memtest.c     ****     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
+ 1263              		r0, r2
+ 1264 076c E1B01121 		.loc 3 231 0
+ 1265              		mvn	ip, lr
+ 1266              		.loc 3 228 0
+ 1267 0770 E52DE004 		bne	.L226
+ 1268              	.L220:
+ 1269              		mov	r0, #0
+ 1270 0774 0A000015 	.LVL148:
+ 1271 0778 E3A02001 		.loc 3 239 0
+ 1272              		ldr	pc, [sp], #4
+ 1273 077c E1A0C000 	.LVL149:
+ 1274              	.L234:
+ 1275 0780 E081E002 		ldr	pc, [sp], #4
+ 1276              	.LFE31:
+ 220:memtest.c     ****     {
+ 221:memtest.c     ****         antipattern = ~pattern;
+ 1278              	bal	long_to_hex_string
+ 1280              	long_to_hex_string:
+ 1281              	.LFB33:
+ 1282 0788 E2822001 		.file 4 "main.c"
+ 1283 078c E15E0002 		.loc 4 35 0
+ 222:memtest.c     ****         baseAddress[offset] = antipattern;
+ 1284              	s = 0, pretend = 0, frame = 0
+ 1285 0790 E48C3004 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1286              	.LVL150:
+ 1287 0794 1AFFFFFA 		stmfd	sp!, {r4, lr}
+ 223:memtest.c     ****     }
+ 224:memtest.c     **** 
+ 225:memtest.c     ****     /*
+ 226:memtest.c     ****      * Check each location for the inverted pattern and zero it.
+ 227:memtest.c     ****      */
+ 228:memtest.c     ****     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
+ 229:memtest.c     ****     {
+ 230:memtest.c     ****         antipattern = ~pattern;
+ 231:memtest.c     ****         if (baseAddress[offset] != antipattern)
+ 1288              	I7:
+ 1289 0798 E5903000 		.loc 4 35 0
+ 1290              		and	r4, r2, #255
+ 1291 079c E3730002 		.loc 4 40 0
+ 1292 07a0 149DF004 		cmp	r4, #8
+ 232:memtest.c     ****         {
+ 233:memtest.c     ****             return ((datum *) &baseAddress[offset]);
+ 1293              	i	r4, #8
+ 1294 07a4 E2802004 		bhi	.L238
+ 1295              	.LVL151:
+ 1296 07a8 E3A0E001 		.loc 4 42 0
+ 1297              		cmp	r4, #0
+ 1298 07ac EA000002 		.loc 4 65 0
+ 1299              		moveq	r4, #1
+ 1300              	.L238:
+ 1301 07b0 E4923004 		mov	r2, r1
+ 1302 07b4 E15C0003 	.LVL152:
+ 1303 07b8 1A000006 		mov	lr, r4
+ 1304              	.LVL153:
+ 1305              	.L240:
+ 1306 07bc E151000E 		.loc 4 48 0
+ 1307 07c0 E28EE001 		mov	r3, lr, asl #2
+ 1308 07c4 E1A00002 		.loc 4 47 0
+ 1309              		cmp	lr, #1
+ 1310 07c8 E1E0C00E 		.loc 4 48 0
+ 1311              		sub	r3, r3, #4
+ 1312 07cc 1AFFFFF7 		.loc 4 47 0
+ 1313              		mov	ip, r0
+ 1314 07d0 E3A00000 	.LVL154:
+ 1315              		.loc 4 48 0
+ 234:memtest.c     ****         }
+ 235:memtest.c     ****     }
+ 236:memtest.c     **** 
+ 237:memtest.c     ****     return (NULL);
+ 238:memtest.c     **** 
+ 239:memtest.c     **** }   /* memTestDevice2() */
+ 1316              	.loc 4 52 0
+ 1317 07d4 E49DF004 		sub	r3, lr, #1
+ 1318              		.loc 4 51 0
+ 1319              		and	ip, ip, #15
+ 1320 07d8 E49DF004 	.LVL155:
+ 1321              		.loc 4 52 0
+ 1322              		and	lr, r3, #255
+ 1323              		.loc 4 55 0
+ 1324              		cmp	ip, #9
+ 1325              		.loc 4 56 0
+ 1326              		add	r3, ip, #48
+ 1327              	.LVL156:
+ 1328              		.loc 4 58 0
    1:main.c        **** /**********************************************************************
    2:main.c        ****  *
    3:main.c        ****  * Function:    memTest()
    4:main.c        ****  *
-   5:main.c        ****  * Description: Test a 4-k chunk of SRAM.
-   6:main.c        ****  *
-   7:main.c        ****  * Notes:       
+   5:main.c        ****  * Description: Test a  chunk of SRAM.
+   6:main.c        **** 				Set BASE_ADDRESS below to the starting address (in hex) of the memory
+   7:main.c        **** 				Set NUM_BYTES below to the number to bytes (in dec) to test in memory 
    8:main.c        ****  *
-   9:main.c        ****  * Returns:     0 on success.
-  10:main.c        ****  *              Otherwise -1 indicates failure.
-  11:main.c        ****  *
-  12:main.c        ****  **********************************************************************/
-  13:main.c        **** #include "../lib/io_driver.h"
-  14:main.c        **** #include "../lib/io_driver.c"
-  15:main.c        **** #include "../lib/uart.h"
-  16:main.c        **** #include "../lib/uart.c"
-  17:main.c        **** #include "memtest.h"
-  18:main.c        **** #include "memtest.c"
-  19:main.c        **** #include "memtest_run.c"
-  20:main.c        **** 
-  21:main.c        **** 
-  22:main.c        **** #define BASE_ADDRESS  (volatile datum *) 0x01000000 //beginning of SDRAM memory
-  23:main.c        **** #define NUM_BYTES      32 * 1024 * 1024
-  24:main.c        **** //#define NUM_BYTES     ( 32 * 1024 )
-  25:main.c        **** #define CYCLES	1
-  26:main.c        **** 
-  27:main.c        **** // ############################################################################################
-  28:main.c        **** // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
-  29:main.c        ****    void long_to_hex_string(unsigned long data,    // max 32 bit data word
-  30:main.c        ****                            unsigned char *buffer, // buffer to store the string
-  31:main.c        **** 						   unsigned char numbers) // number of places, max 8
-  32:main.c        **** // ############################################################################################
-  33:main.c        **** {
- 1313              	, #55
- 1314              		.loc 4 43 0
- 1315              		cmp	lr, #0
- 1316              		.loc 4 59 0
- 1317 07d0 E92D4010 		strb	r3, [r2], #1
- 1318              		.loc 4 43 0
- 1319              		bne	.L238
- 1320 07d4 E20240FF 		.loc 4 62 0
-  34:main.c        **** ##################################################
+   9:main.c        ****  * Notes:       
+  10:main.c        ****  *
+  11:main.c        ****  * Returns:     0 on success.
+  12:main.c        ****  *              Otherwise -1 indicates failure.
+  13:main.c        ****  *
+  14:main.c        ****  **********************************************************************/
+  15:main.c        **** #include "../lib/io_driver.h"
+  16:main.c        **** #include "../lib/io_driver.c"
+  17:main.c        **** #include "../lib/uart.h"
+  18:main.c        **** #include "../lib/uart.c"
+  19:main.c        **** #include "memtest.h"
+  20:main.c        **** #include "memtest.c"
+  21:main.c        **** #include "memtest_run.c"
+  22:main.c        **** 
+  23:main.c        **** 
+  24:main.c        **** #define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
+  25:main.c        **** #define NUM_BYTES      32 * 1024 * 1024
+  26:main.c        **** //#define NUM_BYTES     ( 32 * 1024 )
+  27:main.c        **** #define CYCLES	25
+  28:main.c        **** 
+  29:main.c        **** // ############################################################################################
+  30:main.c        **** // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
+  31:main.c        ****    void long_to_hex_string(unsigned long data,    // max 32 bit data word
+  32:main.c        ****                            unsigned char *buffer, // buffer to store the string
+  33:main.c        **** 						   unsigned char numbers) // number of places, max 8
+  34:main.c        **** // ############################################################################################
   35:main.c        **** {
+ 1329              	, #55
+ 1330              		.loc 4 45 0
+ 1331              		cmp	lr, #0
+ 1332              		.loc 4 61 0
+ 1333 07dc E92D4010 		strb	r3, [r2], #1
+ 1334              		.loc 4 45 0
+ 1335              		bne	.L240
+ 1336 07e0 E20240FF 		.loc 4 64 0
   36:main.c        **** 	unsigned char temp_char = 0;
   37:main.c        **** 	unsigned long temp_data = 0;
   38:main.c        **** 
- 1321              	 r4, #1
- 1322 07d8 E3540008 	.LVL155:
- 1323 07dc 83A04008 		and	r3, r3, #255
- 1324 07e0 8A000001 		add	r3, r1, r3
- 1325              		strb	lr, [r3, #1]
-  39:main.c        **** har temp_char = 0;
-  40:main.c        **** 	unsigned long temp_data = 0;
- 1326              	 4 63 0
- 1327 07e4 E3540000 		ldmfd	sp!, {r4, pc}
-  41:main.c        ****  char temp_char = 0;
-  42:main.c        **** 	unsigned long temp_data = 0;
-  43:main.c        **** 
-  44:main.c        **** 	// fit into range
-  45:main.c        **** 	if(numbers > 8)
-  46:main.c        **** 		numbers = 8;
-  47:main.c        **** 	if(numbers < 1)
-  48:main.c        **** 		numbers = 1;
-  49:main.c        **** 
-  50:main.c        **** 	while(numbers > 0){
-  51:main.c        **** 		// isolate one 4-bit value
-  52:main.c        **** 		if(numbers > 1)
-  53:main.c        **** 			temp_data = data >> ((numbers-1)*4);
-  54:main.c        **** 		else
-  55:main.c        **** 			temp_data = data;
-  56:main.c        **** 		temp_data = temp_data & 0x0000000F;
-  57:main.c        **** 		numbers--;
-  58:main.c        **** 
-  59:main.c        **** 		// convert 4-bit value temp_data to char temp_char
-  60:main.c        **** 		if(temp_data < 10)
-  61:main.c        **** 			temp_char = '0' + temp_data;
-  62:main.c        **** 		else
-  63:main.c        **** 			temp_char = 'A' + temp_data - 10;
- 1328              	FE33:
- 1330              		.section	.rodata.str1.4,"aMS",%progbits,1
- 1331 07ec E1A02001 		.align	2
- 1332              	.LC1:
- 1333 07f0 E1A0E004 		.ascii	"memTestDataBus FAILED\015\012\000"
- 1334              		.align	2
- 1335              	.LC2:
- 1336              		.ascii	"memTestDataBus Passed\015\012\000"
- 1337 07f4 E1A0310E 		.align	2
- 1338              	.LC3:
- 1339 07f8 E35E0001 		.ascii	"memTestAddressBus FAILED \000"
- 1340              		.align	2
- 1341 07fc E2433004 	.LC4:
- 1342              		.ascii	"\015\012\000"
- 1343 0800 E1A0C000 		.align	2
- 1344              	.LC5:
- 1345              		.ascii	"memTestAddressBus Passed\015\012\000"
- 1346 0804 81A0C330 		.align	2
- 1347              	.LC6:
- 1348 0808 E24E3001 		.ascii	"memTestDevice1 FAILED \000"
- 1349              		.align	2
- 1350 080c E20CC00F 	.LC7:
- 1351              		.ascii	"memTestDevice1 Passed\015\012\000"
- 1352              		.align	2
- 1353 0810 E203E0FF 	.LC8:
- 1354              		.ascii	"memTestDevice2 FAILED \000"
- 1355 0814 E35C0009 		.align	2
- 1356              	.LC9:
- 1357 0818 E28C3030 		.ascii	"memTestDevice2 Passed\015\012\000"
- 1358              		.section	.rodata
- 1359              		.align	2
- 1360 081c 828C3037 	.LC0:
- 1361              		.ascii	"\000\000"
- 1362 0820 E35E0000 		.space	8
- 1363              		.text
- 1364 0824 E4C23001 		.align	2
- 1365              		.global	memtest_run
- 1367              	memtest_run:
- 1368 082c E2443001 	.LFB32:
- 1369              		.file 5 "memtest_run.c"
- 1370 0830 E20330FF 		.loc 5 11 0
- 1371 0834 E0813003 		@ args = 0, pretend = 0, frame = 12
- 1372 0838 E5C3E001 		@ frame_needed = 0, uses_anonymous_args = 0
- 1373              		stmfd	sp!, {r4, r5, lr}
- 1374 083c E8BD8010 	.LCFI8:
- 1375              		.loc 5 13 0
- 1376              		ldr	r3, .L262
- 1377              		ldrh	r3, [r3, #0]
- 1378              		.loc 5 11 0
- 1379              		sub	sp, sp, #12
- 1380 0000 6D656D54 	.LCFI9:
- 1380      65737444 
- 1380      61746142 
- 1380      75732046 
- 1380      41494C45 
- 1381              		.loc 5 13 0
- 1382              		strh	r3, [sp, #2]	@ movhi
- 1383 0018 6D656D54 		.loc 5 16 0
- 1383      65737444 
- 1383      61746142 
- 1383      75732050 
- 1383      61737365 
- 1384              		mov	r0, #16777216
- 1385              		.loc 5 13 0
- 1386 0030 6D656D54 		mov	r3, #0	@ movhi
- 1386      65737441 
- 1386      64647265 
- 1386      73734275 
- 1386      73204641 
- 1387 004a 0000     		strh	r3, [sp, #4]	@ movhi
- 1388              		strh	r3, [sp, #6]	@ movhi
- 1389 004c 0D0A00   		strh	r3, [sp, #8]	@ movhi
- 1390 004f 00       		strh	r3, [sp, #10]	@ movhi
- 1391              		.loc 5 16 0
- 1392 0050 6D656D54 		bl	memTestDataBus
- 1392      65737441 
- 1392      64647265 
- 1392      73734275 
- 1392      73205061 
- 1393 006b 00       		.loc 5 17 0
- 1394              		cmp	r0, #0
- 1395 006c 6D656D54 		beq	.L250
- 1395      65737444 
- 1395      65766963 
- 1395      65312046 
- 1395      41494C45 
- 1396 0083 00       		.loc 5 19 0
- 1397              		ldr	r0, .L262+4
- 1398 0084 6D656D54 		bl	uart0_printf
- 1398      65737444 
- 1398      65766963 
- 1398      65312050 
- 1398      61737365 
- 1399              	.LVL156:
- 1400              	.L261:
- 1401 009c 6D656D54 		.loc 5 68 0
- 1401      65737444 
- 1401      65766963 
- 1401      65322046 
- 1401      41494C45 
- 1402 00b3 00       		add	sp, sp, #12
- 1403              		ldmfd	sp!, {r4, r5, pc}
- 1404 00b4 6D656D54 	.LVL157:
- 1404      65737444 
- 1404      65766963 
- 1404      65322050 
- 1404      61737365 
- 1405              	.L250:
- 1406              		.loc 5 24 0
- 1407              		ldr	r0, .L262+8
- 1408 0000 0000     		bl	uart0_printf
- 1409 0002 00000000 		.loc 5 27 0
- 1409      00000000 
- 1410 000a 0000     		mov	r0, #16777216
- 1411              		mov	r1, #33554432
- 1412              		bl	memTestAddressBus
- 1413              		.loc 5 28 0
- 1414              		subs	r5, r0, #0
- 1415              	.LVL158:
- 1416              		beq	.L253
+  39:main.c        **** 	// fit into range
+  40:main.c        **** 	if(numbers > 8)
+ 1337              	 r4, #1
+ 1338 07e4 E3540008 	.LVL157:
+ 1339 07e8 83A04008 		and	r3, r3, #255
+ 1340 07ec 8A000001 		add	r3, r1, r3
+ 1341              		strb	lr, [r3, #1]
+  41:main.c        **** 		numbers = 8;
+  42:main.c        **** 	if(numbers < 1)
+ 1342              	 4 65 0
+ 1343 07f0 E3540000 		ldmfd	sp!, {r4, pc}
+  43:main.c        **** 		numbers = 1;
+  44:main.c        **** 
+  45:main.c        **** 	while(numbers > 0){
+  46:main.c        **** 		// isolate one 4-bit value
+  47:main.c        **** 		if(numbers > 1)
+  48:main.c        **** 			temp_data = data >> ((numbers-1)*4);
+  49:main.c        **** 		else
+  50:main.c        **** 			temp_data = data;
+  51:main.c        **** 		temp_data = temp_data & 0x0000000F;
+  52:main.c        **** 		numbers--;
+  53:main.c        **** 
+  54:main.c        **** 		// convert 4-bit value temp_data to char temp_char
+  55:main.c        **** 		if(temp_data < 10)
+  56:main.c        **** 			temp_char = '0' + temp_data;
+  57:main.c        **** 		else
+  58:main.c        **** 			temp_char = 'A' + temp_data - 10;
+  59:main.c        **** 
+  60:main.c        **** 		// save character
+  61:main.c        **** 		*buffer++ = temp_char;
+  62:main.c        **** 	}
+  63:main.c        **** 
+  64:main.c        **** 	*buffer++ = 0; // terminate string
+  65:main.c        **** }
+ 1344              	FE33:
+ 1346              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1347 07f8 E1A02001 		.align	2
+ 1348              	.LC1:
+ 1349 07fc E1A0E004 		.ascii	"memTestDataBus FAILED\015\012\000"
+ 1350              		.align	2
+ 1351              	.LC2:
+ 1352              		.ascii	"memTestDataBus Passed\015\012\000"
+ 1353 0800 E1A0310E 		.align	2
+ 1354              	.LC3:
+ 1355 0804 E35E0001 		.ascii	"memTestAddressBus FAILED \000"
+ 1356              		.align	2
+ 1357 0808 E2433004 	.LC4:
+ 1358              		.ascii	"\015\012\000"
+ 1359 080c E1A0C000 		.align	2
+ 1360              	.LC5:
+ 1361              		.ascii	"memTestAddressBus Passed\015\012\000"
+ 1362 0810 81A0C330 		.align	2
+ 1363              	.LC6:
+ 1364 0814 E24E3001 		.ascii	"memTestDevice1 FAILED \000"
+ 1365              		.align	2
+ 1366 0818 E20CC00F 	.LC7:
+ 1367              		.ascii	"memTestDevice1 Passed\015\012\000"
+ 1368              		.align	2
+ 1369 081c E203E0FF 	.LC8:
+ 1370              		.ascii	"memTestDevice2 FAILED \000"
+ 1371 0820 E35C0009 		.align	2
+ 1372              	.LC9:
+ 1373 0824 E28C3030 		.ascii	"memTestDevice2 Passed\015\012\000"
+ 1374              		.text
+ 1375              		.align	2
+ 1376 0828 828C3037 		.global	memtest_run
+ 1378 082c E35E0000 	memtest_run:
+ 1379              	.LFB32:
+ 1380 0830 E4C23001 		.file 5 "memtest_run.c"
+ 1381              		.loc 5 11 0
+ 1382 0834 1AFFFFF1 		@ args = 0, pretend = 0, frame = 12
+ 1383              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1384 0838 E2443001 		stmfd	sp!, {r4, r5, lr}
+ 1385              	.LCFI8:
+ 1386 083c E20330FF 		.loc 5 13 0
+ 1387 0840 E0813003 		ldr	r3, .L264
+ 1388 0844 E5C3E001 		ldrh	r3, [r3, #0]
+ 1389              		.loc 5 11 0
+ 1390 0848 E8BD8010 		sub	sp, sp, #12
+ 1391              	.LCFI9:
+ 1392              		.loc 5 13 0
+ 1393              		strh	r3, [sp, #2]	@ movhi
+ 1394              		.loc 5 16 0
+ 1395              		mov	r0, #67108864
+ 1396 0000 6D656D54 		.loc 5 13 0
+ 1396      65737444 
+ 1396      61746142 
+ 1396      75732046 
+ 1396      41494C45 
+ 1397              		mov	r3, #0	@ movhi
+ 1398              		strh	r3, [sp, #4]	@ movhi
+ 1399 0018 6D656D54 		strh	r3, [sp, #6]	@ movhi
+ 1399      65737444 
+ 1399      61746142 
+ 1399      75732050 
+ 1399      61737365 
+ 1400              		strh	r3, [sp, #8]	@ movhi
+ 1401              		strh	r3, [sp, #10]	@ movhi
+ 1402 0030 6D656D54 		.loc 5 16 0
+ 1402      65737441 
+ 1402      64647265 
+ 1402      73734275 
+ 1402      73204641 
+ 1403 004a 0000     		bl	memTestDataBus
+ 1404              		.loc 5 17 0
+ 1405 004c 0D0A00   		cmp	r0, #0
+ 1406 004f 00       		beq	.L252
+ 1407              		.loc 5 19 0
+ 1408 0050 6D656D54 		ldr	r0, .L264+4
+ 1408      65737441 
+ 1408      64647265 
+ 1408      73734275 
+ 1408      73205061 
+ 1409 006b 00       		bl	uart0_printf
+ 1410              	.LVL158:
+ 1411 006c 6D656D54 	.L263:
+ 1411      65737444 
+ 1411      65766963 
+ 1411      65312046 
+ 1411      41494C45 
+ 1412 0083 00       		.loc 5 68 0
+ 1413              		add	sp, sp, #12
+ 1414 0084 6D656D54 		ldmfd	sp!, {r4, r5, pc}
+ 1414      65737444 
+ 1414      65766963 
+ 1414      65312050 
+ 1414      61737365 
+ 1415              	.LVL159:
+ 1416              	.L252:
+ 1417 009c 6D656D54 		.loc 5 24 0
+ 1417      65737444 
+ 1417      65766963 
+ 1417      65322046 
+ 1417      41494C45 
+ 1418 00b3 00       		ldr	r0, .L264+8
+ 1419              		bl	uart0_printf
+ 1420 00b4 6D656D54 		.loc 5 27 0
+ 1420      65737444 
+ 1420      65766963 
+ 1420      65322050 
+ 1420      61737365 
+ 1421              		mov	r0, #67108864
+ 1422              		mov	r1, #33554432
+ 1423              		bl	memTestAddressBus
+ 1424              		.loc 5 28 0
+ 1425              		subs	r5, r0, #0
+ 1426              	.LVL160:
+ 1427              		beq	.L255
    1:memtest_run.c **** // #include "../lib/io_driver.h"
    2:memtest_run.c **** // #include "../lib/io_driver.c"
    3:memtest_run.c **** // #include "../lib/uart.h"
@@ -2163,49 +2175,49 @@
    5:memtest_run.c **** //#include "memtest.h"
    6:memtest_run.c **** //#include "memtest.c"
    7:memtest_run.c **** 
-   8:memtest_run.c **** #define BASE_ADDRESS  (volatile datum *) 0x01000000 //beginning of SDRAM memory
+   8:memtest_run.c **** #define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
    9:memtest_run.c **** #define NUM_BYTES      32 * 1024 * 1024
   10:memtest_run.c **** 
   11:memtest_run.c **** void memtest_run () {
- 1417              	
- 1418              		mov	r1, r4
- 1419              		mov	r2, #8
- 1420 0840 E92D4030 		mov	r0, r5
- 1421              		bl	long_to_hex_string
+ 1428              	 31 0
+ 1429              		mov	r1, r4
+ 1430              		mov	r2, #8
+ 1431 084c E92D4030 		mov	r0, r5
+ 1432              		bl	long_to_hex_string
   12:memtest_run.c **** 	int result = 0;
   13:memtest_run.c **** 	unsigned char str[10]="\0";
- 1422              	c 5 32 0
- 1423 0844 E59F312C 		mov	r0, r4
- 1424 0848 E1D330B0 		bl	uart0_printf
- 1425              		ldr	r0, .L262+16
- 1426 084c E24DD00C 		bl	uart0_printf
- 1427              	.L255:
- 1428              		.loc 5 40 0
- 1429 0850 E1CD30B2 		mov	r0, #16777216
+ 1433              	 5 32 0
+ 1434 0850 E59F312C 		mov	r0, r4
+ 1435 0854 E1D330B0 		bl	uart0_printf
+ 1436              		ldr	r0, .L264+16
+ 1437 0858 E24DD00C 		bl	uart0_printf
+ 1438              	.L257:
+ 1439              		.loc 5 40 0
+ 1440 085c E1CD30B2 		mov	r0, #67108864
   14:memtest_run.c **** 	
   15:memtest_run.c **** 	datum *result_ptr=NULL;
   16:memtest_run.c ****     result = memTestDataBus(BASE_ADDRESS);
- 1430              	 #33554432
- 1431 0854 E3A00401 		bl	memTestDevice1
- 1432              		.loc 5 41 0
- 1433 0858 E3A03000 		subs	r5, r0, #0
- 1434 085c E1CD30B4 	.LVL159:
- 1435 0860 E1CD30B6 		beq	.L256
- 1436 0864 E1CD30B8 		.loc 5 44 0
- 1437 0868 E1CD30BA 		add	r4, sp, #2
- 1438              		.loc 5 43 0
- 1439 086c EBFFFFFE 		ldr	r0, .L262+20
+ 1441              	 #33554432
+ 1442 0860 E3A00301 		bl	memTestDevice1
+ 1443              		.loc 5 41 0
+ 1444 0864 E3A03000 		subs	r5, r0, #0
+ 1445 0868 E1CD30B4 	.LVL161:
+ 1446 086c E1CD30B6 		beq	.L258
+ 1447 0870 E1CD30B8 		.loc 5 44 0
+ 1448 0874 E1CD30BA 		add	r4, sp, #2
+ 1449              		.loc 5 43 0
+ 1450 0878 EBFFFFFE 		ldr	r0, .L264+20
   17:memtest_run.c ****     if ( result != 0)
- 1440              	printf
- 1441 0870 E3500000 		.loc 5 44 0
- 1442 0874 0A000003 		mov	r1, r4
+ 1451              	printf
+ 1452 087c E3500000 		.loc 5 44 0
+ 1453 0880 0A000003 		mov	r1, r4
   18:memtest_run.c ****     {
   19:memtest_run.c ****         uart0_printf("memTestDataBus FAILED\r\n");
- 1443              	v	r2, #8
- 1444 0878 E59F00FC 		mov	r0, r5
- 1445 087c EBFFFFFE 		bl	long_to_hex_string
- 1446              		.loc 5 45 0
- 1447              		mov	r0, r4
+ 1454              	v	r2, #8
+ 1455 0884 E59F00FC 		mov	r0, r5
+ 1456 0888 EBFFFFFE 		bl	long_to_hex_string
+ 1457              		.loc 5 45 0
+ 1458              		mov	r0, r4
   20:memtest_run.c **** 		return (-1);
   21:memtest_run.c ****     }
   22:memtest_run.c ****     else
@@ -2255,251 +2267,257 @@
   66:memtest_run.c **** 		//return (0);
   67:memtest_run.c ****     }
   68:memtest_run.c **** } //memtest_run()...
- 1448              	art0_printf
- 1449 0880 E28DD00C 		ldr	r0, .L262+16
- 1450 0884 E8BD8030 		bl	uart0_printf
- 1451              	.L258:
- 1452              		.loc 5 55 0
- 1453              		mov	r0, #16777216
- 1454 0888 E59F00F0 		mov	r1, #33554432
- 1455 088c EBFFFFFE 		bl	memTestDevice2
- 1456              		.loc 5 56 0
- 1457 0890 E3A00401 		subs	r5, r0, #0
- 1458 0894 E3A01402 	.LVL160:
- 1459 0898 EBFFFFFE 		beq	.L259
- 1460              		.loc 5 59 0
- 1461 089c E2505000 		add	r4, sp, #2
- 1462              		.loc 5 58 0
- 1463 08a0 0A00002B 		ldr	r0, .L262+24
- 1464              		bl	uart0_printf
- 1465 08a4 E28D4002 		.loc 5 59 0
- 1466              		mov	r1, r4
- 1467 08a8 E59F00D4 		mov	r2, #8
- 1468 08ac EBFFFFFE 		mov	r0, r5
- 1469              		bl	long_to_hex_string
- 1470 08b0 E1A01004 		.loc 5 60 0
- 1471 08b4 E3A02008 		mov	r0, r4
- 1472 08b8 E1A00005 		bl	uart0_printf
- 1473 08bc EBFFFFFE 		ldr	r0, .L262+16
- 1474              		bl	uart0_printf
- 1475 08c0 E1A00004 		b	.L261
- 1476 08c4 EBFFFFFE 	.LVL161:
- 1477 08c8 E59F00B8 	.L253:
- 1478 08cc EBFFFFFE 		.loc 5 37 0
- 1479              		ldr	r0, .L262+28
- 1480              		bl	uart0_printf
- 1481 08d0 E3A00401 		b	.L255
- 1482 08d4 E3A01402 	.LVL162:
- 1483 08d8 EBFFFFFE 	.L259:
- 1484              		.loc 5 65 0
- 1485 08dc E2505000 		ldr	r0, .L262+32
- 1486              		bl	uart0_printf
- 1487 08e0 0A000021 		b	.L261
- 1488              	.LVL163:
- 1489 08e4 E28D4002 	.L256:
- 1490              		.loc 5 50 0
- 1491 08e8 E59F009C 		ldr	r0, .L262+36
- 1492 08ec EBFFFFFE 		bl	uart0_printf
- 1493              		b	.L258
- 1494 08f0 E1A01004 	.L263:
- 1495 08f4 E3A02008 		.align	2
- 1496 08f8 E1A00005 	.L262:
- 1497 08fc EBFFFFFE 		.word	.LC0
- 1498              		.word	.LC1
- 1499 0900 E1A00004 		.word	.LC2
- 1500 0904 EBFFFFFE 		.word	.LC3
- 1501 0908 E59F0078 		.word	.LC4
- 1502 090c EBFFFFFE 		.word	.LC6
- 1503              		.word	.LC8
- 1504              		.word	.LC5
- 1505 0910 E3A00401 		.word	.LC9
- 1506 0914 E3A01402 		.word	.LC7
- 1507 0918 EBFFFFFE 	.LFE32:
- 1509 091c E2505000 		.section	.rodata.str1.4
- 1510              		.align	2
- 1511 0920 0A00000E 	.LC10:
- 1512              		.ascii	"Starting MEMTEST tests\015\012\000"
- 1513 0924 E28D4002 		.align	2
- 1514              	.LC11:
- 1515 0928 E59F0060 		.ascii	"BASE ADDRESS:  \000"
- 1516 092c EBFFFFFE 		.align	2
- 1517              	.LC12:
- 1518 0930 E1A01004 		.ascii	"Number of Bytes to test:  \000"
- 1519 0934 E3A02008 		.align	2
- 1520 0938 E1A00005 	.LC13:
- 1521 093c EBFFFFFE 		.ascii	"testing done \012\015\000"
- 1522              		.text
- 1523 0940 E1A00004 		.align	2
- 1524 0944 EBFFFFFE 		.global	main
- 1526 094c EBFFFFFE 	main:
- 1527 0950 EAFFFFCA 	.LFB34:
- 1528              		.loc 4 67 0
- 1529              		@ args = 0, pretend = 0, frame = 12
- 1530              		@ frame_needed = 0, uses_anonymous_args = 0
- 1531 0954 E59F0038 		stmfd	sp!, {r4, r5, r6, lr}
- 1532 0958 EBFFFFFE 	.LCFI10:
- 1533 095c EAFFFFDB 		.loc 4 69 0
- 1534              		ldr	r3, .L266
- 1535              		ldrh	r3, [r3, #0]
- 1536              		.loc 4 67 0
- 1537 0960 E59F0030 		sub	sp, sp, #12
- 1538 0964 EBFFFFFE 	.LCFI11:
- 1539 0968 EAFFFFC4 		.loc 4 69 0
- 1540              		mov	r5, #0
- 1541              		.loc 4 74 0
- 1542              		ldr	r0, .L266+4
- 1543 096c E59F0028 		.loc 4 69 0
- 1544 0970 EBFFFFFE 		strh	r3, [sp, #2]	@ movhi
- 1545 0974 EAFFFFE5 		.loc 4 76 0
- 1546              		add	r4, sp, #2
+ 1459              	art0_printf
+ 1460 088c E28DD00C 		ldr	r0, .L264+16
+ 1461 0890 E8BD8030 		bl	uart0_printf
+ 1462              	.L260:
+ 1463              		.loc 5 55 0
+ 1464              		mov	r0, #67108864
+ 1465 0894 E59F00F0 		mov	r1, #33554432
+ 1466 0898 EBFFFFFE 		bl	memTestDevice2
+ 1467              		.loc 5 56 0
+ 1468 089c E3A00301 		subs	r5, r0, #0
+ 1469 08a0 E3A01402 	.LVL162:
+ 1470 08a4 EBFFFFFE 		beq	.L261
+ 1471              		.loc 5 59 0
+ 1472 08a8 E2505000 		add	r4, sp, #2
+ 1473              		.loc 5 58 0
+ 1474 08ac 0A00002B 		ldr	r0, .L264+24
+ 1475              		bl	uart0_printf
+ 1476 08b0 E28D4002 		.loc 5 59 0
+ 1477              		mov	r1, r4
+ 1478 08b4 E59F00D4 		mov	r2, #8
+ 1479 08b8 EBFFFFFE 		mov	r0, r5
+ 1480              		bl	long_to_hex_string
+ 1481 08bc E1A01004 		.loc 5 60 0
+ 1482 08c0 E3A02008 		mov	r0, r4
+ 1483 08c4 E1A00005 		bl	uart0_printf
+ 1484 08c8 EBFFFFFE 		ldr	r0, .L264+16
+ 1485              		bl	uart0_printf
+ 1486 08cc E1A00004 		b	.L263
+ 1487 08d0 EBFFFFFE 	.LVL163:
+ 1488 08d4 E59F00B8 	.L255:
+ 1489 08d8 EBFFFFFE 		.loc 5 37 0
+ 1490              		ldr	r0, .L264+28
+ 1491              		bl	uart0_printf
+ 1492 08dc E3A00301 		b	.L257
+ 1493 08e0 E3A01402 	.LVL164:
+ 1494 08e4 EBFFFFFE 	.L261:
+ 1495              		.loc 5 65 0
+ 1496 08e8 E2505000 		ldr	r0, .L264+32
+ 1497              		bl	uart0_printf
+ 1498 08ec 0A000021 		b	.L263
+ 1499              	.LVL165:
+ 1500 08f0 E28D4002 	.L258:
+ 1501              		.loc 5 50 0
+ 1502 08f4 E59F009C 		ldr	r0, .L264+36
+ 1503 08f8 EBFFFFFE 		bl	uart0_printf
+ 1504              		b	.L260
+ 1505 08fc E1A01004 	.L265:
+ 1506 0900 E3A02008 		.align	2
+ 1507 0904 E1A00005 	.L264:
+ 1508 0908 EBFFFFFE 		.word	.LC0
+ 1509              		.word	.LC1
+ 1510 090c E1A00004 		.word	.LC2
+ 1511 0910 EBFFFFFE 		.word	.LC3
+ 1512 0914 E59F0078 		.word	.LC4
+ 1513 0918 EBFFFFFE 		.word	.LC6
+ 1514              		.word	.LC8
+ 1515              		.word	.LC5
+ 1516 091c E3A00301 		.word	.LC9
+ 1517 0920 E3A01402 		.word	.LC7
+ 1518 0924 EBFFFFFE 	.LFE32:
+ 1520 0928 E2505000 		.section	.rodata.str1.4
+ 1521              		.align	2
+ 1522 092c 0A00000E 	.LC10:
+ 1523              		.ascii	"Starting MEMTEST tests\015\012\000"
+ 1524 0930 E28D4002 		.align	2
+ 1525              	.LC11:
+ 1526 0934 E59F0060 		.ascii	"BASE ADDRESS:  \000"
+ 1527 0938 EBFFFFFE 		.align	2
+ 1528              	.LC12:
+ 1529 093c E1A01004 		.ascii	"Number of Bytes to test:  \000"
+ 1530 0940 E3A02008 		.align	2
+ 1531 0944 E1A00005 	.LC13:
+ 1532 0948 EBFFFFFE 		.ascii	"testing done \012\015\000"
+ 1533              		.text
+ 1534 094c E1A00004 		.align	2
+ 1535 0950 EBFFFFFE 		.global	main
+ 1537 0958 EBFFFFFE 	main:
+ 1538 095c EAFFFFCA 	.LFB34:
+ 1539              		.loc 4 69 0
+ 1540              		@ args = 0, pretend = 0, frame = 12
+ 1541              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1542 0960 E59F0038 		stmfd	sp!, {r4, lr}
+ 1543 0964 EBFFFFFE 	.LCFI10:
+ 1544 0968 EAFFFFDB 		.loc 4 71 0
+ 1545              		ldr	r3, .L272
+ 1546              		ldrh	r3, [r3, #0]
  1547              		.loc 4 69 0
- 1548              		strh	r5, [sp, #4]	@ movhi
- 1549 0978 00000000 		strh	r5, [sp, #6]	@ movhi
- 1550 097c 00000000 		strh	r5, [sp, #8]	@ movhi
- 1551 0980 00000018 		strh	r5, [sp, #10]	@ movhi
- 1552 0984 00000030 		.loc 4 74 0
- 1553 0988 0000004C 		bl	uart0_printf
- 1554 098c 0000006C 		.loc 4 75 0
- 1555 0990 0000009C 		ldr	r0, .L266+8
- 1556 0994 00000050 		bl	uart0_printf
- 1557 0998 000000B4 		.loc 4 77 0
- 1558 099c 00000084 		ldr	r6, .L266+12
- 1559              		.loc 4 76 0
- 1560              		mov	r1, r4
- 1561              		mov	r2, #8
- 1562              		mov	r0, #16777216
- 1563              		bl	long_to_hex_string
- 1564 00cc 53746172 		.loc 4 77 0
- 1564      74696E67 
- 1564      204D454D 
- 1564      54455354 
- 1564      20746573 
- 1565 00e5 000000   		mov	r0, r4
- 1566              		bl	uart0_printf
- 1567 00e8 42415345 		mov	r0, r6
- 1567      20414444 
- 1567      52455353 
- 1567      3A202000 
- 1568              		bl	uart0_printf
- 1569              		.loc 4 78 0
- 1570 00f8 4E756D62 		ldr	r0, .L266+16
- 1570      6572206F 
- 1570      66204279 
- 1570      74657320 
- 1570      746F2074 
- 1571 0113 00       		bl	uart0_printf
+ 1548 096c E59F0030 		sub	sp, sp, #12
+ 1549 0970 EBFFFFFE 	.LCFI11:
+ 1550 0974 EAFFFFC4 		.loc 4 71 0
+ 1551              		strh	r3, [sp, #2]	@ movhi
+ 1552              		.loc 4 76 0
+ 1553              		ldr	r0, .L272+4
+ 1554 0978 E59F0028 		.loc 4 71 0
+ 1555 097c EBFFFFFE 		mov	r3, #0	@ movhi
+ 1556 0980 EAFFFFE5 		strh	r3, [sp, #4]	@ movhi
+ 1557              		strh	r3, [sp, #6]	@ movhi
+ 1558              		strh	r3, [sp, #8]	@ movhi
+ 1559              		strh	r3, [sp, #10]	@ movhi
+ 1560 0984 00000000 		.loc 4 78 0
+ 1561 0988 00000000 		add	r4, sp, #2
+ 1562 098c 00000018 		.loc 4 76 0
+ 1563 0990 00000030 		bl	uart0_printf
+ 1564 0994 0000004C 		.loc 4 77 0
+ 1565 0998 0000006C 		ldr	r0, .L272+8
+ 1566 099c 0000009C 		bl	uart0_printf
+ 1567 09a0 00000050 		.loc 4 78 0
+ 1568 09a4 000000B4 		mov	r1, r4
+ 1569 09a8 00000084 		mov	r2, #8
+ 1570              		mov	r0, #67108864
+ 1571              		bl	long_to_hex_string
  1572              		.loc 4 79 0
- 1573 0114 74657374 		mov	r1, r4
- 1573      696E6720 
- 1573      646F6E65 
- 1573      200A0D00 
- 1574              		mov	r2, #8
- 1575              		mov	r0, #33554432
- 1576              		bl	long_to_hex_string
+ 1573              		mov	r0, r4
+ 1574              		bl	uart0_printf
+ 1575 00cc 53746172 		ldr	r0, .L272+12
+ 1575      74696E67 
+ 1575      204D454D 
+ 1575      54455354 
+ 1575      20746573 
+ 1576 00e5 000000   		bl	uart0_printf
  1577              		.loc 4 80 0
- 1578              		mov	r0, r4
+ 1578 00e8 42415345 		ldr	r0, .L272+16
+ 1578      20414444 
+ 1578      52455353 
+ 1578      3A202000 
  1579              		bl	uart0_printf
-  64:main.c        **** _char = 'A' + temp_data - 10;
-  65:main.c        **** 
-  66:main.c        **** 		// save character
-  67:main.c        **** 		*buffer++ = temp_char;
- 1580              	10000
- 1581              		.loc 4 87 0
- 1582              		mov	r0, r5
- 1583 09a0 E92D4070 		add	sp, sp, #12
- 1584              		ldmfd	sp!, {r4, r5, r6, pc}
-  68:main.c        **** r
-  69:main.c        **** 		*buffer++ = temp_char;
- 1585              	:
- 1586 09a4 E59F3098 		.align	2
- 1587 09a8 E1D330B0 	.L266:
- 1588              		.word	.LC0
- 1589 09ac E24DD00C 		.word	.LC10
- 1590              		.word	.LC11
- 1591              		.word	.LC4
- 1592 09b0 E3A05000 		.word	.LC12
-  70:main.c        **** r
-  71:main.c        **** 		*buffer++ = temp_char;
-  72:main.c        **** 	}
-  73:main.c        **** 
-  74:main.c        **** 	*buffer++ = 0; // terminate string
- 1593              	LC13
- 1594 09b4 E59F008C 	.LFE34:
- 1596 09b8 E1CD30B2 		.align	2
-  75:main.c        ****  0; // terminate string
-  76:main.c        **** }
- 1597              	obal	io_enable_xint
- 1599              	io_enable_xint:
- 1600 09c0 E1CD50B4 	.LFB23:
- 1601 09c4 E1CD50B6 		.loc 1 444 0
- 1602 09c8 E1CD50B8 		@ args = 0, pretend = 0, frame = 0
- 1603 09cc E1CD50BA 		@ frame_needed = 0, uses_anonymous_args = 0
- 1604              		@ link register save eliminated.
- 1605 09d0 EBFFFFFE 		@ lr needed for prologue
- 1606              	.LBB6:
- 1607 09d4 E59F0070 	.LBB7:
- 1608 09d8 EBFFFFFE 		.loc 1 428 0
-  77:main.c        ****  // terminate string
- 1609              	sr
- 1610 09dc E59F606C 	.LVL164:
- 1611              	.LBE7:
- 1612 09e0 E1A01004 	.LBE6:
- 1613 09e4 E3A02008 	.LBB8:
- 1614 09e8 E3A00401 	.LBB9:
- 1615 09ec EBFFFFFE 		.loc 1 437 0
- 1616              		bic	r3, r3, #192
- 1617 09f0 E1A00004 	.LVL165:
- 1618 09f4 EBFFFFFE 		 msr cpsr, r3
- 1619 09f8 E1A00006 	.LBE9:
- 1620 09fc EBFFFFFE 	.LBE8:
-  78:main.c        ****  0; // terminate string
- 1621              	0
- 1622 0a00 E59F004C 		bx	lr
- 1623 0a04 EBFFFFFE 	.LFE23:
-  79:main.c        ****  0; // terminate string
- 1624              	ize	io_enable_xint, .-io_enable_xint
- 1625 0a08 E1A01004 		.align	2
- 1626 0a0c E3A02008 		.global	io_disable_xint
- 1628 0a14 EBFFFFFE 	io_disable_xint:
-  80:main.c        ****  0; // terminate string
- 1629              	4:
- 1630 0a18 E1A00004 		.loc 1 454 0
- 1631 0a1c EBFFFFFE 		@ args = 0, pretend = 0, frame = 0
- 1632 0a20 E1A00006 		@ frame_needed = 0, uses_anonymous_args = 0
- 1633 0a24 EBFFFFFE 		@ link register save eliminated.
-  81:main.c        ****  0; // terminate string
-  82:main.c        **** }
- 1634              	 needed for prologue
- 1635 0a28 EBFFFFFE 	.LBB14:
-  83:main.c        ****  // terminate string
-  84:main.c        **** }
-  85:main.c        **** 
- 1636              	BB15:
- 1637 0a2c E59F0024 		.loc 1 428 0
- 1638 0a30 EBFFFFFE 		 mrs r3, cpsr
-  86:main.c        **** / terminate string
- 1639              	L166:
- 1640 0a34 E3A0FA01 	.LBE15:
-  87:main.c        ****  0; // terminate string
- 1641              	BE14:
- 1642 0a38 E1A00005 	.LBB16:
- 1643 0a3c E28DD00C 	.LBB17:
- 1644 0a40 E8BD8070 		.loc 1 437 0
- 1645              		orr	r3, r3, #192
- 1646              	.LVL167:
- 1647              		 msr cpsr, r3
- 1648 0a44 00000000 	.LBE17:
- 1649 0a48 000000CC 	.LBE16:
- 1650 0a4c 000000E8 		.loc 1 458 0
- 1651 0a50 0000004C 		bx	lr
- 1652 0a54 000000F8 	.LFE24:
- 1654              		.section	.debug_frame,"",%progbits
- 1655              	.Lframe0:
- 1656              		.4byte	.LECIE0-.LSCIE0
- 1657              	.LSCIE0:
- 1658              		.4byte	0xffffffff
- 1659              		.byte	0x1
- 1660              		.ascii	"\000"
+ 1580              		.loc 4 81 0
+ 1581 00f8 4E756D62 		mov	r1, r4
+ 1581      6572206F 
+ 1581      66204279 
+ 1581      74657320 
+ 1581      746F2074 
+ 1582 0113 00       		mov	r2, #8
+ 1583              		mov	r0, #33554432
+ 1584 0114 74657374 		bl	long_to_hex_string
+ 1584      696E6720 
+ 1584      646F6E65 
+ 1584      200A0D00 
+ 1585              		.loc 4 82 0
+ 1586              		mov	r0, r4
+ 1587              		bl	uart0_printf
+ 1588              		ldr	r0, .L272+12
+ 1589              		bl	uart0_printf
+ 1590              		mov	r4, #0
+  66:main.c        **** 
+  67:main.c        **** int
+  68:main.c        **** main(void)
+  69:main.c        **** {
+ 1591              	 .L272+20
+ 1592              		bl	uart0_printf
+ 1593              		.loc 4 88 0
+ 1594 09ac E92D4010 		mov pc, #00010000
+ 1595              		.loc 4 89 0
+  70:main.c        ****     int i, result = 0;
+  71:main.c        **** 	unsigned char str[10]="\0";
+ 1596              	r0, #0
+ 1597 09b0 E59F30A4 		add	sp, sp, #12
+ 1598 09b4 E1D330B0 		ldmfd	sp!, {r4, pc}
+ 1599              	.L273:
+ 1600 09b8 E24DD00C 		.align	2
+ 1601              	.L272:
+ 1602              		.word	.LC0
+ 1603 09bc E1CD30B2 		.word	.LC10
+  72:main.c        **** 	
+  73:main.c        **** 	datum *result_ptr=NULL;
+  74:main.c        **** 	
+  75:main.c        **** 
+  76:main.c        ****      uart0_printf("Starting MEMTEST tests\r\n");
+ 1604              	LC11
+ 1605 09c0 E59F0098 		.word	.LC4
+ 1606              		.word	.LC12
+ 1607 09c4 E3A03000 		.word	.LC13
+ 1608 09c8 E1CD30B4 	.LFE34:
+ 1610 09d0 E1CD30B8 		.align	2
+ 1611 09d4 E1CD30BA 		.global	io_enable_xint
+  77:main.c        ****      uart0_printf("BASE ADDRESS:  ");
+  78:main.c        ****      long_to_hex_string((unsigned long ) BASE_ADDRESS, str, 8);
+ 1612              	o_enable_xint, %function
+ 1613 09d8 E28D4002 	io_enable_xint:
+ 1614              	.LFB23:
+ 1615 09dc EBFFFFFE 		.loc 1 444 0
+ 1616              		@ args = 0, pretend = 0, frame = 0
+ 1617 09e0 E59F007C 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1618 09e4 EBFFFFFE 		@ link register save eliminated.
+ 1619              		@ lr needed for prologue
+ 1620 09e8 E1A01004 	.LBB6:
+ 1621 09ec E3A02008 	.LBB7:
+ 1622 09f0 E3A00301 		.loc 1 428 0
+ 1623 09f4 EBFFFFFE 		 mrs r3, cpsr
+  79:main.c        ****      uart0_printf(str);uart0_printf("\r\n");
+ 1624              	E7:
+ 1625 09f8 E1A00004 	.LBE6:
+ 1626 09fc EBFFFFFE 	.LBB8:
+ 1627 0a00 E59F0060 	.LBB9:
+ 1628 0a04 EBFFFFFE 		.loc 1 437 0
+  80:main.c        ****      uart0_printf("Number of Bytes to test:  ");
+ 1629              	r3, r3, #192
+ 1630 0a08 E59F005C 	.LVL168:
+ 1631 0a0c EBFFFFFE 		 msr cpsr, r3
+  81:main.c        ****      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
+ 1632              	E9:
+ 1633 0a10 E1A01004 	.LBE8:
+ 1634 0a14 E3A02008 		.loc 1 448 0
+ 1635 0a18 E3A00402 		bx	lr
+ 1636 0a1c EBFFFFFE 	.LFE23:
+  82:main.c        ****      uart0_printf(str);uart0_printf("\r\n");
+ 1637              	e	io_enable_xint, .-io_enable_xint
+ 1638 0a20 E1A00004 		.align	2
+ 1639 0a24 EBFFFFFE 		.global	io_disable_xint
+ 1641 0a2c EBFFFFFE 	io_disable_xint:
+ 1642 0a30 E3A04000 	.LFB24:
+ 1643              		.loc 1 454 0
+ 1644              		@ args = 0, pretend = 0, frame = 0
+  83:main.c        ****   for (i=0; i<CYCLES; i++) {	
+ 1645              	_needed = 0, uses_anonymous_args = 0
+ 1646 0a34 E2844001 		@ link register save eliminated.
+  84:main.c        ****     memtest_run();
+ 1647              	 lr needed for prologue
+ 1648 0a38 EBFFFFFE 	.LBB14:
+ 1649              	.LBB15:
+ 1650 0a3c E3540019 		.loc 1 428 0
+ 1651 0a40 1AFFFFFB 		 mrs r3, cpsr
+  85:main.c        ****    } //for
+  86:main.c        ****    
+  87:main.c        ****    uart0_printf ("testing done \n\r");
+ 1652              	69:
+ 1653 0a44 E59F0024 	.LBE15:
+ 1654 0a48 EBFFFFFE 	.LBE14:
+  88:main.c        **** 	asm volatile ("mov pc, #00010000");
+ 1655              	B16:
+ 1656 0a4c E3A0FA01 	.LBB17:
+  89:main.c        **** }   /* memTest() */...
+ 1657              	loc 1 437 0
+ 1658 0a50 E3A00000 		orr	r3, r3, #192
+ 1659 0a54 E28DD00C 	.LVL170:
+ 1660 0a58 E8BD8010 		 msr cpsr, r3
+ 1661              	.LBE17:
+ 1662              	.LBE16:
+ 1663              		.loc 1 458 0
+ 1664 0a5c 00000000 		bx	lr
+ 1665 0a60 000000CC 	.LFE24:
+ 1667 0a68 0000004C 		.section	.debug_frame,"",%progbits
+ 1668 0a6c 000000F8 	.Lframe0:
+ 1669 0a70 00000114 		.4byte	.LECIE0-.LSCIE0
+ 1670              	.LSCIE0:
+ 1671              		.4byte	0xffffffff
+ 1672              		.byte	0x1
+ 1673              		.ascii	"\000"
+ 1674              		.uleb128 0x1
+ 1675              		.sleb128 -4
+ 1676              		.byte	0xe
  417:../lib/io_driver.c **** //		case 14:         asm volatile ("mcr p15,0,%0,c14,c14,0" : /* no outputs */ : "r" (_cp_val)); br
  418:../lib/io_driver.c **** //		case 15:         asm volatile ("mcr p15,0,%0,c15,c15,0" : /* no outputs */ : "r" (_cp_val)); br
  419:../lib/io_driver.c **** 		default:         break;
@@ -2528,115 +2546,117 @@
  442:../lib/io_driver.c ****    void io_enable_xint(void)
  443:../lib/io_driver.c **** // ******************************************************************************
  444:../lib/io_driver.c **** {
- 1661              	128 -4
- 1662              		.byte	0xe
- 1663              		.byte	0xc
- 1664              		.uleb128 0xd
- 1665              		.uleb128 0x0
- 1666              		.align	2
- 1667              	.LECIE0:
- 1668              	.LSFDE0:
- 1669 0a5c E10F3000 		.4byte	.LEFDE0-.LASFDE0
- 1670              	.LASFDE0:
- 1671              		.4byte	.Lframe0
- 1672              		.4byte	.LFB2
- 1673              		.4byte	.LFE2-.LFB2
- 1674              		.align	2
- 1675              	.LEFDE0:
- 1676 0a60 E3C330C0 	.LSFDE2:
- 1677              		.4byte	.LEFDE2-.LASFDE2
- 1678 0a64 E129F003 	.LASFDE2:
- 1679              		.4byte	.Lframe0
- 1680              		.4byte	.LFB3
+ 1677              	 0xd
+ 1678              		.uleb128 0x0
+ 1679              		.align	2
+ 1680              	.LECIE0:
+ 1681              	.LSFDE0:
+ 1682              		.4byte	.LEFDE0-.LASFDE0
+ 1683              	.LASFDE0:
+ 1684              		.4byte	.Lframe0
+ 1685 0a74 E10F3000 		.4byte	.LFB2
+ 1686              		.4byte	.LFE2-.LFB2
+ 1687              		.align	2
+ 1688              	.LEFDE0:
+ 1689              	.LSFDE2:
+ 1690              		.4byte	.LEFDE2-.LASFDE2
+ 1691              	.LASFDE2:
+ 1692 0a78 E3C330C0 		.4byte	.Lframe0
+ 1693              		.4byte	.LFB3
+ 1694 0a7c E129F003 		.4byte	.LFE3-.LFB3
+ 1695              		.align	2
+ 1696              	.LEFDE2:
  445:../lib/io_driver.c **** 	unsigned long _cmsr = get_cmsr();
  446:../lib/io_driver.c **** 	_cmsr = _cmsr & ~(1<<CMSR_FIQ) &~(1<<CMSR_IRQ);
  447:../lib/io_driver.c **** 	set_cmsr(_cmsr);
  448:../lib/io_driver.c **** }
- 1681              		.align	2
- 1682 0a68 E12FFF1E 	.LEFDE2:
- 1683              	.LSFDE4:
- 1684              		.4byte	.LEFDE4-.LASFDE4
- 1685              	.LASFDE4:
- 1686              		.4byte	.Lframe0
- 1687              		.4byte	.LFB4
- 1688              		.4byte	.LFE4-.LFB4
- 1689              		.align	2
+ 1697              	FDE4-.LASFDE4
+ 1698 0a80 E12FFF1E 	.LASFDE4:
+ 1699              		.4byte	.Lframe0
+ 1700              		.4byte	.LFB4
+ 1701              		.4byte	.LFE4-.LFB4
+ 1702              		.align	2
+ 1703              	.LEFDE4:
+ 1704              	.LSFDE6:
+ 1705              		.4byte	.LEFDE6-.LASFDE6
  449:../lib/io_driver.c **** 
  450:../lib/io_driver.c **** // ******************************************************************************
  451:../lib/io_driver.c **** // Disable all global IBTs
  452:../lib/io_driver.c ****    void io_disable_xint(void)
  453:../lib/io_driver.c **** // ******************************************************************************
  454:../lib/io_driver.c **** {
- 1690              	.LSFDE6:
- 1691              		.4byte	.LEFDE6-.LASFDE6
- 1692              	.LASFDE6:
- 1693              		.4byte	.Lframe0
- 1694              		.4byte	.LFB5
- 1695              		.4byte	.LFE5-.LFB5
- 1696              		.align	2
- 1697              	.LEFDE6:
- 1698 0a6c E10F3000 	.LSFDE8:
- 1699              		.4byte	.LEFDE8-.LASFDE8
- 1700              	.LASFDE8:
- 1701              		.4byte	.Lframe0
- 1702              		.4byte	.LFB6
- 1703              		.4byte	.LFE6-.LFB6
- 1704              		.align	2
- 1705 0a70 E38330C0 	.LEFDE8:
- 1706              	.LSFDE10:
- 1707 0a74 E129F003 		.4byte	.LEFDE10-.LASFDE10
- 1708              	.LASFDE10:
- 1709              		.4byte	.Lframe0
+ 1706              	
+ 1707              		.4byte	.Lframe0
+ 1708              		.4byte	.LFB5
+ 1709              		.4byte	.LFE5-.LFB5
+ 1710              		.align	2
+ 1711              	.LEFDE6:
+ 1712              	.LSFDE8:
+ 1713              		.4byte	.LEFDE8-.LASFDE8
+ 1714 0a84 E10F3000 	.LASFDE8:
+ 1715              		.4byte	.Lframe0
+ 1716              		.4byte	.LFB6
+ 1717              		.4byte	.LFE6-.LFB6
+ 1718              		.align	2
+ 1719              	.LEFDE8:
+ 1720              	.LSFDE10:
+ 1721 0a88 E38330C0 		.4byte	.LEFDE10-.LASFDE10
+ 1722              	.LASFDE10:
+ 1723 0a8c E129F003 		.4byte	.Lframe0
+ 1724              		.4byte	.LFB7
+ 1725              		.4byte	.LFE7-.LFB7
  455:../lib/io_driver.c **** 	unsigned long _cmsr = get_cmsr();
  456:../lib/io_driver.c **** 	_cmsr = _cmsr | (1<<CMSR_FIQ) | (1<<CMSR_IRQ);
  457:../lib/io_driver.c **** 	set_cmsr(_cmsr);
  458:../lib/io_driver.c **** }
- 1710              	e	.LFE7-.LFB7
- 1711 0a78 E12FFF1E 		.align	2
- 1712              	.LEFDE10:
- 1713              	.LSFDE12:
- 2081              		.4byte	.LVL17-.Ltext0
+ 1726              	
+ 1727 0a90 E12FFF1E 	.LSFDE12:
+ 1728              		.4byte	.LEFDE12-.LASFDE12
+ 1729              	.LASFDE12:
+ 2093              		.2byte	0x1
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:13     .text:00000000 io_read_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:22     .text:00000000 $a
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:39     .text:00000018 io_read_gpio0_port
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:59     .text:00000024 io_set_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:85     .text:00000040 io_clr_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:111    .text:00000064 io_toggle_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:137    .text:00000080 io_set_gpio0_port
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:157    .text:0000008c io_set_pwm
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:229    .text:00000108 io_get_pwm
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:282    .text:00000158 io_uart0_read_byte
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:306    .text:00000170 io_uart0_send_byte
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:331    .text:0000018c io_spi0_config
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:361    .text:000001b0 io_spi0_speed
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:381    .text:000001bc io_spi0_trans
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:418    .text:000001f4 io_spi0_enable
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:444    .text:00000210 io_spi0_disable
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:470    .text:00000234 io_i2c0_speed
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:503    .text:00000260 io_i2c0_byte_transfer
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:647    .text:00000390 get_syscpreg
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:662    .text:000003a0 $d
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:679    .text:000003e0 $a
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:785    .text:00000468 set_syscpreg
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:804    .text:0000047c $d
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:814    .text:0000049c $a
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:834    .text:000004bc uart0_printf
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:874    .text:000004f4 uart0_scanf
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:936    .text:00000544 uart0_print_buffer
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:966    .text:00000568 memTestDataBus
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:997    .text:0000058c memTestAddressBus
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1180   .text:000006fc memTestDevice1
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1241   .text:00000760 memTestDevice2
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1310   .text:000007d0 long_to_hex_string
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1414   .text:00000840 memtest_run
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1549   .text:00000978 $d
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1578   .text:000009a0 main
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1583   .text:000009a0 $a
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1648   .text:00000a44 $d
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1659   .text:00000a5c io_enable_xint
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1669   .text:00000a5c $a
-C:\Users\jh\AppData\Local\Temp/ccyMcaaa.s:1688   .text:00000a6c io_disable_xint
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:13     .text:00000000 io_read_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:22     .text:00000000 $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:39     .text:00000018 io_read_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:59     .text:00000024 io_set_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:85     .text:00000040 io_clr_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:111    .text:00000064 io_toggle_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:137    .text:00000080 io_set_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:157    .text:0000008c io_set_pwm
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:229    .text:00000108 io_get_pwm
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:282    .text:00000158 io_uart0_read_byte
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:306    .text:00000170 io_uart0_send_byte
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:331    .text:0000018c io_spi0_config
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:361    .text:000001b0 io_spi0_speed
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:381    .text:000001bc io_spi0_trans
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:418    .text:000001f4 io_spi0_enable
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:444    .text:00000210 io_spi0_disable
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:470    .text:00000234 io_i2c0_speed
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:503    .text:00000260 io_i2c0_byte_transfer
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:647    .text:00000390 get_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:662    .text:000003a0 $d
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:679    .text:000003e0 $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:785    .text:00000468 set_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:804    .text:0000047c $d
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:814    .text:0000049c $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:834    .text:000004bc uart0_printf
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:879    .text:000004f4 uart0_scanf
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:946    .text:0000054c $d
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:952    .text:00000550 uart0_print_buffer
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:958    .text:00000550 $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:982    .text:00000574 memTestDataBus
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1013   .text:00000598 memTestAddressBus
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1196   .text:00000708 memTestDevice1
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1257   .text:0000076c memTestDevice2
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1326   .text:000007dc long_to_hex_string
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1425   .text:0000084c memtest_run
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1560   .text:00000984 $d
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1589   .text:000009ac main
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1594   .text:000009ac $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1664   .text:00000a5c $d
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1675   .text:00000a74 io_enable_xint
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1685   .text:00000a74 $a
+C:\Users\jh\AppData\Local\Temp/ccqWaaaa.s:1704   .text:00000a84 io_disable_xint
 
 NO UNDEFINED SYMBOLS

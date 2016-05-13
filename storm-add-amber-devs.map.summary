@@ -1,14 +1,14 @@
-Analysis & Synthesis Status : Successful - Wed May 11 19:39:53 2016
+Analysis & Synthesis Status : Successful - Thu May 12 09:35:53 2016
 Quartus II 64-Bit Version : 13.0.1 Build 232 06/12/2013 SP 1 SJ Web Edition
 Revision Name : storm-add-amber-devs
 Top-level Entity Name : STORM_SoC_basic
 Family : Cyclone IV E
-Total logic elements : 19,183
-    Total combinational functions : 13,707
-    Dedicated logic registers : 9,259
-Total registers : 9259
+Total logic elements : 24,779
+    Total combinational functions : 15,564
+    Dedicated logic registers : 13,986
+Total registers : 13986
 Total pins : 101
 Total virtual pins : 0
-Total memory bits : 471,296
+Total memory bits : 498,432
 Embedded Multiplier 9-bit elements : 6
 Total PLLs : 1

@@ -264,7 +264,7 @@ begin
 	-- -----------------------------------------------------------------------------------------------------------
 		ARBITER_ASYNC: process(ARB_STATE,  STORM_MODE_I, FREEZE_FLAG, BASE_BUF,   TIMEOUT_CNT, IO_ACCESS,  BIT_BUF,    WORD_BUF,  PROTECTED_IO_I,
 		                       DC_ADR_BUF, DC_P_ADR_BUF, DC_P_ADR_I,  PAGE_BUF,   DC_D_SEL_I,  DC_A_SEL_I, DC_DIRTY_I, DC_MISS_I, DC_P_WE_I,      DC_P_CS_I,
-		                       IC_ADR_BUF, IC_P_ADR_BUF, IC_MISS_I,
+		                       IC_ADR_BUF, IC_P_ADR_BUF, IC_MISS_I, WB_HALT_I, 
 		                       WB_ADR_BUF, WB_ACK_BUF,   WB_ACK_I,    WB_ACK_CNT, WB_ERR_BUF,  C_BUS_CYCC_I)
 			variable IF_BASE_ADR_V, DF_BASE_ADR_V : STD_LOGIC_VECTOR(31 downto 0);
 		begin
