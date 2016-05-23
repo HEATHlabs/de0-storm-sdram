@@ -365,10 +365,10 @@ begin
 						IC_MSS_ACK_O    <= '1'; -- ack miss!
 						WB_CYC_O_NXT    <= '0'; -- terminate cycle
 						WB_STB_O_NXT    <= '0'; -- terminate cycle
-					elsif (WB_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (I_CACHE_PAGE_SIZE-1)*4)) then
+					elsif ((WB_HALT_I = '0') and (WB_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (I_CACHE_PAGE_SIZE-1)*4))) then
 						WB_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(WB_ADR_BUF) + 4); -- inc counter
 					end if;
-					if (IC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + I_CACHE_PAGE_SIZE*4)) and
+					if ((WB_HALT_I = '0') and (IC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + I_CACHE_PAGE_SIZE*4))) and
 					   (WB_ACK_BUF = '1') then
 						IC_CS_O <= '1';
 						IC_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(IC_ADR_BUF) + 4); -- inc counter
@@ -404,10 +404,10 @@ begin
 						DC_MSS_ACK_O    <= '1'; -- ack miss!
 						WB_CYC_O_NXT    <= '0'; -- terminate cycle
 						WB_STB_O_NXT    <= '0'; -- terminate cycle
-					elsif (WB_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (D_CACHE_PAGE_SIZE-1)*4)) then
+					elsif ((WB_HALT_I = '0') and (WB_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (D_CACHE_PAGE_SIZE-1)*4))) then
 						WB_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(WB_ADR_BUF) + 4); -- inc counter
 					end if;
-					if (DC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + D_CACHE_PAGE_SIZE*4)) and
+					if ((WB_HALT_I = '0') and (DC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + D_CACHE_PAGE_SIZE*4))) and
 					   (WB_ACK_BUF = '1') then
 						DC_CS_O <= '1';
 						DC_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(DC_ADR_BUF) + 4); -- inc counter
@@ -493,7 +493,7 @@ begin
 							DC_DRT_ACK_O <= '1'; -- ack of dirty signal
 						end if;
 					end if;
-					if (DC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (D_CACHE_PAGE_SIZE-1)*4)) then
+					if ((WB_ACK_I = '1') and (DC_ADR_BUF < Std_Logic_Vector(unsigned(BASE_BUF) + (D_CACHE_PAGE_SIZE-1)*4))) then --JH
 						DC_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(DC_ADR_BUF) + 4); -- inc mem pointer
 						WB_ADR_BUF_NXT <= Std_Logic_Vector(unsigned(WB_ADR_BUF) + 4); -- inc wb pointer
 					end if;
