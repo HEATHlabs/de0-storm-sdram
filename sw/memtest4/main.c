@@ -24,7 +24,7 @@
 #define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 //#define NUM_BYTES     ( 32 * 1024 )
-#define CYCLES	25
+#define CYCLES	1
 
 // ############################################################################################
 // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
@@ -69,7 +69,8 @@ main(void)
 {
     int i, result = 0;
 	unsigned char str[10]="\0";
-	
+	volatile datum * address;
+	datum pattern;
 	datum *result_ptr=NULL;
 	
 
@@ -80,8 +81,22 @@ main(void)
      uart0_printf("Number of Bytes to test:  ");
      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
      uart0_printf(str);uart0_printf("\r\n");
+	 
+	 // write known pattern to memory
+	 uart0_printf ("clearing memory \n\r");
+	 address = 0x04000000;
+	for (pattern = 0x04000000 ; pattern < (0x04000000+NUM_BYTES); pattern = pattern+4 )
+    {
+        /*
+         * Write the "address" pattern.
+         */
+        * address = pattern;
+		address = address + 1;
+    }
+	
+	uart0_printf ("testing started \n\r");
   for (i=0; i<CYCLES; i++) {	
-    memtest_run();
+ //   memtest_run();
    } //for
    
    uart0_printf ("testing done \n\r");

@@ -21,7 +21,7 @@ LOAD d:/winarm/bin/../lib/gcc/arm-elf/4.1.1/../../../../arm-elf/lib/be\libc.a
 END GROUP
                 0x00004000                STACK_SIZE = 0x4000
 
-.text           0x00000000      0xe48
+.text           0x00000000      0xd24
  *storm_startup_code.o(.text)
  .text          0x00000000      0x290 build/storm_startup_code.o
                 0x00000100                reset
@@ -33,7 +33,7 @@ END GROUP
                 0x00000100                exit
                 0x00000050                start
  *(.text)
- .text          0x00000290      0xa94 main.o
+ .text          0x00000290      0x9d8 main.o
                 0x000004a0                io_spi0_disable
                 0x000002b4                io_set_gpio0_pin
                 0x000002f4                io_toggle_gpio0_pin
@@ -46,13 +46,13 @@ END GROUP
                 0x00000440                io_spi0_speed
                 0x00000784                uart0_scanf
                 0x00000484                io_spi0_enable
-                0x00000d04                io_enable_xint
+                0x00000c48                io_enable_xint
                 0x0000044c                io_spi0_trans
                 0x000004f0                io_i2c0_byte_transfer
                 0x000006f8                set_syscpreg
                 0x000007e0                uart0_print_buffer
                 0x0000074c                uart0_printf
-                0x00000c3c                main
+                0x00000b68                main
                 0x00000a6c                long_to_hex_string
                 0x00000998                memTestDevice1
                 0x0000031c                io_set_pwm
@@ -60,54 +60,54 @@ END GROUP
                 0x000003e8                io_uart0_read_byte
                 0x0000041c                io_spi0_config
                 0x00000400                io_uart0_send_byte
-                0x00000d14                io_disable_xint
+                0x00000c58                io_disable_xint
                 0x00000828                memTestAddressBus
                 0x00000290                io_read_gpio0_pin
                 0x000002a8                io_read_gpio0_port
                 0x00000398                io_get_pwm
  *(.rodata)
- .rodata        0x00000d24        0x4 main.o
+ .rodata        0x00000c68        0x4 main.o
  *(.rodata*)
  .rodata.str1.4
-                0x00000d28      0x120 main.o
-                                0x124 (size before relaxing)
+                0x00000c6c       0xb8 main.o
+                                 0xbc (size before relaxing)
  *(.glue_7)
- .glue_7        0x00000e48        0x0 build/storm_startup_code.o
- .glue_7        0x00000e48        0x0 main.o
+ .glue_7        0x00000d24        0x0 build/storm_startup_code.o
+ .glue_7        0x00000d24        0x0 main.o
  *(.glue_7t)
- .glue_7t       0x00000e48        0x0 build/storm_startup_code.o
- .glue_7t       0x00000e48        0x0 main.o
-                0x00000e48                . = ALIGN (0x4)
-                0x00000e48                _etext = .
-                0x00000e48                PROVIDE (etext, .)
+ .glue_7t       0x00000d24        0x0 build/storm_startup_code.o
+ .glue_7t       0x00000d24        0x0 main.o
+                0x00000d24                . = ALIGN (0x4)
+                0x00000d24                _etext = .
+                0x00000d24                PROVIDE (etext, .)
 
-.data           0x00000e48        0x0
-                0x00000e48                _data = .
+.data           0x00000d24        0x0
+                0x00000d24                _data = .
  *(.data)
- .data          0x00000e48        0x0 build/storm_startup_code.o
- .data          0x00000e48        0x0 main.o
-                0x00000e48                . = ALIGN (0x4)
-                0x00000e48                _edata = .
-                0x00000e48                PROVIDE (edata, .)
+ .data          0x00000d24        0x0 build/storm_startup_code.o
+ .data          0x00000d24        0x0 main.o
+                0x00000d24                . = ALIGN (0x4)
+                0x00000d24                _edata = .
+                0x00000d24                PROVIDE (edata, .)
 
-.bss            0x00000e48        0x0
-                0x00000e48                __bss_start = .
-                0x00000e48                __bss_start__ = .
+.bss            0x00000d24        0x0
+                0x00000d24                __bss_start = .
+                0x00000d24                __bss_start__ = .
  *(.bss)
- .bss           0x00000e48        0x0 build/storm_startup_code.o
- .bss           0x00000e48        0x0 main.o
+ .bss           0x00000d24        0x0 build/storm_startup_code.o
+ .bss           0x00000d24        0x0 main.o
  *(COMMON)
-                0x00000e48                . = ALIGN (0x4)
-                0x00000e48                . = ALIGN (0x4)
-                0x00000e48                __bss_end__ = .
-                0x00000e48                PROVIDE (__bss_end, .)
+                0x00000d24                . = ALIGN (0x4)
+                0x00000d24                . = ALIGN (0x4)
+                0x00000d24                __bss_end__ = .
+                0x00000d24                PROVIDE (__bss_end, .)
 
-.stack          0x00000f00     0x4000
-                0x00004f00                . = (. + STACK_SIZE)
- *fill*         0x00000f00     0x4000 00
-                0x00004f00                PROVIDE (_stack, .)
-                0x00004f00                _end = .
-                0x00004f00                PROVIDE (end, .)
+.stack          0x00000e00     0x4000
+                0x00004e00                . = (. + STACK_SIZE)
+ *fill*         0x00000e00     0x4000 00
+                0x00004e00                PROVIDE (_stack, .)
+                0x00004e00                _end = .
+                0x00004e00                PROVIDE (end, .)
 
 .stab
  *(.stab)
@@ -156,20 +156,20 @@ END GROUP
  .debug_pubnames
                 0x00000000      0x26d main.o
 
-.debug_info     0x00000000      0x8f1
+.debug_info     0x00000000      0x907
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0x63 build/storm_startup_code.o
- .debug_info    0x00000063      0x88e main.o
+ .debug_info    0x00000063      0x8a4 main.o
 
-.debug_abbrev   0x00000000      0x27d
+.debug_abbrev   0x00000000      0x28a
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x14 build/storm_startup_code.o
- .debug_abbrev  0x00000014      0x269 main.o
+ .debug_abbrev  0x00000014      0x276 main.o
 
-.debug_line     0x00000000      0x38f
+.debug_line     0x00000000      0x38a
  *(.debug_line)
  .debug_line    0x00000000       0xeb build/storm_startup_code.o
- .debug_line    0x000000eb      0x2a4 main.o
+ .debug_line    0x000000eb      0x29f main.o
 
 .debug_frame    0x00000000      0x268
  *(.debug_frame)
@@ -180,9 +180,9 @@ END GROUP
  .debug_str     0x00000000      0x339 main.o
                                 0x369 (size before relaxing)
 
-.debug_loc      0x00000000      0x847
+.debug_loc      0x00000000      0x826
  *(.debug_loc)
- .debug_loc     0x00000000      0x847 main.o
+ .debug_loc     0x00000000      0x826 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
