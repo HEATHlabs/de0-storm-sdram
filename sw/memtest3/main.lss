@@ -3,27 +3,27 @@ main.elf:     file format elf32-bigarm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000df4  00000000  00000000  00008000  2**2
+  0 .text         00000df8  00000000  00000000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .stack        00004000  00000e00  00000e00  00008df4  2**0
+  1 .stack        00004000  00000e00  00000e00  00008df8  2**0
                   ALLOC
-  2 .comment      0000001b  00000000  00000000  00008df4  2**0
+  2 .comment      0000001b  00000000  00000000  00008df8  2**0
                   CONTENTS, READONLY
-  3 .debug_aranges 00000040  00000000  00000000  00008e10  2**3
+  3 .debug_aranges 00000040  00000000  00000000  00008e18  2**3
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_pubnames 0000025d  00000000  00000000  00008e50  2**0
+  4 .debug_pubnames 0000025d  00000000  00000000  00008e58  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000008b2  00000000  00000000  000090ad  2**0
+  5 .debug_info   000008b2  00000000  00000000  000090b5  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000275  00000000  00000000  0000995f  2**0
+  6 .debug_abbrev 00000275  00000000  00000000  00009967  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000366  00000000  00000000  00009bd4  2**0
+  7 .debug_line   0000036c  00000000  00000000  00009bdc  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  0000024c  00000000  00000000  00009f3c  2**2
+  8 .debug_frame  0000024c  00000000  00000000  00009f48  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000032d  00000000  00000000  0000a188  2**0
+  9 .debug_str    0000032d  00000000  00000000  0000a194  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    00000827  00000000  00000000  0000a4b5  2**0
+ 10 .debug_loc    0000081c  00000000  00000000  0000a4c1  2**0
                   CONTENTS, READONLY, DEBUGGING
 Disassembly of section .text:
 
@@ -516,7 +516,7 @@ uart0_send_byte:
 		mov   pc, lr
  27c:	e1a0f00e 	mov	pc, lr
  280:	00004e00 	andeq	r4, r0, r0, lsl #28
- 284:	00000ad0 	ldreqd	r0, [r0], -r0
+ 284:	00000adc 	ldreqd	r0, [r0], -ip
  288:	ffff001c 	undefined instruction 0xffff001c
  28c:	ffff0018 	undefined instruction 0xffff0018
 
@@ -1309,7 +1309,7 @@ uart0_send_byte:
  788:	e2514000 	subs	r4, r1, #0	; 0x0
  78c:	e1a05000 	mov	r5, r0
  790:	e20260ff 	and	r6, r2, #255	; 0xff
- 794:	d8bd8070 	ldmleia	sp!, {r4, r5, r6, pc}
+ 794:	da00000b 	ble	7c8 <uart0_scanf+0x44>
 		temp = io_uart0_read_byte();
  798:	ebffff12 	bl	3e8 <io_uart0_read_byte>
 		if(temp != -1){
@@ -1324,47 +1324,51 @@ uart0_send_byte:
 				io_uart0_send_byte(temp); // echo
  7b0:	e1a00003 	mov	r0, r3
  7b4:	e2855001 	add	r5, r5, #1	; 0x1
- 7b8:	0a000003 	beq	7cc <uart0_scanf+0x48>
+ 7b8:	0a000005 	beq	7d4 <uart0_scanf+0x50>
 			length--;
  7bc:	e2444001 	sub	r4, r4, #1	; 0x1
  7c0:	e3540000 	cmp	r4, #0	; 0x0
  7c4:	cafffff3 	bgt	798 <uart0_scanf+0x14>
- 7c8:	e8bd8070 	ldmia	sp!, {r4, r5, r6, pc}
- 7cc:	ebffff0b 	bl	400 <io_uart0_send_byte>
- 7d0:	eafffff9 	b	7bc <uart0_scanf+0x38>
-
-000007d4 <uart0_print_buffer>:
 		}
 	}
+	*buffer="\0";
+ 7c8:	e59f300c 	ldr	r3, [pc, #12]	; 7dc <.text+0x7dc>
+ 7cc:	e5c53000 	strb	r3, [r5]
 }
+ 7d0:	e8bd8070 	ldmia	sp!, {r4, r5, r6, pc}
+ 7d4:	ebffff09 	bl	400 <io_uart0_send_byte>
+ 7d8:	eafffff7 	b	7bc <uart0_scanf+0x38>
+ 7dc:	00000ce4 	andeq	r0, r0, r4, ror #25
+
+000007e0 <uart0_print_buffer>:
 
 // ############################################################################################
 // Print character buffer via UART 0
    void uart0_print_buffer(unsigned char *buffer, int size)
 // ############################################################################################
 {
- 7d4:	e92d4030 	stmdb	sp!, {r4, r5, lr}
+ 7e0:	e92d4030 	stmdb	sp!, {r4, r5, lr}
 	unsigned char char_buffer = 0;
 	while(size > 0){
- 7d8:	e2514000 	subs	r4, r1, #0	; 0x0
- 7dc:	e1a05000 	mov	r5, r0
- 7e0:	d8bd8030 	ldmleia	sp!, {r4, r5, pc}
+ 7e4:	e2514000 	subs	r4, r1, #0	; 0x0
+ 7e8:	e1a05000 	mov	r5, r0
+ 7ec:	d8bd8030 	ldmleia	sp!, {r4, r5, pc}
 		char_buffer = *buffer++;
 		io_uart0_send_byte((int)char_buffer);
- 7e4:	e4d50001 	ldrb	r0, [r5], #1
- 7e8:	ebffff04 	bl	400 <io_uart0_send_byte>
- 7ec:	e2544001 	subs	r4, r4, #1	; 0x1
- 7f0:	1afffffb 	bne	7e4 <uart0_print_buffer+0x10>
- 7f4:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
+ 7f0:	e4d50001 	ldrb	r0, [r5], #1
+ 7f4:	ebffff01 	bl	400 <io_uart0_send_byte>
+ 7f8:	e2544001 	subs	r4, r4, #1	; 0x1
+ 7fc:	1afffffb 	bne	7f0 <uart0_print_buffer+0x10>
+ 800:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
 
-000007f8 <memTestDataBus>:
+00000804 <memTestDataBus>:
  *
  **********************************************************************/
 datum
 memTestDataBus(volatile datum * address)
 {
- 7f8:	e1a02000 	mov	r2, r0
- 7fc:	e3a00001 	mov	r0, #1	; 0x1
+ 804:	e1a02000 	mov	r2, r0
+ 808:	e3a00001 	mov	r0, #1	; 0x1
     datum pattern;
 
 
@@ -1377,17 +1381,17 @@ memTestDataBus(volatile datum * address)
          * Write the test pattern.
          */
         *address = pattern;
- 800:	e5820000 	str	r0, [r2]
+ 80c:	e5820000 	str	r0, [r2]
 
         /*
          * Read it back (immediately is okay for this test).
          */
         if (*address != pattern) 
- 804:	e5923000 	ldr	r3, [r2]
- 808:	e1530000 	cmp	r3, r0
- 80c:	112fff1e 	bxne	lr
- 810:	e1b00080 	movs	r0, r0, lsl #1
- 814:	1afffff9 	bne	800 <memTestDataBus+0x8>
+ 810:	e5923000 	ldr	r3, [r2]
+ 814:	e1530000 	cmp	r3, r0
+ 818:	112fff1e 	bxne	lr
+ 81c:	e1b00080 	movs	r0, r0, lsl #1
+ 820:	1afffff9 	bne	80c <memTestDataBus+0x8>
         {
             return (pattern);
         }
@@ -1396,9 +1400,9 @@ memTestDataBus(volatile datum * address)
     return (0);
 
 }   /* memTestDataBus() */
- 818:	e12fff1e 	bx	lr
+ 824:	e12fff1e 	bx	lr
 
-0000081c <memTestAddressBus>:
+00000828 <memTestAddressBus>:
 
 
 /**********************************************************************
@@ -1430,9 +1434,9 @@ datum *
 memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
 {
     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
- 81c:	e1a01121 	mov	r1, r1, lsr #2
- 820:	e92d4030 	stmdb	sp!, {r4, r5, lr}
- 824:	e241e001 	sub	lr, r1, #1	; 0x1
+ 828:	e1a01121 	mov	r1, r1, lsr #2
+ 82c:	e92d4030 	stmdb	sp!, {r4, r5, lr}
+ 830:	e241e001 	sub	lr, r1, #1	; 0x1
     unsigned long offset;
     unsigned long testOffset;
 
@@ -1444,19 +1448,19 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
      * Write the default pattern at each of the power-of-two offsets.
      */
     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
- 828:	e21e1001 	ands	r1, lr, #1	; 0x1
- 82c:	0a00004a 	beq	95c <memTestAddressBus+0x140>
- 830:	e3a01caa 	mov	r1, #43520	; 0xaa00
- 834:	e28110aa 	add	r1, r1, #170	; 0xaa
- 838:	e1811801 	orr	r1, r1, r1, lsl #16
- 83c:	e3a02001 	mov	r2, #1	; 0x1
+ 834:	e21e1001 	ands	r1, lr, #1	; 0x1
+ 838:	0a00004a 	beq	968 <memTestAddressBus+0x140>
+ 83c:	e3a01caa 	mov	r1, #43520	; 0xaa00
+ 840:	e28110aa 	add	r1, r1, #170	; 0xaa
+ 844:	e1811801 	orr	r1, r1, r1, lsl #16
+ 848:	e3a02001 	mov	r2, #1	; 0x1
     {
         baseAddress[offset] = pattern;
- 840:	e1a03102 	mov	r3, r2, lsl #2
- 844:	e1a02082 	mov	r2, r2, lsl #1
- 848:	e11e0002 	tst	lr, r2
- 84c:	e7801003 	str	r1, [r0, r3]
- 850:	1afffffa 	bne	840 <memTestAddressBus+0x24>
+ 84c:	e1a03102 	mov	r3, r2, lsl #2
+ 850:	e1a02082 	mov	r2, r2, lsl #1
+ 854:	e11e0002 	tst	lr, r2
+ 858:	e7801003 	str	r1, [r0, r3]
+ 85c:	1afffffa 	bne	84c <memTestAddressBus+0x24>
     }
 
     /* 
@@ -1464,39 +1468,39 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
      */
     testOffset = 0;
     baseAddress[testOffset] = antipattern;
- 854:	e3a03c55 	mov	r3, #21760	; 0x5500
- 858:	e2833055 	add	r3, r3, #85	; 0x55
- 85c:	e1a05000 	mov	r5, r0
- 860:	e1833803 	orr	r3, r3, r3, lsl #16
- 864:	e4853004 	str	r3, [r5], #4
+ 860:	e3a03c55 	mov	r3, #21760	; 0x5500
+ 864:	e2833055 	add	r3, r3, #85	; 0x55
+ 868:	e1a05000 	mov	r5, r0
+ 86c:	e1833803 	orr	r3, r3, r3, lsl #16
+ 870:	e4853004 	str	r3, [r5], #4
 
     for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
     {
         if (baseAddress[offset] != pattern)
- 868:	e5902004 	ldr	r2, [r0, #4]
- 86c:	e1520001 	cmp	r2, r1
- 870:	11a0c005 	movne	ip, r5
- 874:	1a000035 	bne	950 <memTestAddressBus+0x134>
+ 874:	e5902004 	ldr	r2, [r0, #4]
+ 878:	e1520001 	cmp	r2, r1
+ 87c:	11a0c005 	movne	ip, r5
+ 880:	1a000035 	bne	95c <memTestAddressBus+0x134>
         {
             return ((datum *) &baseAddress[offset]);
- 878:	e3a01001 	mov	r1, #1	; 0x1
- 87c:	ea000002 	b	88c <memTestAddressBus+0x70>
- 880:	e7903003 	ldr	r3, [r0, r3]
- 884:	e1530002 	cmp	r3, r2
- 888:	1a000030 	bne	950 <memTestAddressBus+0x134>
- 88c:	e1a01081 	mov	r1, r1, lsl #1
- 890:	e3a02caa 	mov	r2, #43520	; 0xaa00
- 894:	e28220aa 	add	r2, r2, #170	; 0xaa
- 898:	e1a03101 	mov	r3, r1, lsl #2
- 89c:	e11e0001 	tst	lr, r1
- 8a0:	e1822802 	orr	r2, r2, r2, lsl #16
- 8a4:	e080c003 	add	ip, r0, r3
- 8a8:	1afffff4 	bne	880 <memTestAddressBus+0x64>
+ 884:	e3a01001 	mov	r1, #1	; 0x1
+ 888:	ea000002 	b	898 <memTestAddressBus+0x70>
+ 88c:	e7903003 	ldr	r3, [r0, r3]
+ 890:	e1530002 	cmp	r3, r2
+ 894:	1a000030 	bne	95c <memTestAddressBus+0x134>
+ 898:	e1a01081 	mov	r1, r1, lsl #1
+ 89c:	e3a02caa 	mov	r2, #43520	; 0xaa00
+ 8a0:	e28220aa 	add	r2, r2, #170	; 0xaa
+ 8a4:	e1a03101 	mov	r3, r1, lsl #2
+ 8a8:	e11e0001 	tst	lr, r1
+ 8ac:	e1822802 	orr	r2, r2, r2, lsl #16
+ 8b0:	e080c003 	add	ip, r0, r3
+ 8b4:	1afffff4 	bne	88c <memTestAddressBus+0x64>
         }
     }
 
     baseAddress[testOffset] = pattern;
- 8ac:	e3a03caa 	mov	r3, #43520	; 0xaa00
+ 8b8:	e3a03caa 	mov	r3, #43520	; 0xaa00
 
     /*
      * Check for address bits stuck low or shorted.
@@ -1504,20 +1508,20 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
     for (testOffset = 1; (testOffset & addressMask) != 0; testOffset <<= 1)
     {
         baseAddress[testOffset] = antipattern;
- 8b0:	e3a02c55 	mov	r2, #21760	; 0x5500
- 8b4:	e28330aa 	add	r3, r3, #170	; 0xaa
- 8b8:	e2822055 	add	r2, r2, #85	; 0x55
- 8bc:	e1833803 	orr	r3, r3, r3, lsl #16
- 8c0:	e1822802 	orr	r2, r2, r2, lsl #16
- 8c4:	e5803000 	str	r3, [r0]
- 8c8:	e5852000 	str	r2, [r5]
+ 8bc:	e3a02c55 	mov	r2, #21760	; 0x5500
+ 8c0:	e28330aa 	add	r3, r3, #170	; 0xaa
+ 8c4:	e2822055 	add	r2, r2, #85	; 0x55
+ 8c8:	e1833803 	orr	r3, r3, r3, lsl #16
+ 8cc:	e1822802 	orr	r2, r2, r2, lsl #16
+ 8d0:	e5803000 	str	r3, [r0]
+ 8d4:	e5852000 	str	r2, [r5]
 
 		if (baseAddress[0] != pattern)
- 8cc:	e5901000 	ldr	r1, [r0]
- 8d0:	e1510003 	cmp	r1, r3
- 8d4:	03a04001 	moveq	r4, #1	; 0x1
- 8d8:	1a000019 	bne	944 <memTestAddressBus+0x128>
- 8dc:	e3a01001 	mov	r1, #1	; 0x1
+ 8d8:	e5901000 	ldr	r1, [r0]
+ 8dc:	e1510003 	cmp	r1, r3
+ 8e0:	03a04001 	moveq	r4, #1	; 0x1
+ 8e4:	1a000019 	bne	950 <memTestAddressBus+0x128>
+ 8e8:	e3a01001 	mov	r1, #1	; 0x1
 		{
 			return ((datum *) &baseAddress[testOffset]);
 		}
@@ -1525,62 +1529,62 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
         for (offset = 1; (offset & addressMask) != 0; offset <<= 1)
         {
             if ((baseAddress[offset] != pattern) && (offset != testOffset))
- 8e0:	e1a03101 	mov	r3, r1, lsl #2
- 8e4:	e3a0ccaa 	mov	ip, #43520	; 0xaa00
- 8e8:	e7902003 	ldr	r2, [r0, r3]
- 8ec:	e28cc0aa 	add	ip, ip, #170	; 0xaa
- 8f0:	e18cc80c 	orr	ip, ip, ip, lsl #16
- 8f4:	e152000c 	cmp	r2, ip
- 8f8:	0a000001 	beq	904 <memTestAddressBus+0xe8>
- 8fc:	e1510004 	cmp	r1, r4
- 900:	1a00000f 	bne	944 <memTestAddressBus+0x128>
- 904:	e1a01081 	mov	r1, r1, lsl #1
- 908:	e11e0001 	tst	lr, r1
- 90c:	1afffff3 	bne	8e0 <memTestAddressBus+0xc4>
- 910:	e1a04084 	mov	r4, r4, lsl #1
- 914:	e01e2004 	ands	r2, lr, r4
+ 8ec:	e1a03101 	mov	r3, r1, lsl #2
+ 8f0:	e3a0ccaa 	mov	ip, #43520	; 0xaa00
+ 8f4:	e7902003 	ldr	r2, [r0, r3]
+ 8f8:	e28cc0aa 	add	ip, ip, #170	; 0xaa
+ 8fc:	e18cc80c 	orr	ip, ip, ip, lsl #16
+ 900:	e152000c 	cmp	r2, ip
+ 904:	0a000001 	beq	910 <memTestAddressBus+0xe8>
+ 908:	e1510004 	cmp	r1, r4
+ 90c:	1a00000f 	bne	950 <memTestAddressBus+0x128>
+ 910:	e1a01081 	mov	r1, r1, lsl #1
+ 914:	e11e0001 	tst	lr, r1
+ 918:	1afffff3 	bne	8ec <memTestAddressBus+0xc4>
+ 91c:	e1a04084 	mov	r4, r4, lsl #1
+ 920:	e01e2004 	ands	r2, lr, r4
             {
                 return ((datum *) &baseAddress[testOffset]);
             }
         }
 
         baseAddress[testOffset] = pattern;
- 918:	e585c000 	str	ip, [r5]
- 91c:	0a000018 	beq	984 <memTestAddressBus+0x168>
- 920:	e3a03c55 	mov	r3, #21760	; 0x5500
- 924:	e2833055 	add	r3, r3, #85	; 0x55
- 928:	e1a01104 	mov	r1, r4, lsl #2
- 92c:	e1833803 	orr	r3, r3, r3, lsl #16
- 930:	e7803001 	str	r3, [r0, r1]
- 934:	e5902000 	ldr	r2, [r0]
- 938:	e152000c 	cmp	r2, ip
- 93c:	e0805001 	add	r5, r0, r1
- 940:	0affffe5 	beq	8dc <memTestAddressBus+0xc0>
- 944:	e1a01005 	mov	r1, r5
+ 924:	e585c000 	str	ip, [r5]
+ 928:	0a000018 	beq	990 <memTestAddressBus+0x168>
+ 92c:	e3a03c55 	mov	r3, #21760	; 0x5500
+ 930:	e2833055 	add	r3, r3, #85	; 0x55
+ 934:	e1a01104 	mov	r1, r4, lsl #2
+ 938:	e1833803 	orr	r3, r3, r3, lsl #16
+ 93c:	e7803001 	str	r3, [r0, r1]
+ 940:	e5902000 	ldr	r2, [r0]
+ 944:	e152000c 	cmp	r2, ip
+ 948:	e0805001 	add	r5, r0, r1
+ 94c:	0affffe5 	beq	8e8 <memTestAddressBus+0xc0>
+ 950:	e1a01005 	mov	r1, r5
     }
 
     return (NULL);
 
 }   /* memTestAddressBus() */
- 948:	e1a00001 	mov	r0, r1
- 94c:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
- 950:	e1a0100c 	mov	r1, ip
  954:	e1a00001 	mov	r0, r1
  958:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
- 95c:	e3a03c55 	mov	r3, #21760	; 0x5500
- 960:	e3a02caa 	mov	r2, #43520	; 0xaa00
- 964:	e2833055 	add	r3, r3, #85	; 0x55
- 968:	e28220aa 	add	r2, r2, #170	; 0xaa
- 96c:	e1833803 	orr	r3, r3, r3, lsl #16
- 970:	e1822802 	orr	r2, r2, r2, lsl #16
- 974:	e5803000 	str	r3, [r0]
- 978:	e5802000 	str	r2, [r0]
- 97c:	e1a00001 	mov	r0, r1
- 980:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
- 984:	e1a01002 	mov	r1, r2
- 988:	eaffffee 	b	948 <memTestAddressBus+0x12c>
+ 95c:	e1a0100c 	mov	r1, ip
+ 960:	e1a00001 	mov	r0, r1
+ 964:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
+ 968:	e3a03c55 	mov	r3, #21760	; 0x5500
+ 96c:	e3a02caa 	mov	r2, #43520	; 0xaa00
+ 970:	e2833055 	add	r3, r3, #85	; 0x55
+ 974:	e28220aa 	add	r2, r2, #170	; 0xaa
+ 978:	e1833803 	orr	r3, r3, r3, lsl #16
+ 97c:	e1822802 	orr	r2, r2, r2, lsl #16
+ 980:	e5803000 	str	r3, [r0]
+ 984:	e5802000 	str	r2, [r0]
+ 988:	e1a00001 	mov	r0, r1
+ 98c:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
+ 990:	e1a01002 	mov	r1, r2
+ 994:	eaffffee 	b	954 <memTestAddressBus+0x12c>
 
-0000098c <memTestDevice1>:
+00000998 <memTestDevice1>:
 
 
 /**********************************************************************
@@ -1618,17 +1622,17 @@ memTestDevice1(volatile datum * baseAddress, unsigned long nBytes)
      * Fill memory with a known pattern.
      */
     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
- 98c:	e1b01121 	movs	r1, r1, lsr #2
- 990:	0a000013 	beq	9e4 <memTestDevice1+0x58>
- 994:	e3a03001 	mov	r3, #1	; 0x1
- 998:	e1a02000 	mov	r2, r0
- 99c:	e081c003 	add	ip, r1, r3
+ 998:	e1b01121 	movs	r1, r1, lsr #2
+ 99c:	0a000013 	beq	9f0 <memTestDevice1+0x58>
+ 9a0:	e3a03001 	mov	r3, #1	; 0x1
+ 9a4:	e1a02000 	mov	r2, r0
+ 9a8:	e081c003 	add	ip, r1, r3
     {
         baseAddress[offset] = pattern;
- 9a0:	e4823004 	str	r3, [r2], #4
- 9a4:	e2833001 	add	r3, r3, #1	; 0x1
- 9a8:	e15c0003 	cmp	ip, r3
- 9ac:	1afffffb 	bne	9a0 <memTestDevice1+0x14>
+ 9ac:	e4823004 	str	r3, [r2], #4
+ 9b0:	e2833001 	add	r3, r3, #1	; 0x1
+ 9b4:	e15c0003 	cmp	ip, r3
+ 9b8:	1afffffb 	bne	9ac <memTestDevice1+0x14>
     }
 
     /*
@@ -1637,32 +1641,32 @@ memTestDevice1(volatile datum * baseAddress, unsigned long nBytes)
     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
     {
         if (baseAddress[offset] != pattern)
- 9b0:	e5903000 	ldr	r3, [r0]
- 9b4:	e3530001 	cmp	r3, #1	; 0x1
- 9b8:	112fff1e 	bxne	lr
+ 9bc:	e5903000 	ldr	r3, [r0]
+ 9c0:	e3530001 	cmp	r3, #1	; 0x1
+ 9c4:	112fff1e 	bxne	lr
         {
             return ((datum *) &baseAddress[offset]);
- 9bc:	e2802004 	add	r2, r0, #4	; 0x4
- 9c0:	e1a0c003 	mov	ip, r3
- 9c4:	ea000002 	b	9d4 <memTestDevice1+0x48>
- 9c8:	e4923004 	ldr	r3, [r2], #4
- 9cc:	e153000c 	cmp	r3, ip
- 9d0:	1a000005 	bne	9ec <memTestDevice1+0x60>
- 9d4:	e151000c 	cmp	r1, ip
- 9d8:	e1a00002 	mov	r0, r2
- 9dc:	e28cc001 	add	ip, ip, #1	; 0x1
- 9e0:	1afffff8 	bne	9c8 <memTestDevice1+0x3c>
- 9e4:	e3a00000 	mov	r0, #0	; 0x0
+ 9c8:	e2802004 	add	r2, r0, #4	; 0x4
+ 9cc:	e1a0c003 	mov	ip, r3
+ 9d0:	ea000002 	b	9e0 <memTestDevice1+0x48>
+ 9d4:	e4923004 	ldr	r3, [r2], #4
+ 9d8:	e153000c 	cmp	r3, ip
+ 9dc:	1a000005 	bne	9f8 <memTestDevice1+0x60>
+ 9e0:	e151000c 	cmp	r1, ip
+ 9e4:	e1a00002 	mov	r0, r2
+ 9e8:	e28cc001 	add	ip, ip, #1	; 0x1
+ 9ec:	1afffff8 	bne	9d4 <memTestDevice1+0x3c>
+ 9f0:	e3a00000 	mov	r0, #0	; 0x0
         }
  
     }
     return (NULL);
 
 }   /* memTestDevice1() */
- 9e8:	e12fff1e 	bx	lr
- 9ec:	e12fff1e 	bx	lr
+ 9f4:	e12fff1e 	bx	lr
+ 9f8:	e12fff1e 	bx	lr
 
-000009f0 <memTestDevice2>:
+000009fc <memTestDevice2>:
 datum * 
 memTestDevice2(volatile datum * baseAddress, unsigned long nBytes)	
 {
@@ -1676,20 +1680,20 @@ memTestDevice2(volatile datum * baseAddress, unsigned long nBytes)
      * Check each location and invert it for the second pass.
      */
     for (pattern = 1, offset = 0; offset < nWords; pattern++, offset++)
- 9f0:	e1b01121 	movs	r1, r1, lsr #2
- 9f4:	e52de004 	str	lr, [sp, #-4]!
- 9f8:	0a000015 	beq	a54 <memTestDevice2+0x64>
- 9fc:	e3a02001 	mov	r2, #1	; 0x1
- a00:	e1a0c000 	mov	ip, r0
- a04:	e081e002 	add	lr, r1, r2
+ 9fc:	e1b01121 	movs	r1, r1, lsr #2
+ a00:	e52de004 	str	lr, [sp, #-4]!
+ a04:	0a000015 	beq	a60 <memTestDevice2+0x64>
+ a08:	e3a02001 	mov	r2, #1	; 0x1
+ a0c:	e1a0c000 	mov	ip, r0
+ a10:	e081e002 	add	lr, r1, r2
     {
         antipattern = ~pattern;
- a08:	e1e03002 	mvn	r3, r2
- a0c:	e2822001 	add	r2, r2, #1	; 0x1
- a10:	e15e0002 	cmp	lr, r2
+ a14:	e1e03002 	mvn	r3, r2
+ a18:	e2822001 	add	r2, r2, #1	; 0x1
+ a1c:	e15e0002 	cmp	lr, r2
         baseAddress[offset] = antipattern;
- a14:	e48c3004 	str	r3, [ip], #4
- a18:	1afffffa 	bne	a08 <memTestDevice2+0x18>
+ a20:	e48c3004 	str	r3, [ip], #4
+ a24:	1afffffa 	bne	a14 <memTestDevice2+0x18>
     }
 
     /*
@@ -1699,51 +1703,51 @@ memTestDevice2(volatile datum * baseAddress, unsigned long nBytes)
     {
         antipattern = ~pattern;
         if (baseAddress[offset] != antipattern)
- a1c:	e5903000 	ldr	r3, [r0]
- a20:	e3730002 	cmn	r3, #2	; 0x2
- a24:	149df004 	ldrne	pc, [sp], #4
+ a28:	e5903000 	ldr	r3, [r0]
+ a2c:	e3730002 	cmn	r3, #2	; 0x2
+ a30:	149df004 	ldrne	pc, [sp], #4
         {
             return ((datum *) &baseAddress[offset]);
- a28:	e2802004 	add	r2, r0, #4	; 0x4
- a2c:	e3a0e001 	mov	lr, #1	; 0x1
- a30:	ea000002 	b	a40 <memTestDevice2+0x50>
- a34:	e4923004 	ldr	r3, [r2], #4
- a38:	e15c0003 	cmp	ip, r3
- a3c:	1a000006 	bne	a5c <memTestDevice2+0x6c>
- a40:	e151000e 	cmp	r1, lr
- a44:	e28ee001 	add	lr, lr, #1	; 0x1
- a48:	e1a00002 	mov	r0, r2
- a4c:	e1e0c00e 	mvn	ip, lr
- a50:	1afffff7 	bne	a34 <memTestDevice2+0x44>
- a54:	e3a00000 	mov	r0, #0	; 0x0
+ a34:	e2802004 	add	r2, r0, #4	; 0x4
+ a38:	e3a0e001 	mov	lr, #1	; 0x1
+ a3c:	ea000002 	b	a4c <memTestDevice2+0x50>
+ a40:	e4923004 	ldr	r3, [r2], #4
+ a44:	e15c0003 	cmp	ip, r3
+ a48:	1a000006 	bne	a68 <memTestDevice2+0x6c>
+ a4c:	e151000e 	cmp	r1, lr
+ a50:	e28ee001 	add	lr, lr, #1	; 0x1
+ a54:	e1a00002 	mov	r0, r2
+ a58:	e1e0c00e 	mvn	ip, lr
+ a5c:	1afffff7 	bne	a40 <memTestDevice2+0x44>
+ a60:	e3a00000 	mov	r0, #0	; 0x0
         }
     }
 
     return (NULL);
 
 }   /* memTestDevice2() */
- a58:	e49df004 	ldr	pc, [sp], #4
- a5c:	e49df004 	ldr	pc, [sp], #4
+ a64:	e49df004 	ldr	pc, [sp], #4
+ a68:	e49df004 	ldr	pc, [sp], #4
 
-00000a60 <long_to_hex_string>:
+00000a6c <long_to_hex_string>:
    void long_to_hex_string(unsigned long data,    // max 32 bit data word
                            unsigned char *buffer, // buffer to store the string
 						   unsigned char numbers) // number of places, max 8
 // ############################################################################################
 {
- a60:	e92d4010 	stmdb	sp!, {r4, lr}
- a64:	e20240ff 	and	r4, r2, #255	; 0xff
+ a6c:	e92d4010 	stmdb	sp!, {r4, lr}
+ a70:	e20240ff 	and	r4, r2, #255	; 0xff
 	unsigned char temp_char = 0;
 	unsigned long temp_data = 0;
 
 	// fit into range
 	if(numbers > 8)
- a68:	e3540008 	cmp	r4, #8	; 0x8
- a6c:	83a04008 	movhi	r4, #8	; 0x8
- a70:	8a000001 	bhi	a7c <long_to_hex_string+0x1c>
+ a74:	e3540008 	cmp	r4, #8	; 0x8
+ a78:	83a04008 	movhi	r4, #8	; 0x8
+ a7c:	8a000001 	bhi	a88 <long_to_hex_string+0x1c>
 		numbers = 8;
 	if(numbers < 1)
- a74:	e3540000 	cmp	r4, #0	; 0x0
+ a80:	e3540000 	cmp	r4, #0	; 0x0
 		numbers = 1;
 
 	while(numbers > 0){
@@ -1767,87 +1771,87 @@ memTestDevice2(volatile datum * baseAddress, unsigned long nBytes)
 
 	*buffer++ = 0; // terminate string
 }
- a78:	03a04001 	moveq	r4, #1	; 0x1
- a7c:	e1a02001 	mov	r2, r1
- a80:	e1a0e004 	mov	lr, r4
- a84:	e1a0310e 	mov	r3, lr, lsl #2
- a88:	e35e0001 	cmp	lr, #1	; 0x1
- a8c:	e2433004 	sub	r3, r3, #4	; 0x4
- a90:	e1a0c000 	mov	ip, r0
- a94:	81a0c330 	movhi	ip, r0, lsr r3
- a98:	e24e3001 	sub	r3, lr, #1	; 0x1
- a9c:	e20cc00f 	and	ip, ip, #15	; 0xf
- aa0:	e203e0ff 	and	lr, r3, #255	; 0xff
- aa4:	e35c0009 	cmp	ip, #9	; 0x9
- aa8:	e28c3030 	add	r3, ip, #48	; 0x30
- aac:	828c3037 	addhi	r3, ip, #55	; 0x37
- ab0:	e35e0000 	cmp	lr, #0	; 0x0
- ab4:	e4c23001 	strb	r3, [r2], #1
- ab8:	1afffff1 	bne	a84 <long_to_hex_string+0x24>
- abc:	e2443001 	sub	r3, r4, #1	; 0x1
- ac0:	e20330ff 	and	r3, r3, #255	; 0xff
- ac4:	e0813003 	add	r3, r1, r3
- ac8:	e5c3e001 	strb	lr, [r3, #1]
- acc:	e8bd8010 	ldmia	sp!, {r4, pc}
+ a84:	03a04001 	moveq	r4, #1	; 0x1
+ a88:	e1a02001 	mov	r2, r1
+ a8c:	e1a0e004 	mov	lr, r4
+ a90:	e1a0310e 	mov	r3, lr, lsl #2
+ a94:	e35e0001 	cmp	lr, #1	; 0x1
+ a98:	e2433004 	sub	r3, r3, #4	; 0x4
+ a9c:	e1a0c000 	mov	ip, r0
+ aa0:	81a0c330 	movhi	ip, r0, lsr r3
+ aa4:	e24e3001 	sub	r3, lr, #1	; 0x1
+ aa8:	e20cc00f 	and	ip, ip, #15	; 0xf
+ aac:	e203e0ff 	and	lr, r3, #255	; 0xff
+ ab0:	e35c0009 	cmp	ip, #9	; 0x9
+ ab4:	e28c3030 	add	r3, ip, #48	; 0x30
+ ab8:	828c3037 	addhi	r3, ip, #55	; 0x37
+ abc:	e35e0000 	cmp	lr, #0	; 0x0
+ ac0:	e4c23001 	strb	r3, [r2], #1
+ ac4:	1afffff1 	bne	a90 <long_to_hex_string+0x24>
+ ac8:	e2443001 	sub	r3, r4, #1	; 0x1
+ acc:	e20330ff 	and	r3, r3, #255	; 0xff
+ ad0:	e0813003 	add	r3, r1, r3
+ ad4:	e5c3e001 	strb	lr, [r3, #1]
+ ad8:	e8bd8010 	ldmia	sp!, {r4, pc}
 
-00000ad0 <main>:
+00000adc <main>:
 
 int
 main(void)
 {
- ad0:	e92d4030 	stmdb	sp!, {r4, r5, lr}
+ adc:	e92d4030 	stmdb	sp!, {r4, r5, lr}
     int i, result = 0;
 	unsigned char str[10]="\0";
- ad4:	e59f31a8 	ldr	r3, [pc, #424]	; c84 <.text+0xc84>
- ad8:	e1d330b0 	ldrh	r3, [r3]
- adc:	e24dd00c 	sub	sp, sp, #12	; 0xc
- ae0:	e1cd30b2 	strh	r3, [sp, #2]
+ ae0:	e59f31a8 	ldr	r3, [pc, #424]	; c90 <.text+0xc90>
+ ae4:	e1d330b0 	ldrh	r3, [r3]
+ ae8:	e24dd00c 	sub	sp, sp, #12	; 0xc
+ aec:	e1cd30b2 	strh	r3, [sp, #2]
 	
 	datum *result_ptr=NULL;
 	
 
      uart0_printf("Starting MEMTEST tests\r\n");
- ae4:	e59f019c 	ldr	r0, [pc, #412]	; c88 <.text+0xc88>
- ae8:	e3a03000 	mov	r3, #0	; 0x0
- aec:	e1cd30b4 	strh	r3, [sp, #4]
- af0:	e1cd30b6 	strh	r3, [sp, #6]
- af4:	e1cd30b8 	strh	r3, [sp, #8]
- af8:	e1cd30ba 	strh	r3, [sp, #10]
+ af0:	e59f019c 	ldr	r0, [pc, #412]	; c94 <.text+0xc94>
+ af4:	e3a03000 	mov	r3, #0	; 0x0
+ af8:	e1cd30b4 	strh	r3, [sp, #4]
+ afc:	e1cd30b6 	strh	r3, [sp, #6]
+ b00:	e1cd30b8 	strh	r3, [sp, #8]
+ b04:	e1cd30ba 	strh	r3, [sp, #10]
      uart0_printf("BASE ADDRESS:  ");
      long_to_hex_string((unsigned long ) BASE_ADDRESS, str, 8);
- afc:	e28d5002 	add	r5, sp, #2	; 0x2
- b00:	ebffff11 	bl	74c <uart0_printf>
- b04:	e59f0180 	ldr	r0, [pc, #384]	; c8c <.text+0xc8c>
- b08:	ebffff0f 	bl	74c <uart0_printf>
- b0c:	e1a01005 	mov	r1, r5
- b10:	e3a02008 	mov	r2, #8	; 0x8
- b14:	e3a00401 	mov	r0, #16777216	; 0x1000000
- b18:	ebffffd0 	bl	a60 <long_to_hex_string>
+ b08:	e28d5002 	add	r5, sp, #2	; 0x2
+ b0c:	ebffff0e 	bl	74c <uart0_printf>
+ b10:	e59f0180 	ldr	r0, [pc, #384]	; c98 <.text+0xc98>
+ b14:	ebffff0c 	bl	74c <uart0_printf>
+ b18:	e1a01005 	mov	r1, r5
+ b1c:	e3a02008 	mov	r2, #8	; 0x8
+ b20:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ b24:	ebffffd0 	bl	a6c <long_to_hex_string>
      uart0_printf(str);uart0_printf("\r\n");
- b1c:	e1a00005 	mov	r0, r5
- b20:	ebffff09 	bl	74c <uart0_printf>
- b24:	e59f0164 	ldr	r0, [pc, #356]	; c90 <.text+0xc90>
- b28:	ebffff07 	bl	74c <uart0_printf>
+ b28:	e1a00005 	mov	r0, r5
+ b2c:	ebffff06 	bl	74c <uart0_printf>
+ b30:	e59f0164 	ldr	r0, [pc, #356]	; c9c <.text+0xc9c>
+ b34:	ebffff04 	bl	74c <uart0_printf>
      uart0_printf("Number of Bytes to test:  ");
- b2c:	e59f0160 	ldr	r0, [pc, #352]	; c94 <.text+0xc94>
- b30:	ebffff05 	bl	74c <uart0_printf>
+ b38:	e59f0160 	ldr	r0, [pc, #352]	; ca0 <.text+0xca0>
+ b3c:	ebffff02 	bl	74c <uart0_printf>
      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
- b34:	e1a01005 	mov	r1, r5
- b38:	e3a02008 	mov	r2, #8	; 0x8
- b3c:	e3a00402 	mov	r0, #33554432	; 0x2000000
- b40:	ebffffc6 	bl	a60 <long_to_hex_string>
+ b40:	e1a01005 	mov	r1, r5
+ b44:	e3a02008 	mov	r2, #8	; 0x8
+ b48:	e3a00402 	mov	r0, #33554432	; 0x2000000
+ b4c:	ebffffc6 	bl	a6c <long_to_hex_string>
      uart0_printf(str);uart0_printf("\r\n");
- b44:	e1a00005 	mov	r0, r5
- b48:	ebfffeff 	bl	74c <uart0_printf>
- b4c:	e59f013c 	ldr	r0, [pc, #316]	; c90 <.text+0xc90>
- b50:	ebfffefd 	bl	74c <uart0_printf>
+ b50:	e1a00005 	mov	r0, r5
+ b54:	ebfffefc 	bl	74c <uart0_printf>
+ b58:	e59f013c 	ldr	r0, [pc, #316]	; c9c <.text+0xc9c>
+ b5c:	ebfffefa 	bl	74c <uart0_printf>
   for (i=1; i<=CYCLES; i++) {	
     result = memTestDataBus(BASE_ADDRESS);
- b54:	e3a00401 	mov	r0, #16777216	; 0x1000000
- b58:	ebffff26 	bl	7f8 <memTestDataBus>
+ b60:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ b64:	ebffff26 	bl	804 <memTestDataBus>
     if ( result != 0)
- b5c:	e3500000 	cmp	r0, #0	; 0x0
- b60:	1a000043 	bne	c74 <main+0x1a4>
+ b68:	e3500000 	cmp	r0, #0	; 0x0
+ b6c:	1a000043 	bne	c80 <main+0x1a4>
     {
         uart0_printf("memTestDataBus FAILED\r\n");
 		return (-1);
@@ -1855,31 +1859,31 @@ main(void)
     else
     {
         uart0_printf("memTestDataBus Passed\r\n");
- b64:	e59f012c 	ldr	r0, [pc, #300]	; c98 <.text+0xc98>
- b68:	ebfffef7 	bl	74c <uart0_printf>
+ b70:	e59f012c 	ldr	r0, [pc, #300]	; ca4 <.text+0xca4>
+ b74:	ebfffef4 	bl	74c <uart0_printf>
 
     }
 	result_ptr = memTestAddressBus(BASE_ADDRESS, NUM_BYTES);
- b6c:	e3a00401 	mov	r0, #16777216	; 0x1000000
- b70:	e3a01402 	mov	r1, #33554432	; 0x2000000
- b74:	ebffff28 	bl	81c <memTestAddressBus>
+ b78:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ b7c:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ b80:	ebffff28 	bl	828 <memTestAddressBus>
     if ( result_ptr != NULL)
- b78:	e2504000 	subs	r4, r0, #0	; 0x0
- b7c:	0a00002b 	beq	c30 <main+0x160>
+ b84:	e2504000 	subs	r4, r0, #0	; 0x0
+ b88:	0a00002b 	beq	c3c <main+0x160>
     {
        uart0_printf("memTestAddressBus FAILED ");
- b80:	e59f0114 	ldr	r0, [pc, #276]	; c9c <.text+0xc9c>
- b84:	ebfffef0 	bl	74c <uart0_printf>
+ b8c:	e59f0114 	ldr	r0, [pc, #276]	; ca8 <.text+0xca8>
+ b90:	ebfffeed 	bl	74c <uart0_printf>
 	   long_to_hex_string((unsigned long ) result_ptr, str, 8);
- b88:	e1a01005 	mov	r1, r5
- b8c:	e3a02008 	mov	r2, #8	; 0x8
- b90:	e1a00004 	mov	r0, r4
- b94:	ebffffb1 	bl	a60 <long_to_hex_string>
+ b94:	e1a01005 	mov	r1, r5
+ b98:	e3a02008 	mov	r2, #8	; 0x8
+ b9c:	e1a00004 	mov	r0, r4
+ ba0:	ebffffb1 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
- b98:	e1a00005 	mov	r0, r5
- b9c:	ebfffeea 	bl	74c <uart0_printf>
- ba0:	e59f00e8 	ldr	r0, [pc, #232]	; c90 <.text+0xc90>
- ba4:	ebfffee8 	bl	74c <uart0_printf>
+ ba4:	e1a00005 	mov	r0, r5
+ ba8:	ebfffee7 	bl	74c <uart0_printf>
+ bac:	e59f00e8 	ldr	r0, [pc, #232]	; c9c <.text+0xc9c>
+ bb0:	ebfffee5 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
@@ -1888,26 +1892,26 @@ main(void)
     }
 
     result_ptr = memTestDevice1(BASE_ADDRESS, NUM_BYTES);
- ba8:	e3a00401 	mov	r0, #16777216	; 0x1000000
- bac:	e3a01402 	mov	r1, #33554432	; 0x2000000
- bb0:	ebffff75 	bl	98c <memTestDevice1>
+ bb4:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ bb8:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ bbc:	ebffff75 	bl	998 <memTestDevice1>
     if ( result_ptr != NULL)
- bb4:	e2504000 	subs	r4, r0, #0	; 0x0
- bb8:	0a000023 	beq	c4c <main+0x17c>
+ bc0:	e2504000 	subs	r4, r0, #0	; 0x0
+ bc4:	0a000023 	beq	c58 <main+0x17c>
     {
         uart0_printf("memTestDevice1 FAILED ");
- bbc:	e59f00dc 	ldr	r0, [pc, #220]	; ca0 <.text+0xca0>
- bc0:	ebfffee1 	bl	74c <uart0_printf>
+ bc8:	e59f00dc 	ldr	r0, [pc, #220]	; cac <.text+0xcac>
+ bcc:	ebfffede 	bl	74c <uart0_printf>
 		long_to_hex_string((unsigned long ) result_ptr, str, 8);
- bc4:	e1a01005 	mov	r1, r5
- bc8:	e3a02008 	mov	r2, #8	; 0x8
- bcc:	e1a00004 	mov	r0, r4
- bd0:	ebffffa2 	bl	a60 <long_to_hex_string>
+ bd0:	e1a01005 	mov	r1, r5
+ bd4:	e3a02008 	mov	r2, #8	; 0x8
+ bd8:	e1a00004 	mov	r0, r4
+ bdc:	ebffffa2 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
- bd4:	e1a00005 	mov	r0, r5
- bd8:	ebfffedb 	bl	74c <uart0_printf>
- bdc:	e59f00ac 	ldr	r0, [pc, #172]	; c90 <.text+0xc90>
- be0:	ebfffed9 	bl	74c <uart0_printf>
+ be0:	e1a00005 	mov	r0, r5
+ be4:	ebfffed8 	bl	74c <uart0_printf>
+ be8:	e59f00ac 	ldr	r0, [pc, #172]	; c9c <.text+0xc9c>
+ bec:	ebfffed6 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
@@ -1918,26 +1922,26 @@ main(void)
 
 	
     result_ptr = memTestDevice2(BASE_ADDRESS, NUM_BYTES);
- be4:	e3a00401 	mov	r0, #16777216	; 0x1000000
- be8:	e3a01402 	mov	r1, #33554432	; 0x2000000
- bec:	ebffff7f 	bl	9f0 <memTestDevice2>
+ bf0:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ bf4:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ bf8:	ebffff7f 	bl	9fc <memTestDevice2>
     if ( result_ptr != NULL)
- bf0:	e2504000 	subs	r4, r0, #0	; 0x0
- bf4:	0a00001b 	beq	c68 <main+0x198>
+ bfc:	e2504000 	subs	r4, r0, #0	; 0x0
+ c00:	0a00001b 	beq	c74 <main+0x198>
     {
         uart0_printf("memTestDevice2 FAILED ");
- bf8:	e59f00a4 	ldr	r0, [pc, #164]	; ca4 <.text+0xca4>
- bfc:	ebfffed2 	bl	74c <uart0_printf>
+ c04:	e59f00a4 	ldr	r0, [pc, #164]	; cb0 <.text+0xcb0>
+ c08:	ebfffecf 	bl	74c <uart0_printf>
 		long_to_hex_string((unsigned long ) result_ptr, str, 8);
- c00:	e1a00004 	mov	r0, r4
- c04:	e1a01005 	mov	r1, r5
- c08:	e3a02008 	mov	r2, #8	; 0x8
- c0c:	ebffff93 	bl	a60 <long_to_hex_string>
+ c0c:	e1a00004 	mov	r0, r4
+ c10:	e1a01005 	mov	r1, r5
+ c14:	e3a02008 	mov	r2, #8	; 0x8
+ c18:	ebffff93 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
- c10:	e1a00005 	mov	r0, r5
- c14:	ebfffecc 	bl	74c <uart0_printf>
- c18:	e59f0070 	ldr	r0, [pc, #112]	; c90 <.text+0xc90>
- c1c:	ebfffeca 	bl	74c <uart0_printf>
+ c1c:	e1a00005 	mov	r0, r5
+ c20:	ebfffec9 	bl	74c <uart0_printf>
+ c24:	e59f0070 	ldr	r0, [pc, #112]	; c9c <.text+0xc9c>
+ c28:	ebfffec7 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
@@ -1947,47 +1951,47 @@ main(void)
     }
    } //for
 	asm volatile ("mov pc, #00010000");
- c20:	e3a0fa01 	mov	pc, #4096	; 0x1000
- c24:	e3a00000 	mov	r0, #0	; 0x0
+ c2c:	e3a0fa01 	mov	pc, #4096	; 0x1000
+ c30:	e3a00000 	mov	r0, #0	; 0x0
 }   /* memTest() */
- c28:	e28dd00c 	add	sp, sp, #12	; 0xc
- c2c:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
- c30:	e59f0070 	ldr	r0, [pc, #112]	; ca8 <.text+0xca8>
- c34:	ebfffec4 	bl	74c <uart0_printf>
- c38:	e3a00401 	mov	r0, #16777216	; 0x1000000
- c3c:	e3a01402 	mov	r1, #33554432	; 0x2000000
- c40:	ebffff51 	bl	98c <memTestDevice1>
- c44:	e2504000 	subs	r4, r0, #0	; 0x0
- c48:	1affffdb 	bne	bbc <main+0xec>
- c4c:	e59f0058 	ldr	r0, [pc, #88]	; cac <.text+0xcac>
- c50:	ebfffebd 	bl	74c <uart0_printf>
- c54:	e3a00401 	mov	r0, #16777216	; 0x1000000
- c58:	e3a01402 	mov	r1, #33554432	; 0x2000000
- c5c:	ebffff63 	bl	9f0 <memTestDevice2>
- c60:	e2504000 	subs	r4, r0, #0	; 0x0
- c64:	1affffe3 	bne	bf8 <main+0x128>
- c68:	e59f0040 	ldr	r0, [pc, #64]	; cb0 <.text+0xcb0>
- c6c:	ebfffeb6 	bl	74c <uart0_printf>
- c70:	eaffffea 	b	c20 <main+0x150>
- c74:	e59f0038 	ldr	r0, [pc, #56]	; cb4 <.text+0xcb4>
+ c34:	e28dd00c 	add	sp, sp, #12	; 0xc
+ c38:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
+ c3c:	e59f0070 	ldr	r0, [pc, #112]	; cb4 <.text+0xcb4>
+ c40:	ebfffec1 	bl	74c <uart0_printf>
+ c44:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ c48:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ c4c:	ebffff51 	bl	998 <memTestDevice1>
+ c50:	e2504000 	subs	r4, r0, #0	; 0x0
+ c54:	1affffdb 	bne	bc8 <main+0xec>
+ c58:	e59f0058 	ldr	r0, [pc, #88]	; cb8 <.text+0xcb8>
+ c5c:	ebfffeba 	bl	74c <uart0_printf>
+ c60:	e3a00301 	mov	r0, #67108864	; 0x4000000
+ c64:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ c68:	ebffff63 	bl	9fc <memTestDevice2>
+ c6c:	e2504000 	subs	r4, r0, #0	; 0x0
+ c70:	1affffe3 	bne	c04 <main+0x128>
+ c74:	e59f0040 	ldr	r0, [pc, #64]	; cbc <.text+0xcbc>
  c78:	ebfffeb3 	bl	74c <uart0_printf>
- c7c:	e3e00000 	mvn	r0, #0	; 0x0
- c80:	eaffffe8 	b	c28 <main+0x158>
- c84:	00000cd8 	ldreqd	r0, [r0], -r8
- c88:	00000ce4 	andeq	r0, r0, r4, ror #25
- c8c:	00000d00 	andeq	r0, r0, r0, lsl #26
- c90:	00000d90 	muleq	r0, r0, sp
- c94:	00000d10 	andeq	r0, r0, r0, lsl sp
- c98:	00000d44 	andeq	r0, r0, r4, asr #26
- c9c:	00000d5c 	andeq	r0, r0, ip, asr sp
- ca0:	00000d94 	muleq	r0, r4, sp
- ca4:	00000dc4 	andeq	r0, r0, r4, asr #27
- ca8:	00000d78 	andeq	r0, r0, r8, ror sp
- cac:	00000dac 	andeq	r0, r0, ip, lsr #27
- cb0:	00000ddc 	ldreqd	r0, [r0], -ip
- cb4:	00000d2c 	andeq	r0, r0, ip, lsr #26
+ c7c:	eaffffea 	b	c2c <main+0x150>
+ c80:	e59f0038 	ldr	r0, [pc, #56]	; cc0 <.text+0xcc0>
+ c84:	ebfffeb0 	bl	74c <uart0_printf>
+ c88:	e3e00000 	mvn	r0, #0	; 0x0
+ c8c:	eaffffe8 	b	c34 <main+0x158>
+ c90:	00000ce4 	andeq	r0, r0, r4, ror #25
+ c94:	00000ce8 	andeq	r0, r0, r8, ror #25
+ c98:	00000d04 	andeq	r0, r0, r4, lsl #26
+ c9c:	00000d94 	muleq	r0, r4, sp
+ ca0:	00000d14 	andeq	r0, r0, r4, lsl sp
+ ca4:	00000d48 	andeq	r0, r0, r8, asr #26
+ ca8:	00000d60 	andeq	r0, r0, r0, ror #26
+ cac:	00000d98 	muleq	r0, r8, sp
+ cb0:	00000dc8 	andeq	r0, r0, r8, asr #27
+ cb4:	00000d7c 	andeq	r0, r0, ip, ror sp
+ cb8:	00000db0 	streqh	r0, [r0], -r0
+ cbc:	00000de0 	andeq	r0, r0, r0, ror #27
+ cc0:	00000d30 	andeq	r0, r0, r0, lsr sp
 
-00000cb8 <io_enable_xint>:
+00000cc4 <io_enable_xint>:
 //		case 14:         asm volatile ("mcr p15,0,%0,c14,c14,0" : /* no outputs */ : "r" (_cp_val)); break;
 //		case 15:         asm volatile ("mcr p15,0,%0,c15,c15,0" : /* no outputs */ : "r" (_cp_val)); break;
 		default:         break;
@@ -2000,7 +2004,7 @@ main(void)
 {
 	unsigned long _cmsr;
 	asm volatile (" mrs %0, cpsr" : "=r" (_cmsr) : /* no inputs */  );
- cb8:	e10f3000 	mrs	r3, CPSR
+ cc4:	e10f3000 	mrs	r3, CPSR
 	return _cmsr;
 }
 
@@ -2010,8 +2014,8 @@ main(void)
 // ******************************************************************************
 {
 	asm volatile (" msr cpsr, %0" : /* no outputs */ : "r" (_cmsr)  );
- cbc:	e3c330c0 	bic	r3, r3, #192	; 0xc0
- cc0:	e129f003 	msr	CPSR_fc, r3
+ cc8:	e3c330c0 	bic	r3, r3, #192	; 0xc0
+ ccc:	e129f003 	msr	CPSR_fc, r3
 }
 
 // ******************************************************************************
@@ -2023,12 +2027,12 @@ main(void)
 	_cmsr = _cmsr & ~(1<<CMSR_FIQ) &~(1<<CMSR_IRQ);
 	set_cmsr(_cmsr);
 }
- cc4:	e12fff1e 	bx	lr
+ cd0:	e12fff1e 	bx	lr
 
-00000cc8 <io_disable_xint>:
- cc8:	e10f3000 	mrs	r3, CPSR
- ccc:	e38330c0 	orr	r3, r3, #192	; 0xc0
- cd0:	e129f003 	msr	CPSR_fc, r3
+00000cd4 <io_disable_xint>:
+ cd4:	e10f3000 	mrs	r3, CPSR
+ cd8:	e38330c0 	orr	r3, r3, #192	; 0xc0
+ cdc:	e129f003 	msr	CPSR_fc, r3
 
 // ******************************************************************************
 // Disable all global IBTs
@@ -2039,73 +2043,73 @@ main(void)
 	_cmsr = _cmsr | (1<<CMSR_FIQ) | (1<<CMSR_IRQ);
 	set_cmsr(_cmsr);
 }
- cd4:	e12fff1e 	bx	lr
-	...
- ce4:	53746172 	cmnpl	r4, #-2147483620	; 0x8000001c
- ce8:	74696e67 	strvcbt	r6, [r9], #-3687
- cec:	204d454d 	subcs	r4, sp, sp, asr #10
- cf0:	54455354 	strplb	r5, [r5], #-852
- cf4:	20746573 	rsbcss	r6, r4, r3, ror r5
- cf8:	74730d0a 	ldrvcbt	r0, [r3], #-3338
- cfc:	00000000 	andeq	r0, r0, r0
- d00:	42415345 	submi	r5, r1, #335544321	; 0x14000001
- d04:	20414444 	subcs	r4, r1, r4, asr #8
- d08:	52455353 	subpl	r5, r5, #1275068417	; 0x4c000001
- d0c:	3a202000 	bcc	808d14 <_end+0x803f14>
- d10:	4e756d62 	cdpmi	13, 7, cr6, cr5, cr2, {3}
- d14:	6572206f 	ldrvsb	r2, [r2, #-111]!
- d18:	66204279 	undefined
- d1c:	74657320 	strvcbt	r7, [r5], #-800
- d20:	746f2074 	strvcbt	r2, [pc], #116	; d28 <io_disable_xint+0x60>
- d24:	6573743a 	ldrvsb	r7, [r3, #-1082]!
- d28:	20200000 	eorcs	r0, r0, r0
- d2c:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d30:	65737444 	ldrvsb	r7, [r3, #-1092]!
- d34:	61746142 	cmnvs	r4, r2, asr #2
- d38:	75732046 	ldrvcb	r2, [r3, #-70]!
- d3c:	41494c45 	cmpmi	r9, r5, asr #24
- d40:	440d0a00 	strmi	r0, [sp], #-2560
- d44:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d48:	65737444 	ldrvsb	r7, [r3, #-1092]!
- d4c:	61746142 	cmnvs	r4, r2, asr #2
- d50:	75732050 	ldrvcb	r2, [r3, #-80]!
- d54:	61737365 	cmnvs	r3, r5, ror #6
- d58:	640d0a00 	strvs	r0, [sp], #-2560
- d5c:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d60:	65737441 	ldrvsb	r7, [r3, #-1089]!
- d64:	64647265 	strvsbt	r7, [r4], #-613
- d68:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
- d6c:	73204641 	teqvc	r0, #68157440	; 0x4100000
- d70:	494c4544 	stmmidb	ip, {r2, r6, r8, sl, lr}^
- d74:	20000000 	andcs	r0, r0, r0
- d78:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d7c:	65737441 	ldrvsb	r7, [r3, #-1089]!
- d80:	64647265 	strvsbt	r7, [r4], #-613
- d84:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
- d88:	73205061 	teqvc	r0, #97	; 0x61
- d8c:	73736564 	cmnvc	r3, #419430400	; 0x19000000
- d90:	0d0a0000 	stceq	0, cr0, [sl]
- d94:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d98:	65737444 	ldrvsb	r7, [r3, #-1092]!
- d9c:	65766963 	ldrvsb	r6, [r6, #-2403]!
- da0:	65312046 	ldrvs	r2, [r1, #-70]!
- da4:	41494c45 	cmpmi	r9, r5, asr #24
- da8:	44200000 	strmit	r0, [r0]
- dac:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- db0:	65737444 	ldrvsb	r7, [r3, #-1092]!
- db4:	65766963 	ldrvsb	r6, [r6, #-2403]!
- db8:	65312050 	ldrvs	r2, [r1, #-80]!
- dbc:	61737365 	cmnvs	r3, r5, ror #6
- dc0:	640d0a00 	strvs	r0, [sp], #-2560
- dc4:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- dc8:	65737444 	ldrvsb	r7, [r3, #-1092]!
- dcc:	65766963 	ldrvsb	r6, [r6, #-2403]!
- dd0:	65322046 	ldrvs	r2, [r2, #-70]!
- dd4:	41494c45 	cmpmi	r9, r5, asr #24
- dd8:	44200000 	strmit	r0, [r0]
- ddc:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- de0:	65737444 	ldrvsb	r7, [r3, #-1092]!
- de4:	65766963 	ldrvsb	r6, [r6, #-2403]!
- de8:	65322050 	ldrvs	r2, [r2, #-80]!
- dec:	61737365 	cmnvs	r3, r5, ror #6
- df0:	640d0a00 	strvs	r0, [sp], #-2560
+ ce0:	e12fff1e 	bx	lr
+ ce4:	00000000 	andeq	r0, r0, r0
+ ce8:	53746172 	cmnpl	r4, #-2147483620	; 0x8000001c
+ cec:	74696e67 	strvcbt	r6, [r9], #-3687
+ cf0:	204d454d 	subcs	r4, sp, sp, asr #10
+ cf4:	54455354 	strplb	r5, [r5], #-852
+ cf8:	20746573 	rsbcss	r6, r4, r3, ror r5
+ cfc:	74730d0a 	ldrvcbt	r0, [r3], #-3338
+ d00:	00000000 	andeq	r0, r0, r0
+ d04:	42415345 	submi	r5, r1, #335544321	; 0x14000001
+ d08:	20414444 	subcs	r4, r1, r4, asr #8
+ d0c:	52455353 	subpl	r5, r5, #1275068417	; 0x4c000001
+ d10:	3a202000 	bcc	808d18 <_end+0x803f18>
+ d14:	4e756d62 	cdpmi	13, 7, cr6, cr5, cr2, {3}
+ d18:	6572206f 	ldrvsb	r2, [r2, #-111]!
+ d1c:	66204279 	undefined
+ d20:	74657320 	strvcbt	r7, [r5], #-800
+ d24:	746f2074 	strvcbt	r2, [pc], #116	; d2c <io_disable_xint+0x58>
+ d28:	6573743a 	ldrvsb	r7, [r3, #-1082]!
+ d2c:	20200000 	eorcs	r0, r0, r0
+ d30:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ d34:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ d38:	61746142 	cmnvs	r4, r2, asr #2
+ d3c:	75732046 	ldrvcb	r2, [r3, #-70]!
+ d40:	41494c45 	cmpmi	r9, r5, asr #24
+ d44:	440d0a00 	strmi	r0, [sp], #-2560
+ d48:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ d4c:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ d50:	61746142 	cmnvs	r4, r2, asr #2
+ d54:	75732050 	ldrvcb	r2, [r3, #-80]!
+ d58:	61737365 	cmnvs	r3, r5, ror #6
+ d5c:	640d0a00 	strvs	r0, [sp], #-2560
+ d60:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ d64:	65737441 	ldrvsb	r7, [r3, #-1089]!
+ d68:	64647265 	strvsbt	r7, [r4], #-613
+ d6c:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
+ d70:	73204641 	teqvc	r0, #68157440	; 0x4100000
+ d74:	494c4544 	stmmidb	ip, {r2, r6, r8, sl, lr}^
+ d78:	20000000 	andcs	r0, r0, r0
+ d7c:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ d80:	65737441 	ldrvsb	r7, [r3, #-1089]!
+ d84:	64647265 	strvsbt	r7, [r4], #-613
+ d88:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
+ d8c:	73205061 	teqvc	r0, #97	; 0x61
+ d90:	73736564 	cmnvc	r3, #419430400	; 0x19000000
+ d94:	0d0a0000 	stceq	0, cr0, [sl]
+ d98:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ d9c:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ da0:	65766963 	ldrvsb	r6, [r6, #-2403]!
+ da4:	65312046 	ldrvs	r2, [r1, #-70]!
+ da8:	41494c45 	cmpmi	r9, r5, asr #24
+ dac:	44200000 	strmit	r0, [r0]
+ db0:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ db4:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ db8:	65766963 	ldrvsb	r6, [r6, #-2403]!
+ dbc:	65312050 	ldrvs	r2, [r1, #-80]!
+ dc0:	61737365 	cmnvs	r3, r5, ror #6
+ dc4:	640d0a00 	strvs	r0, [sp], #-2560
+ dc8:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ dcc:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ dd0:	65766963 	ldrvsb	r6, [r6, #-2403]!
+ dd4:	65322046 	ldrvs	r2, [r2, #-70]!
+ dd8:	41494c45 	cmpmi	r9, r5, asr #24
+ ddc:	44200000 	strmit	r0, [r0]
+ de0:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ de4:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ de8:	65766963 	ldrvsb	r6, [r6, #-2403]!
+ dec:	65322050 	ldrvs	r2, [r2, #-80]!
+ df0:	61737365 	cmnvs	r3, r5, ror #6
+ df4:	640d0a00 	strvs	r0, [sp], #-2560

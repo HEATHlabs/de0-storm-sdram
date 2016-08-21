@@ -13,17 +13,17 @@ void memtest_run () {
 	unsigned char str[10]="\0";
 	
 	datum *result_ptr=NULL;
-    result = memTestDataBus(BASE_ADDRESS);
-    if ( result != 0)
-    {
-        uart0_printf("memTestDataBus FAILED\r\n");
-		return (-1);
-    }
-    else
-    {
-        uart0_printf("memTestDataBus Passed\r\n");
+    // result = memTestDataBus(BASE_ADDRESS);
+    // if ( result != 0)
+    // {
+        // uart0_printf("memTestDataBus FAILED\r\n");
+		// return (-1);
+    // }
+    // else
+    // {
+        // uart0_printf("memTestDataBus Passed\r\n");
 
-    }
+    // }
 	result_ptr = memTestAddressBus(BASE_ADDRESS, NUM_BYTES);
     if ( result_ptr != NULL)
     {
@@ -37,33 +37,33 @@ void memtest_run () {
         uart0_printf("memTestAddressBus Passed\r\n");
     }
 
-    result_ptr = memTestDevice1(BASE_ADDRESS, NUM_BYTES);
-    if ( result_ptr != NULL)
-    {
-        uart0_printf("memTestDevice1 FAILED ");
-		long_to_hex_string((unsigned long ) result_ptr, str, 8);
-		uart0_printf(str);uart0_printf("\r\n");
-		//return (-1);
-    }
-    else
-    {
-        uart0_printf("memTestDevice1 Passed\r\n");
-		//return (0);
-    }
+    // result_ptr = memTestDevice1(BASE_ADDRESS, NUM_BYTES);
+    // if ( result_ptr != NULL)
+    // {
+        // uart0_printf("memTestDevice1 FAILED ");
+		// long_to_hex_string((unsigned long ) result_ptr, str, 8);
+		// uart0_printf(str);uart0_printf("\r\n");
+		return (-1);
+    // }
+    // else
+    // {
+        // uart0_printf("memTestDevice1 Passed\r\n");
+		return (0);
+    // }
 
 	
-    result_ptr = memTestDevice2(BASE_ADDRESS, NUM_BYTES);
-    if ( result_ptr != NULL)
-    {
-        uart0_printf("memTestDevice2 FAILED ");
-		long_to_hex_string((unsigned long ) result_ptr, str, 8);
-		uart0_printf(str);uart0_printf("\r\n");
-		//return (-1);
-    }
-    else
-    {
-        uart0_printf("memTestDevice2 Passed\r\n");
-		//return (0);
-    }
-	 uart0_printf("Mem test complete \r\n");
+    // result_ptr = memTestDevice2(BASE_ADDRESS, NUM_BYTES);
+    // if ( result_ptr != NULL)
+    // {
+        // uart0_printf("memTestDevice2 FAILED ");
+		// long_to_hex_string((unsigned long ) result_ptr, str, 8);
+		// uart0_printf(str);uart0_printf("\r\n");
+		return (-1);
+    // }
+    // else
+    // {
+        // uart0_printf("memTestDevice2 Passed\r\n");
+		return (0);
+    // }
+	 // uart0_printf("Mem test complete \r\n");
 } //memtest_run()

@@ -17,7 +17,7 @@
 #include "memtest.h"
 #include "memtest.c"
 
-#define BASE_ADDRESS  (volatile datum *) 0x01000000 //beginning of SDRAM memory
+#define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 //#define NUM_BYTES     ( 32 * 1024 )
 #define CYCLES	1

@@ -4,6 +4,8 @@
 #include "../lib/uart.c"
 #include "../lib/utilities.c"
 
+#define DUMPADDRESS 0x04000000
+
 unsigned long int hex_string_to_long ( char *hexstr, int charlen )
 {
 	unsigned long int hexval =  0 ;
@@ -41,7 +43,7 @@ unsigned long int qbytes_to_long ( unsigned char *buffer )
 {
 	int function_sel, data, i, start_app = 0;
 	unsigned long *data_pointer, word_buffer, adr_buffer, cnt;
-	unsigned char buffer[5], char_tmp, *char_pointer, device_id;
+	unsigned char buffer[5], temp_string[9], char_tmp, *char_pointer, device_id;
 
 	// show reset ack
 	io_set_gpio0_port(0);
@@ -137,13 +139,17 @@ main_menu:
 				uart0_printf("\r\n\r\nAbort dumping by pressing any key.\r\nPress any key to continue.\r\n\r\n");
 				while(io_uart0_read_byte() == -1);
 				while(io_uart0_read_byte() != -1);
-				data_pointer = 0;
-				while(data_pointer != RAM_SIZE){
+				data_pointer = (volatile unsigned long *)DUMPADDRESS;
+				
+				while(data_pointer < DUMPADDRESS +2532){
 					word_buffer = *data_pointer;
-					io_uart0_send_byte(word_buffer >> 24);
-					io_uart0_send_byte(word_buffer >> 16);
-					io_uart0_send_byte(word_buffer >>  8);
-					io_uart0_send_byte(word_buffer >>  0);
+					long_to_hex_string(word_buffer, temp_string,8);
+					i=0;
+					while (temp_string[i] != 0) {
+						io_uart0_send_byte(temp_string[i]);
+						i++;
+					}
+					io_uart0_send_byte(' ');
 					data_pointer++;
 					if(io_uart0_read_byte() != -1){
 						break;
