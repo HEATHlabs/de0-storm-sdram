@@ -132,7 +132,15 @@ architecture Structure of BUS_UNIT is
 	signal WB_STB_O_NXT                  : STD_LOGIC;
 	signal WB_CYC_O_NXT                  : STD_LOGIC;
 	signal WB_WE_O_NXT                   : STD_LOGIC;
-
+	signal WB_HALT_DLY, WB_HALT_DLYBUF   : STD_LOGIC;
+	attribute noprune: boolean;
+	attribute noprune of WB_HALT_DLY: signal is true;
+	signal WB_DATA_O_TEST				: STD_LOGIC_VECTOR(31 downto 0);
+	attribute noprune of WB_DATA_O_TEST: signal is true;
+	-- NEW
+	signal WB_DATA_FF_PREV				 : STD_LOGIC_VECTOR(31 downto 0);
+--	attribute noprune: boolean;
+	attribute noprune of WB_DATA_FF_PREV: signal is true;
 	-- Access System --
 	signal IO_ACCESS                     : STD_LOGIC;
 
@@ -166,6 +174,48 @@ begin
 		--- Immediate HALT ---
 		FREEZE_STORM_O  <= (DC_DIRTY_I or IC_MISS_I or DC_MISS_I or FREEZE_FLAG) and (not FREEZE_DIS);
 
+		
+		
+		WB_DATA_O      <= WB_DATA_FF_NXT when (ARB_STATE = UPLOAD_D_PAGE) else WB_DATA_FF;
+		
+		---------------New stuff BEGIN -----------------------
+
+	
+		WB_DATA_OUT_HALT : process(CORE_CLK_I)
+--		WB_DATA_OUT_HALT : process(WB_HALT_DLY)
+		begin
+			if rising_edge(CORE_CLK_I) then
+				if (WB_HALT_DLY = '1') then
+					if (ARB_STATE = UPLOAD_D_PAGE) then
+						WB_DATA_O_TEST <= WB_DATA_FF_PREV;
+					else
+					WB_DATA_O_TEST <= WB_DATA_FF;
+					end if;
+				--can't use when/else inside of process WB_DATA_O <= WB_DATA_FF_PREV when (ARB_STATE = UPLOAD_D_PAGE') else WB_DATA_FF;
+				else
+					if (ARB_STATE = UPLOAD_D_PAGE) then
+						WB_DATA_O_TEST <= WB_DATA_FF_NXT;
+					else
+						WB_DATA_O_TEST <= WB_DATA_FF;
+					end if;
+				--can't use when/else inside of processWB_DATA_O <= WB_DATA_FF_NXT when (ARB_STATE = UPLOAD_D_PAGE') else WB_DATA_FF;
+				end if;
+			end if;
+		 end process;
+
+		WB_HALT_SYNC: process(CORE_CLK_I)
+		begin
+			if rising_edge(CORE_CLK_I) then
+				if (RST_I = '1') then
+					WB_HALT_DLY <= '0';
+				else
+					WB_HALT_DLY <= WB_HALT_I;
+					--WB_HALT_DLY <= WB_HALT_DLYBUF;
+					WB_DATA_FF_PREV <= DC_DATA_I;
+				end if;
+			end if;
+		end process;
+		---------------New stuff END -----------------------
 
 
 	-- Static Interface ---------------------------------------------------------------------------------------
@@ -183,7 +233,6 @@ begin
 		--- Wishbone Bus ---
 		WB_SEL_O       <= "1111"; -- cache entry = 32-bit word
 		WB_DATA_FF_NXT <= x"00000000"    when (ARB_STATE = IDLE) else DC_DATA_I; -- reduce switching losses...
-		WB_DATA_O      <= WB_DATA_FF_NXT when (ARB_STATE = UPLOAD_D_PAGE) else WB_DATA_FF;
 
 		--- IO Access ---
 		IO_ACCESS <= '1' when (DC_P_ADR_I >= IO_UC_BEGIN) and (DC_P_ADR_I <= IO_UC_END) and (CACHED_IO_I = '0') else '0';
@@ -231,6 +280,7 @@ begin
 					TIMEOUT_CNT  <= TIMEOUT_CNT_NXT;
 					DC_P_ADR_BUF <= DC_P_ADR_I;
 					IC_P_ADR_BUF <= IC_P_ADR_I;
+					
 					if (WB_HALT_I = '0') then
 						WB_DATA_FF   <= WB_DATA_FF_NXT;
 						WB_ADR_O     <= WB_ADR_BUF;
