@@ -34,7 +34,7 @@ typedef unsigned long datum;
  * Function prototypes.
  */
 datum   memTestDataBus(volatile datum * address);
-datum * memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes);
+datum * memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes, int *Step);
 datum * memTestDevice1(volatile datum * baseAddress, unsigned long nBytes);
 datum * memTestDevice2(volatile datum * baseAddress, unsigned long nBytes);
 

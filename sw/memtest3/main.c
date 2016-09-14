@@ -100,7 +100,7 @@ main(void)
     {
         uart0_printf("memTestAddressBus Passed\r\n");
     }
-
+return ;
     result_ptr = memTestDevice1(BASE_ADDRESS, NUM_BYTES);
     if ( result_ptr != NULL)
     {

@@ -3,27 +3,27 @@ main.elf:     file format elf32-bigarm
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         00000df8  00000000  00000000  00008000  2**2
+  0 .text         00000cd0  00000000  00000000  00008000  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .stack        00004000  00000e00  00000e00  00008df8  2**0
+  1 .stack        00004000  00000d00  00000d00  00008cd0  2**0
                   ALLOC
-  2 .comment      0000001b  00000000  00000000  00008df8  2**0
+  2 .comment      0000001b  00000000  00000000  00008cd0  2**0
                   CONTENTS, READONLY
-  3 .debug_aranges 00000040  00000000  00000000  00008e18  2**3
+  3 .debug_aranges 00000040  00000000  00000000  00008cf0  2**3
                   CONTENTS, READONLY, DEBUGGING
-  4 .debug_pubnames 0000025d  00000000  00000000  00008e58  2**0
+  4 .debug_pubnames 0000025d  00000000  00000000  00008d30  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   000008b2  00000000  00000000  000090b5  2**0
+  5 .debug_info   000008b2  00000000  00000000  00008f8d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000275  00000000  00000000  00009967  2**0
+  6 .debug_abbrev 00000275  00000000  00000000  0000983f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   0000036c  00000000  00000000  00009bdc  2**0
+  7 .debug_line   0000035a  00000000  00000000  00009ab4  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  0000024c  00000000  00000000  00009f48  2**2
+  8 .debug_frame  0000024c  00000000  00000000  00009e10  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    0000032d  00000000  00000000  0000a194  2**0
+  9 .debug_str    0000032d  00000000  00000000  0000a05c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    0000081c  00000000  00000000  0000a4c1  2**0
+ 10 .debug_loc    00000806  00000000  00000000  0000a389  2**0
                   CONTENTS, READONLY, DEBUGGING
 Disassembly of section .text:
 
@@ -45,9 +45,9 @@ Vectors:
         nop                             // reserved
   14:	e1a00000 	nop			(mov r0,r0)
         ldr   pc,[pc,#-0xFF0]           // IRQ - read the VIC
-  18:	e51ffff0 	ldr	pc, [pc, #-4080]	; fffff030 <_end+0xffffa230>
+  18:	e51ffff0 	ldr	pc, [pc, #-4080]	; fffff030 <_stack+0xffffa330>
         ldr   pc,[pc,#-0xFF0]           // FIQ - read the VIC
-  1c:	e51ffff0 	ldr	pc, [pc, #-4080]	; fffff034 <_end+0xffffa234>
+  1c:	e51ffff0 	ldr	pc, [pc, #-4080]	; fffff034 <_stack+0xffffa334>
 
 00000020 <_undf>:
   20:	00000038 	andeq	r0, r0, r8, lsr r0
@@ -96,7 +96,7 @@ __swi:  b     .                         // SWI
 
 00000040 <__pabt>:
 __pabt: b     .                         // program abort
-  40:	eafffffe 	b	40 <FIQ_BIT>
+  40:	eafffffe 	b	40 <__pabt>
 
 00000044 <__dabt>:
 __dabt: b     .                         // data abort
@@ -515,7 +515,7 @@ uart0_send_byte:
  278:	e5804000 	str	r4, [r0]
 		mov   pc, lr
  27c:	e1a0f00e 	mov	pc, lr
- 280:	00004e00 	andeq	r4, r0, r0, lsl #28
+ 280:	00004d00 	andeq	r4, r0, r0, lsl #26
  284:	00000adc 	ldreqd	r0, [r0], -ip
  288:	ffff001c 	undefined instruction 0xffff001c
  28c:	ffff0018 	undefined instruction 0xffff0018
@@ -1338,7 +1338,7 @@ uart0_send_byte:
  7d0:	e8bd8070 	ldmia	sp!, {r4, r5, r6, pc}
  7d4:	ebffff09 	bl	400 <io_uart0_send_byte>
  7d8:	eafffff7 	b	7bc <uart0_scanf+0x38>
- 7dc:	00000ce4 	andeq	r0, r0, r4, ror #25
+ 7dc:	00000c1c 	andeq	r0, r0, ip, lsl ip
 
 000007e0 <uart0_print_buffer>:
 
@@ -1802,7 +1802,7 @@ main(void)
  adc:	e92d4030 	stmdb	sp!, {r4, r5, lr}
     int i, result = 0;
 	unsigned char str[10]="\0";
- ae0:	e59f31a8 	ldr	r3, [pc, #424]	; c90 <.text+0xc90>
+ ae0:	e59f30f0 	ldr	r3, [pc, #240]	; bd8 <.text+0xbd8>
  ae4:	e1d330b0 	ldrh	r3, [r3]
  ae8:	e24dd00c 	sub	sp, sp, #12	; 0xc
  aec:	e1cd30b2 	strh	r3, [sp, #2]
@@ -1811,7 +1811,7 @@ main(void)
 	
 
      uart0_printf("Starting MEMTEST tests\r\n");
- af0:	e59f019c 	ldr	r0, [pc, #412]	; c94 <.text+0xc94>
+ af0:	e59f00e4 	ldr	r0, [pc, #228]	; bdc <.text+0xbdc>
  af4:	e3a03000 	mov	r3, #0	; 0x0
  af8:	e1cd30b4 	strh	r3, [sp, #4]
  afc:	e1cd30b6 	strh	r3, [sp, #6]
@@ -1821,7 +1821,7 @@ main(void)
      long_to_hex_string((unsigned long ) BASE_ADDRESS, str, 8);
  b08:	e28d5002 	add	r5, sp, #2	; 0x2
  b0c:	ebffff0e 	bl	74c <uart0_printf>
- b10:	e59f0180 	ldr	r0, [pc, #384]	; c98 <.text+0xc98>
+ b10:	e59f00c8 	ldr	r0, [pc, #200]	; be0 <.text+0xbe0>
  b14:	ebffff0c 	bl	74c <uart0_printf>
  b18:	e1a01005 	mov	r1, r5
  b1c:	e3a02008 	mov	r2, #8	; 0x8
@@ -1830,20 +1830,20 @@ main(void)
      uart0_printf(str);uart0_printf("\r\n");
  b28:	e1a00005 	mov	r0, r5
  b2c:	ebffff06 	bl	74c <uart0_printf>
- b30:	e59f0164 	ldr	r0, [pc, #356]	; c9c <.text+0xc9c>
+ b30:	e59f00ac 	ldr	r0, [pc, #172]	; be4 <.text+0xbe4>
  b34:	ebffff04 	bl	74c <uart0_printf>
      uart0_printf("Number of Bytes to test:  ");
- b38:	e59f0160 	ldr	r0, [pc, #352]	; ca0 <.text+0xca0>
+ b38:	e59f00a8 	ldr	r0, [pc, #168]	; be8 <.text+0xbe8>
  b3c:	ebffff02 	bl	74c <uart0_printf>
      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
- b40:	e1a01005 	mov	r1, r5
- b44:	e3a02008 	mov	r2, #8	; 0x8
+ b40:	e3a02008 	mov	r2, #8	; 0x8
+ b44:	e1a01005 	mov	r1, r5
  b48:	e3a00402 	mov	r0, #33554432	; 0x2000000
  b4c:	ebffffc6 	bl	a6c <long_to_hex_string>
      uart0_printf(str);uart0_printf("\r\n");
  b50:	e1a00005 	mov	r0, r5
  b54:	ebfffefc 	bl	74c <uart0_printf>
- b58:	e59f013c 	ldr	r0, [pc, #316]	; c9c <.text+0xc9c>
+ b58:	e59f0084 	ldr	r0, [pc, #132]	; be4 <.text+0xbe4>
  b5c:	ebfffefa 	bl	74c <uart0_printf>
   for (i=1; i<=CYCLES; i++) {	
     result = memTestDataBus(BASE_ADDRESS);
@@ -1851,7 +1851,6 @@ main(void)
  b64:	ebffff26 	bl	804 <memTestDataBus>
     if ( result != 0)
  b68:	e3500000 	cmp	r0, #0	; 0x0
- b6c:	1a000043 	bne	c80 <main+0x1a4>
     {
         uart0_printf("memTestDataBus FAILED\r\n");
 		return (-1);
@@ -1859,59 +1858,48 @@ main(void)
     else
     {
         uart0_printf("memTestDataBus Passed\r\n");
- b70:	e59f012c 	ldr	r0, [pc, #300]	; ca4 <.text+0xca4>
+ b6c:	e59f0078 	ldr	r0, [pc, #120]	; bec <.text+0xbec>
+ b70:	1a000010 	bne	bb8 <main+0xdc>
  b74:	ebfffef4 	bl	74c <uart0_printf>
 
     }
 	result_ptr = memTestAddressBus(BASE_ADDRESS, NUM_BYTES);
- b78:	e3a00301 	mov	r0, #67108864	; 0x4000000
- b7c:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ b78:	e3a01402 	mov	r1, #33554432	; 0x2000000
+ b7c:	e3a00301 	mov	r0, #67108864	; 0x4000000
  b80:	ebffff28 	bl	828 <memTestAddressBus>
     if ( result_ptr != NULL)
  b84:	e2504000 	subs	r4, r0, #0	; 0x0
- b88:	0a00002b 	beq	c3c <main+0x160>
     {
        uart0_printf("memTestAddressBus FAILED ");
- b8c:	e59f0114 	ldr	r0, [pc, #276]	; ca8 <.text+0xca8>
+ b88:	e59f0060 	ldr	r0, [pc, #96]	; bf0 <.text+0xbf0>
+ b8c:	0a00000e 	beq	bcc <main+0xf0>
  b90:	ebfffeed 	bl	74c <uart0_printf>
 	   long_to_hex_string((unsigned long ) result_ptr, str, 8);
- b94:	e1a01005 	mov	r1, r5
- b98:	e3a02008 	mov	r2, #8	; 0x8
- b9c:	e1a00004 	mov	r0, r4
+ b94:	e1a00004 	mov	r0, r4
+ b98:	e1a01005 	mov	r1, r5
+ b9c:	e3a02008 	mov	r2, #8	; 0x8
  ba0:	ebffffb1 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
  ba4:	e1a00005 	mov	r0, r5
  ba8:	ebfffee7 	bl	74c <uart0_printf>
- bac:	e59f00e8 	ldr	r0, [pc, #232]	; c9c <.text+0xc9c>
+ bac:	e59f0030 	ldr	r0, [pc, #48]	; be4 <.text+0xbe4>
  bb0:	ebfffee5 	bl	74c <uart0_printf>
+ bb4:	ea000002 	b	bc4 <main+0xe8>
+ bb8:	e59f0034 	ldr	r0, [pc, #52]	; bf4 <.text+0xbf4>
+ bbc:	ebfffee2 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
     {
         uart0_printf("memTestAddressBus Passed\r\n");
     }
-
+return ;
     result_ptr = memTestDevice1(BASE_ADDRESS, NUM_BYTES);
- bb4:	e3a00301 	mov	r0, #67108864	; 0x4000000
- bb8:	e3a01402 	mov	r1, #33554432	; 0x2000000
- bbc:	ebffff75 	bl	998 <memTestDevice1>
     if ( result_ptr != NULL)
- bc0:	e2504000 	subs	r4, r0, #0	; 0x0
- bc4:	0a000023 	beq	c58 <main+0x17c>
     {
         uart0_printf("memTestDevice1 FAILED ");
- bc8:	e59f00dc 	ldr	r0, [pc, #220]	; cac <.text+0xcac>
- bcc:	ebfffede 	bl	74c <uart0_printf>
 		long_to_hex_string((unsigned long ) result_ptr, str, 8);
- bd0:	e1a01005 	mov	r1, r5
- bd4:	e3a02008 	mov	r2, #8	; 0x8
- bd8:	e1a00004 	mov	r0, r4
- bdc:	ebffffa2 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
- be0:	e1a00005 	mov	r0, r5
- be4:	ebfffed8 	bl	74c <uart0_printf>
- be8:	e59f00ac 	ldr	r0, [pc, #172]	; c9c <.text+0xc9c>
- bec:	ebfffed6 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
@@ -1922,26 +1910,11 @@ main(void)
 
 	
     result_ptr = memTestDevice2(BASE_ADDRESS, NUM_BYTES);
- bf0:	e3a00301 	mov	r0, #67108864	; 0x4000000
- bf4:	e3a01402 	mov	r1, #33554432	; 0x2000000
- bf8:	ebffff7f 	bl	9fc <memTestDevice2>
     if ( result_ptr != NULL)
- bfc:	e2504000 	subs	r4, r0, #0	; 0x0
- c00:	0a00001b 	beq	c74 <main+0x198>
     {
         uart0_printf("memTestDevice2 FAILED ");
- c04:	e59f00a4 	ldr	r0, [pc, #164]	; cb0 <.text+0xcb0>
- c08:	ebfffecf 	bl	74c <uart0_printf>
 		long_to_hex_string((unsigned long ) result_ptr, str, 8);
- c0c:	e1a00004 	mov	r0, r4
- c10:	e1a01005 	mov	r1, r5
- c14:	e3a02008 	mov	r2, #8	; 0x8
- c18:	ebffff93 	bl	a6c <long_to_hex_string>
 		uart0_printf(str);uart0_printf("\r\n");
- c1c:	e1a00005 	mov	r0, r5
- c20:	ebfffec9 	bl	74c <uart0_printf>
- c24:	e59f0070 	ldr	r0, [pc, #112]	; c9c <.text+0xc9c>
- c28:	ebfffec7 	bl	74c <uart0_printf>
 		//return (-1);
     }
     else
@@ -1951,47 +1924,24 @@ main(void)
     }
    } //for
 	asm volatile ("mov pc, #00010000");
- c2c:	e3a0fa01 	mov	pc, #4096	; 0x1000
- c30:	e3a00000 	mov	r0, #0	; 0x0
 }   /* memTest() */
- c34:	e28dd00c 	add	sp, sp, #12	; 0xc
- c38:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
- c3c:	e59f0070 	ldr	r0, [pc, #112]	; cb4 <.text+0xcb4>
- c40:	ebfffec1 	bl	74c <uart0_printf>
- c44:	e3a00301 	mov	r0, #67108864	; 0x4000000
- c48:	e3a01402 	mov	r1, #33554432	; 0x2000000
- c4c:	ebffff51 	bl	998 <memTestDevice1>
- c50:	e2504000 	subs	r4, r0, #0	; 0x0
- c54:	1affffdb 	bne	bc8 <main+0xec>
- c58:	e59f0058 	ldr	r0, [pc, #88]	; cb8 <.text+0xcb8>
- c5c:	ebfffeba 	bl	74c <uart0_printf>
- c60:	e3a00301 	mov	r0, #67108864	; 0x4000000
- c64:	e3a01402 	mov	r1, #33554432	; 0x2000000
- c68:	ebffff63 	bl	9fc <memTestDevice2>
- c6c:	e2504000 	subs	r4, r0, #0	; 0x0
- c70:	1affffe3 	bne	c04 <main+0x128>
- c74:	e59f0040 	ldr	r0, [pc, #64]	; cbc <.text+0xcbc>
- c78:	ebfffeb3 	bl	74c <uart0_printf>
- c7c:	eaffffea 	b	c2c <main+0x150>
- c80:	e59f0038 	ldr	r0, [pc, #56]	; cc0 <.text+0xcc0>
- c84:	ebfffeb0 	bl	74c <uart0_printf>
- c88:	e3e00000 	mvn	r0, #0	; 0x0
- c8c:	eaffffe8 	b	c34 <main+0x158>
- c90:	00000ce4 	andeq	r0, r0, r4, ror #25
- c94:	00000ce8 	andeq	r0, r0, r8, ror #25
- c98:	00000d04 	andeq	r0, r0, r4, lsl #26
- c9c:	00000d94 	muleq	r0, r4, sp
- ca0:	00000d14 	andeq	r0, r0, r4, lsl sp
- ca4:	00000d48 	andeq	r0, r0, r8, asr #26
- ca8:	00000d60 	andeq	r0, r0, r0, ror #26
- cac:	00000d98 	muleq	r0, r8, sp
- cb0:	00000dc8 	andeq	r0, r0, r8, asr #27
- cb4:	00000d7c 	andeq	r0, r0, ip, ror sp
- cb8:	00000db0 	streqh	r0, [r0], -r0
- cbc:	00000de0 	andeq	r0, r0, r0, ror #27
- cc0:	00000d30 	andeq	r0, r0, r0, lsr sp
+ bc0:	e3e00000 	mvn	r0, #0	; 0x0
+ bc4:	e28dd00c 	add	sp, sp, #12	; 0xc
+ bc8:	e8bd8030 	ldmia	sp!, {r4, r5, pc}
+ bcc:	e59f0024 	ldr	r0, [pc, #36]	; bf8 <.text+0xbf8>
+ bd0:	ebfffedd 	bl	74c <uart0_printf>
+ bd4:	eafffffa 	b	bc4 <main+0xe8>
+ bd8:	00000c1c 	andeq	r0, r0, ip, lsl ip
+ bdc:	00000c20 	andeq	r0, r0, r0, lsr #24
+ be0:	00000c3c 	andeq	r0, r0, ip, lsr ip
+ be4:	00000ccc 	andeq	r0, r0, ip, asr #25
+ be8:	00000c4c 	andeq	r0, r0, ip, asr #24
+ bec:	00000c80 	andeq	r0, r0, r0, lsl #25
+ bf0:	00000c98 	muleq	r0, r8, ip
+ bf4:	00000c68 	andeq	r0, r0, r8, ror #24
+ bf8:	00000cb4 	streqh	r0, [r0], -r4
 
-00000cc4 <io_enable_xint>:
+00000bfc <io_enable_xint>:
 //		case 14:         asm volatile ("mcr p15,0,%0,c14,c14,0" : /* no outputs */ : "r" (_cp_val)); break;
 //		case 15:         asm volatile ("mcr p15,0,%0,c15,c15,0" : /* no outputs */ : "r" (_cp_val)); break;
 		default:         break;
@@ -2004,7 +1954,7 @@ main(void)
 {
 	unsigned long _cmsr;
 	asm volatile (" mrs %0, cpsr" : "=r" (_cmsr) : /* no inputs */  );
- cc4:	e10f3000 	mrs	r3, CPSR
+ bfc:	e10f3000 	mrs	r3, CPSR
 	return _cmsr;
 }
 
@@ -2014,8 +1964,8 @@ main(void)
 // ******************************************************************************
 {
 	asm volatile (" msr cpsr, %0" : /* no outputs */ : "r" (_cmsr)  );
- cc8:	e3c330c0 	bic	r3, r3, #192	; 0xc0
- ccc:	e129f003 	msr	CPSR_fc, r3
+ c00:	e3c330c0 	bic	r3, r3, #192	; 0xc0
+ c04:	e129f003 	msr	CPSR_fc, r3
 }
 
 // ******************************************************************************
@@ -2027,12 +1977,12 @@ main(void)
 	_cmsr = _cmsr & ~(1<<CMSR_FIQ) &~(1<<CMSR_IRQ);
 	set_cmsr(_cmsr);
 }
- cd0:	e12fff1e 	bx	lr
+ c08:	e12fff1e 	bx	lr
 
-00000cd4 <io_disable_xint>:
- cd4:	e10f3000 	mrs	r3, CPSR
- cd8:	e38330c0 	orr	r3, r3, #192	; 0xc0
- cdc:	e129f003 	msr	CPSR_fc, r3
+00000c0c <io_disable_xint>:
+ c0c:	e10f3000 	mrs	r3, CPSR
+ c10:	e38330c0 	orr	r3, r3, #192	; 0xc0
+ c14:	e129f003 	msr	CPSR_fc, r3
 
 // ******************************************************************************
 // Disable all global IBTs
@@ -2043,73 +1993,49 @@ main(void)
 	_cmsr = _cmsr | (1<<CMSR_FIQ) | (1<<CMSR_IRQ);
 	set_cmsr(_cmsr);
 }
- ce0:	e12fff1e 	bx	lr
- ce4:	00000000 	andeq	r0, r0, r0
- ce8:	53746172 	cmnpl	r4, #-2147483620	; 0x8000001c
- cec:	74696e67 	strvcbt	r6, [r9], #-3687
- cf0:	204d454d 	subcs	r4, sp, sp, asr #10
- cf4:	54455354 	strplb	r5, [r5], #-852
- cf8:	20746573 	rsbcss	r6, r4, r3, ror r5
- cfc:	74730d0a 	ldrvcbt	r0, [r3], #-3338
- d00:	00000000 	andeq	r0, r0, r0
- d04:	42415345 	submi	r5, r1, #335544321	; 0x14000001
- d08:	20414444 	subcs	r4, r1, r4, asr #8
- d0c:	52455353 	subpl	r5, r5, #1275068417	; 0x4c000001
- d10:	3a202000 	bcc	808d18 <_end+0x803f18>
- d14:	4e756d62 	cdpmi	13, 7, cr6, cr5, cr2, {3}
- d18:	6572206f 	ldrvsb	r2, [r2, #-111]!
- d1c:	66204279 	undefined
- d20:	74657320 	strvcbt	r7, [r5], #-800
- d24:	746f2074 	strvcbt	r2, [pc], #116	; d2c <io_disable_xint+0x58>
- d28:	6573743a 	ldrvsb	r7, [r3, #-1082]!
- d2c:	20200000 	eorcs	r0, r0, r0
- d30:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d34:	65737444 	ldrvsb	r7, [r3, #-1092]!
- d38:	61746142 	cmnvs	r4, r2, asr #2
- d3c:	75732046 	ldrvcb	r2, [r3, #-70]!
- d40:	41494c45 	cmpmi	r9, r5, asr #24
- d44:	440d0a00 	strmi	r0, [sp], #-2560
- d48:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d4c:	65737444 	ldrvsb	r7, [r3, #-1092]!
- d50:	61746142 	cmnvs	r4, r2, asr #2
- d54:	75732050 	ldrvcb	r2, [r3, #-80]!
- d58:	61737365 	cmnvs	r3, r5, ror #6
- d5c:	640d0a00 	strvs	r0, [sp], #-2560
- d60:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d64:	65737441 	ldrvsb	r7, [r3, #-1089]!
- d68:	64647265 	strvsbt	r7, [r4], #-613
- d6c:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
- d70:	73204641 	teqvc	r0, #68157440	; 0x4100000
- d74:	494c4544 	stmmidb	ip, {r2, r6, r8, sl, lr}^
- d78:	20000000 	andcs	r0, r0, r0
- d7c:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d80:	65737441 	ldrvsb	r7, [r3, #-1089]!
- d84:	64647265 	strvsbt	r7, [r4], #-613
- d88:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
- d8c:	73205061 	teqvc	r0, #97	; 0x61
- d90:	73736564 	cmnvc	r3, #419430400	; 0x19000000
- d94:	0d0a0000 	stceq	0, cr0, [sl]
- d98:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- d9c:	65737444 	ldrvsb	r7, [r3, #-1092]!
- da0:	65766963 	ldrvsb	r6, [r6, #-2403]!
- da4:	65312046 	ldrvs	r2, [r1, #-70]!
- da8:	41494c45 	cmpmi	r9, r5, asr #24
- dac:	44200000 	strmit	r0, [r0]
- db0:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- db4:	65737444 	ldrvsb	r7, [r3, #-1092]!
- db8:	65766963 	ldrvsb	r6, [r6, #-2403]!
- dbc:	65312050 	ldrvs	r2, [r1, #-80]!
- dc0:	61737365 	cmnvs	r3, r5, ror #6
- dc4:	640d0a00 	strvs	r0, [sp], #-2560
- dc8:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- dcc:	65737444 	ldrvsb	r7, [r3, #-1092]!
- dd0:	65766963 	ldrvsb	r6, [r6, #-2403]!
- dd4:	65322046 	ldrvs	r2, [r2, #-70]!
- dd8:	41494c45 	cmpmi	r9, r5, asr #24
- ddc:	44200000 	strmit	r0, [r0]
- de0:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
- de4:	65737444 	ldrvsb	r7, [r3, #-1092]!
- de8:	65766963 	ldrvsb	r6, [r6, #-2403]!
- dec:	65322050 	ldrvs	r2, [r2, #-80]!
- df0:	61737365 	cmnvs	r3, r5, ror #6
- df4:	640d0a00 	strvs	r0, [sp], #-2560
+ c18:	e12fff1e 	bx	lr
+ c1c:	00000000 	andeq	r0, r0, r0
+ c20:	53746172 	cmnpl	r4, #-2147483620	; 0x8000001c
+ c24:	74696e67 	strvcbt	r6, [r9], #-3687
+ c28:	204d454d 	subcs	r4, sp, sp, asr #10
+ c2c:	54455354 	strplb	r5, [r5], #-852
+ c30:	20746573 	rsbcss	r6, r4, r3, ror r5
+ c34:	74730d0a 	ldrvcbt	r0, [r3], #-3338
+ c38:	00000000 	andeq	r0, r0, r0
+ c3c:	42415345 	submi	r5, r1, #335544321	; 0x14000001
+ c40:	20414444 	subcs	r4, r1, r4, asr #8
+ c44:	52455353 	subpl	r5, r5, #1275068417	; 0x4c000001
+ c48:	3a202000 	bcc	808c50 <_stack+0x803f50>
+ c4c:	4e756d62 	cdpmi	13, 7, cr6, cr5, cr2, {3}
+ c50:	6572206f 	ldrvsb	r2, [r2, #-111]!
+ c54:	66204279 	undefined
+ c58:	74657320 	strvcbt	r7, [r5], #-800
+ c5c:	746f2074 	strvcbt	r2, [pc], #116	; c64 <io_disable_xint+0x58>
+ c60:	6573743a 	ldrvsb	r7, [r3, #-1082]!
+ c64:	20200000 	eorcs	r0, r0, r0
+ c68:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ c6c:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ c70:	61746142 	cmnvs	r4, r2, asr #2
+ c74:	75732046 	ldrvcb	r2, [r3, #-70]!
+ c78:	41494c45 	cmpmi	r9, r5, asr #24
+ c7c:	440d0a00 	strmi	r0, [sp], #-2560
+ c80:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ c84:	65737444 	ldrvsb	r7, [r3, #-1092]!
+ c88:	61746142 	cmnvs	r4, r2, asr #2
+ c8c:	75732050 	ldrvcb	r2, [r3, #-80]!
+ c90:	61737365 	cmnvs	r3, r5, ror #6
+ c94:	640d0a00 	strvs	r0, [sp], #-2560
+ c98:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ c9c:	65737441 	ldrvsb	r7, [r3, #-1089]!
+ ca0:	64647265 	strvsbt	r7, [r4], #-613
+ ca4:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
+ ca8:	73204641 	teqvc	r0, #68157440	; 0x4100000
+ cac:	494c4544 	stmmidb	ip, {r2, r6, r8, sl, lr}^
+ cb0:	20000000 	andcs	r0, r0, r0
+ cb4:	6d656d54 	stcvsl	13, cr6, [r5, #-336]!
+ cb8:	65737441 	ldrvsb	r7, [r3, #-1089]!
+ cbc:	64647265 	strvsbt	r7, [r4], #-613
+ cc0:	73734275 	cmnvc	r3, #1342177287	; 0x50000007
+ cc4:	73205061 	teqvc	r0, #97	; 0x61
+ cc8:	73736564 	cmnvc	r3, #419430400	; 0x19000000
+ ccc:	0d0a0000 	stceq	0, cr0, [sl]

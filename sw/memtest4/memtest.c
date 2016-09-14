@@ -89,7 +89,7 @@ memTestDataBus(volatile datum * address)
  *
  **********************************************************************/
 datum * 
-memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
+memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes, int *Step)
 {
     unsigned long addressMask = (nBytes/sizeof(datum) - 1);
     unsigned long offset;
@@ -117,7 +117,9 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
     {
         if (baseAddress[offset] != pattern)
         {
-            return ((datum *) &baseAddress[offset]);
+            *Step = 1;
+			return ((datum *) &baseAddress[offset]);
+			
         }
     }
 
@@ -132,6 +134,7 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
 
 		if (baseAddress[0] != pattern)
 		{
+            *Step = 2;
 			return ((datum *) &baseAddress[testOffset]);
 		}
 
@@ -139,7 +142,8 @@ memTestAddressBus(volatile datum * baseAddress, unsigned long nBytes)
         {
             if ((baseAddress[offset] != pattern) && (offset != testOffset))
             {
-                return ((datum *) &baseAddress[testOffset]);
+				*Step = 3;
+               return ((datum *) &baseAddress[testOffset]);
             }
         }
 

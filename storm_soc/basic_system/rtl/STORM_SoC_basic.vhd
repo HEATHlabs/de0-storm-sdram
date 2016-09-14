@@ -128,7 +128,8 @@ architecture Structure of STORM_SoC_basic is
 		constant BOOT_IMAGE_C        : string  := "STORM_SOC_BASIC_BL_32_8";
 		constant I_CACHE_PAGES_C     : natural := 8;
 		constant I_CACHE_PAGE_SIZE_C : natural := 32;
-		constant D_CACHE_PAGES_C     : natural := 8;
+--		constant D_CACHE_PAGES_C     : natural := 8;
+		constant D_CACHE_PAGES_C     : natural := 32;
 		constant D_CACHE_PAGE_SIZE_C : natural := 32;
 		constant CORE_CLOCK_C        : natural := 50000000; -- Hz
 		constant RST_RTIGGER_C       : natural := CORE_CLOCK_C/2;

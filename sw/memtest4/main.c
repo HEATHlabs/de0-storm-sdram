@@ -24,7 +24,13 @@
 #define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 //#define NUM_BYTES     ( 32 * 1024 )
-#define CYCLES	2
+
+#define CYCLES	1
+
+//#define CLEARMEM    //run clearing memory and write address to location
+#define MEMTESTRUN	//run memtest routines
+//#define MEMLOCWR    //repeatedly write single memory location 50x
+//#define MEMELOC	0x04000000	//location to write
 
 // ############################################################################################
 // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
@@ -81,9 +87,10 @@ main(void)
      uart0_printf("Number of Bytes to test:  ");
      long_to_hex_string((unsigned long ) NUM_BYTES, str, 8);
      uart0_printf(str);uart0_printf("\r\n");
-	 
-	 // write known pattern to memory
-	 uart0_printf ("clearing memory \n\r");
+
+#ifdef CLEARMEM	 
+	 //write known pattern to memory
+	 uart0_printf ("Start clearing memory \n\r");
 	 address = 0x04000000;
 	for (pattern = 0x04000000 ; pattern < (0x04000000+NUM_BYTES); pattern = pattern+4 )
     {
@@ -93,12 +100,31 @@ main(void)
         * address = pattern;
 		address = address + 1;
     }
-	
-	// uart0_printf ("testing started \n\r");
-  // for (i=0; i<CYCLES; i++) {	
-		// memtest_run();
-   // } //for
+	 uart0_printf ("Done clearing memory \n\r");
+#endif	
+
+#ifdef MEMLOCWR
+	address = MEMELOC;
+	set_syscpreg(SYS_CTRL_0, DC_WTHRU);
+	for (i=0; i<50; i++) {	
+		* address = 0xaaaaaaaa;
+		
+		long_to_hex_string((unsigned long ) *address, str, 8);
+		uart0_printf(str);uart0_printf("\r\n ");
+		* address = 0x55555555;
+		long_to_hex_string((unsigned long ) *address, str, 8);
+		uart0_printf(str);uart0_printf("\r\n ");
+		set_syscpreg(SYS_CTRL_0, DC_FLUSH);
+	} //for
+#endif
+
+	uart0_printf ("testing started \n\r");
+#ifdef MEMTESTRUN
+	for (i=0; i<CYCLES; i++) {	
+		memtest_run();
+	} //for
+#endif
    
    uart0_printf ("testing done \n\r");
-	asm volatile ("mov pc, #00010000");
+//	asm volatile ("mov pc, #00010000");
 }   /* memTest() */
