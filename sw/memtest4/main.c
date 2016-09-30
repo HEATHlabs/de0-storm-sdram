@@ -25,7 +25,7 @@
 #define NUM_BYTES      32 * 1024 * 1024
 //#define NUM_BYTES     ( 32 * 1024 )
 
-#define CYCLES	1
+#define CYCLES	10
 
 //#define CLEARMEM    //run clearing memory and write address to location
 #define MEMTESTRUN	//run memtest routines

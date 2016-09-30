@@ -6,6 +6,11 @@
 
 //#define JUMPADDRESS 0x00000000
 #define JUMPADDRESS 0x04000000
+extern void start_application(unsigned long int){    
+	asm(" ldr sp, [r0,#0]");    
+	asm(" ldr pc, [r0,#4]");
+}
+
 
 unsigned long int hex_string_to_long ( char *hexstr, int charlen )
 {

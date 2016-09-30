@@ -19,7 +19,7 @@
 
 /* External RAM */
 #define XRAM_BASE       (*(REG32 (0x01000000)))
-#define XRAM_SIZE       0//32*1024*1024
+#define XRAM_SIZE       32*1024*1024
 
 /* Complete RAM */
 #define RAM_BASE        (*(REG32 (0x00000000)))

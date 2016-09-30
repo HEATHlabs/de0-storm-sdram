@@ -143,9 +143,9 @@ architecture Structure of BUS_UNIT is
 	-- NEW
 
 	signal WB_DATA_FF_PREV				 : STD_LOGIC_VECTOR(31 downto 0);
-	signal WB_DATA_FF_PREV2				 : STD_LOGIC_VECTOR(31 downto 0);
+	signal WB_DATA_FF_PREV2, WB_DATA_FF_PREV3 : STD_LOGIC_VECTOR(31 downto 0);
 	attribute noprune of WB_DATA_FF_PREV: signal is true;
-	attribute noprune of WB_DATA_FF_PREV2: signal is true;
+	attribute noprune of WB_DATA_FF_PREV3: signal is true;
 
 	--JH 
 	signal HALTED		                 : STD_LOGIC;
@@ -198,8 +198,8 @@ begin
 --			if rising_edge(CORE_CLK_I) then
 				if (WB_HALT_DLY = '1' AND WB_HALT_I = '0') then
 					if (ARB_STATE = UPLOAD_D_PAGE) then
-						if (WB_ACK_CNT > X"0001" ) then
-							WB_DATA_O_TEST <= WB_DATA_FF_PREV;--change to PREV.
+						if (WB_ACK_CNT > X"0000" ) then
+							WB_DATA_O_TEST <= WB_DATA_FF_PREV;--
 						else
 							WB_DATA_O_TEST <= WB_DATA_FF_PREV;
 						end if;
@@ -229,6 +229,7 @@ begin
 					if (WB_HALT_DLY = '0') then
 						WB_DATA_FF_PREV <= DC_DATA_I;
 						WB_DATA_FF_PREV2 <= WB_DATA_FF_PREV;
+						WB_DATA_FF_PREV3 <= WB_DATA_FF_PREV2;
 					end if;
 				end if;
 			end if;

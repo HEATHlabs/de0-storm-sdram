@@ -1573,8 +1573,9 @@
  1082              	.LVL114:
  1083              		ldmfd	sp!, {r4, pc}
  1084              	.LFE29:
- 1086              		.align	2
- 1087              		.global	uart0_scanf
+ 1086              		.section	.rodata
+ 1087              		.align	2
+ 1088              	.LC0:
    1:../lib/uart.c **** #include "uart.h"
    2:../lib/uart.c **** 
    3:../lib/uart.c **** // ############################################################################################
@@ -1582,170 +1583,186 @@
    5:../lib/uart.c ****    const char *uart0_printf(const char *string)
    6:../lib/uart.c **** // ############################################################################################
    7:../lib/uart.c **** {
- 1089              	B30:
- 1090              		.loc 3 22 0
- 1091              		@ args = 0, pretend = 0, frame = 0
- 1092              		@ frame_needed = 0, uses_anonymous_args = 0
- 1093 05fc E92D4010 	.LVL115:
- 1094              		stmfd	sp!, {r4, r5, r6, lr}
- 1095              	.LCFI5:
- 1096 0600 E1A04000 		.loc 3 25 0
+ 1089              	0"
+ 1090              		.text
+ 1091              		.align	2
+ 1092              		.global	uart0_scanf
+ 1094              	uart0_scanf:
+ 1095              	.LFB30:
+ 1096 0600 E1A04000 		.loc 3 22 0
    8:../lib/uart.c **** 	char ch;
    9:../lib/uart.c **** 
   10:../lib/uart.c **** 	while ((ch = *string)){
- 1097              	, r1, #0
- 1098 0604 E5D00000 		.loc 3 22 0
- 1099              		mov	r5, r0
- 1100 0608 E3500000 		and	r6, r2, #255
- 1101 060c 1A000003 		.loc 3 25 0
- 1102 0610 EA000005 		ldmlefd	sp!, {r4, r5, r6, pc}
- 1103              	.LVL116:
- 1104              	.L197:
- 1105 0614 E5F40001 		.loc 3 26 0
- 1106              		bl	io_uart0_read_byte
- 1107 0618 E3500000 	.LVL117:
- 1108 061c 0A000002 	.LVL118:
- 1109              		.loc 3 27 0
+ 1097              	= 0, pretend = 0, frame = 0
+ 1098 0604 E5D00000 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1099              	.LVL115:
+ 1100 0608 E3500000 		stmfd	sp!, {r4, r5, r6, lr}
+ 1101 060c 1A000003 	.LCFI5:
+ 1102 0610 EA000005 		.loc 3 25 0
+ 1103              		subs	r4, r1, #0
+ 1104              		.loc 3 22 0
+ 1105 0614 E5F40001 		mov	r5, r0
+ 1106              		and	r6, r2, #255
+ 1107 0618 E3500000 		.loc 3 25 0
+ 1108 061c 0A000002 		ble	.L190
+ 1109              	.LVL116:
   11:../lib/uart.c **** 		if (io_uart0_send_byte(ch)<=0)
- 1110              	.loc 3 28 0
- 1111 0620 EBFFFFFE 		and	r3, r0, #255
- 1112              	.LVL119:
- 1113 0624 E3500000 		.loc 3 27 0
- 1114 0628 CAFFFFF9 		beq	.L192
- 1115              		.loc 3 30 0
- 1116              		cmp	r6, #1
+ 1110              	3 26 0
+ 1111 0620 EBFFFFFE 		bl	io_uart0_read_byte
+ 1112              	.LVL117:
+ 1113 0624 E3500000 	.LVL118:
+ 1114 0628 CAFFFFF9 		.loc 3 27 0
+ 1115              		cmn	r0, #1
+ 1116              		.loc 3 28 0
   12:../lib/uart.c **** 			break;
   13:../lib/uart.c **** 		string++;
   14:../lib/uart.c **** 	}
   15:../lib/uart.c **** 	return string;
   16:../lib/uart.c **** }
- 1117              	:
- 1118 062c E1A00004 		.loc 3 29 0
- 1119              		strb	r3, [r5, #0]
- 1120 0630 E8BD8010 	.LVL121:
- 1121              		.loc 3 31 0
- 1122              		mov	r0, r3
- 1123              	.LVL122:
+ 1117              	, r0, #255
+ 1118 062c E1A00004 	.LVL119:
+ 1119              		.loc 3 27 0
+ 1120 0630 E8BD8010 		beq	.L192
+ 1121              		.loc 3 30 0
+ 1122              		cmp	r6, #1
+ 1123              	.LVL120:
  1124              		.loc 3 29 0
- 1125              		add	r5, r5, #1
- 1126              		.loc 3 30 0
- 1127              		beq	.L199
+ 1125              		strb	r3, [r5, #0]
+ 1126 0000 0000     	.LVL121:
+ 1127 0002 0000     		.loc 3 31 0
+ 1128              		mov	r0, r3
+ 1129              	.LVL122:
+ 1130              		.loc 3 29 0
+ 1131              		add	r5, r5, #1
+ 1132              		.loc 3 30 0
   17:../lib/uart.c **** 
   18:../lib/uart.c **** // ############################################################################################
   19:../lib/uart.c **** // Read text string via UART 0
   20:../lib/uart.c ****    void uart0_scanf(unsigned char *buffer, int length, unsigned char en_echo)
   21:../lib/uart.c **** // ############################################################################################
   22:../lib/uart.c **** {
- 1128              	194:
- 1129              		.loc 3 32 0
- 1130              		sub	r4, r4, #1
- 1131              	.LVL124:
- 1132 0634 E92D4070 	.L192:
- 1133              		.loc 3 25 0
+ 1133              	23:
+ 1134              	.L194:
+ 1135              		.loc 3 32 0
+ 1136              		sub	r4, r4, #1
+ 1137 0634 E92D4070 	.LVL124:
+ 1138              	.L192:
   23:../lib/uart.c **** 	int temp = 0;
   24:../lib/uart.c **** 
   25:../lib/uart.c **** 	while(length > 0){
- 1134              	4, #0
- 1135 0638 E2514000 		bgt	.L197
- 1136              		ldmfd	sp!, {r4, r5, r6, pc}
- 1137 063c E1A05000 	.LVL125:
- 1138 0640 E20260FF 	.L199:
- 1139              		.loc 3 31 0
- 1140 0644 D8BD8070 		bl	io_uart0_send_byte
- 1141              	.LVL126:
- 1142              		b	.L194
+ 1139              	3 25 0
+ 1140 0638 E2514000 		cmp	r4, #0
+ 1141              		bgt	.L197
+ 1142 063c E1A05000 	.LVL125:
+ 1143 0640 E20260FF 	.L190:
+ 1144              		.loc 3 35 0
+ 1145 0644 DA00000B 		ldr	r3, .L200
+ 1146              	.LVL126:
+ 1147              		strb	r3, [r5, #0]
   26:../lib/uart.c **** 		temp = io_uart0_read_byte();
- 1144 0648 EBFFFFFE 		.align	2
- 1145              		.global	uart0_print_buffer
+ 1148              	6 0
+ 1149 0648 EBFFFFFE 		ldmfd	sp!, {r4, r5, r6, pc}
+ 1150              	.LVL127:
+ 1151              	.L199:
   27:../lib/uart.c **** 		if(temp != -1){
- 1147              	0_print_buffer:
- 1148 064c E3700001 	.LFB31:
+ 1152              	c 3 31 0
+ 1153 064c E3700001 		bl	io_uart0_send_byte
   28:../lib/uart.c **** 			temp = (unsigned char)(temp & 0x000000FF);
- 1149              	loc 3 41 0
- 1150 0650 E20030FF 		@ args = 0, pretend = 0, frame = 0
- 1151              		@ frame_needed = 0, uses_anonymous_args = 0
- 1152              	.LVL127:
- 1153 0654 0A000005 		stmfd	sp!, {r4, r5, lr}
+ 1154              	VL128:
+ 1155 0650 E20030FF 		b	.L194
+ 1156              	.L201:
+ 1157              		.align	2
+ 1158 0654 0A000005 	.L200:
   29:../lib/uart.c **** 			*buffer++ = temp;
   30:../lib/uart.c **** 			if(en_echo == 1)
- 1154              	6:
- 1155 0658 E3560001 		.loc 3 43 0
- 1156              		subs	r4, r1, #0
- 1157              		.loc 3 41 0
- 1158 065c E5C53000 		mov	r5, r0
- 1159              		.loc 3 43 0
+ 1159              	d	.LC0
+ 1160 0658 E3560001 	.LFE30:
+ 1162              		.align	2
+ 1163 065c E5C53000 		.global	uart0_print_buffer
   31:../lib/uart.c **** 				io_uart0_send_byte(temp); // echo
- 1160              	fd	sp!, {r4, r5, pc}
- 1161 0660 E1A00003 	.LVL128:
- 1162              	.L204:
- 1163              		.loc 3 45 0
- 1164 0664 E2855001 		ldrb	r0, [r5], #1	@ zero_extendqisi2
- 1165              	.LVL129:
- 1166 0668 0A000003 		bl	io_uart0_send_byte
- 1167              	.LVL130:
- 1168              		.loc 3 43 0
+ 1165              	print_buffer:
+ 1166 0660 E1A00003 	.LFB31:
+ 1167              		.loc 3 42 0
+ 1168              		@ args = 0, pretend = 0, frame = 0
+ 1169 0664 E2855001 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1170              	.LVL129:
+ 1171 0668 0A000005 		stmfd	sp!, {r4, r5, lr}
+ 1172              	.LCFI6:
+ 1173              		.loc 3 44 0
   32:../lib/uart.c **** 			length--;
- 1169              	 r4, #1
- 1170 066c E2444001 		bne	.L204
- 1171              		ldmfd	sp!, {r4, r5, pc}
- 1172              	.LFE31:
- 1174 0670 E3540000 		.align	2
- 1175 0674 CAFFFFF3 		.global	timer0_isr
- 1177              	timer0_isr:
- 1178              	.LFB32:
- 1179              		.file 4 "main.c"
- 1180 067c EBFFFFFE 		.loc 4 18 0
- 1181              		@ Interrupt Service Routine.
- 1182 0680 EAFFFFF9 		@ args = 0, pretend = 0, frame = 0
- 1183              		@ frame_needed = 0, uses_anonymous_args = 0
- 1184              		sub	lr, lr, #4
- 1185              		stmfd	sp!, {r0, r1, r2, r3, ip, lr}
- 1186              	.LCFI7:
- 1187              		.loc 4 20 0
- 1188              		mov	r0, #13
- 1189              		bl	get_syscpreg
+ 1174              	 r1, #0
+ 1175 066c E2444001 		.loc 3 42 0
+ 1176              		mov	r5, r0
+ 1177              		.loc 3 44 0
+ 1178              		ldmlefd	sp!, {r4, r5, pc}
+ 1179 0670 E3540000 	.LVL130:
+ 1180 0674 CAFFFFF3 	.L206:
+ 1181              		.loc 3 46 0
+ 1182              		ldrb	r0, [r5], #1	@ zero_extendqisi2
   33:../lib/uart.c **** 		}
   34:../lib/uart.c **** 	}
-  35:../lib/uart.c **** }
-  36:../lib/uart.c **** 
-  37:../lib/uart.c **** // ############################################################################################
-  38:../lib/uart.c **** // Print character buffer via UART 0
-  39:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
-  40:../lib/uart.c **** // ############################################################################################
-  41:../lib/uart.c **** {
- 1190              	 r0, #1
- 1191              		bl	set_syscpreg
- 1192              		.loc 4 23 0
- 1193              		mov	r2, #0
- 1194 0684 E92D4030 		mvn	r3, #0
- 1195              		str	r2, [r3, #-4047]
-  42:../lib/uart.c **** 	unsigned char char_buffer = 0;
-  43:../lib/uart.c **** 	while(size > 0){
- 1196              	4 24 0
- 1197 0688 E2514000 		ldmfd	sp!, {r0, r1, r2, r3, ip, pc}^
- 1198              	.LFE32:
- 1200              		.section	.rodata.str1.4,"aMS",%progbits,1
- 1201 0690 D8BD8030 		.align	2
- 1202              	.LC0:
- 1203              		.ascii	"\015\012\015\012STORM SoC Basic Configuration\015\012"
-  44:../lib/uart.c **** 		char_buffer = *buffer++;
-  45:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
- 1204              	"\000"
- 1205 0694 E4D50001 		.align	2
- 1206              	.LC1:
- 1207 0698 EBFFFFFE 		.ascii	"Demo program\015\012\015\012\000"
- 1208              		.align	2
- 1209              	.LC2:
- 1210 069c E2544001 		.ascii	"Press any key!\015\012\000"
- 1211 06a0 1AFFFFFB 		.text
- 1212 06a4 E8BD8030 		.align	2
- 1213              		.global	main
- 1215              	main:
- 1216              	.LFB33:
- 1217              		.loc 4 29 0
- 1218              		@ args = 0, pretend = 0, frame = 0
- 1219              		@ frame_needed = 0, uses_anonymous_args = 0
- 1220              		.loc 4 34 0
+  35:../lib/uart.c **** 	*buffer="\0";
+ 1183              		bl	io_uart0_send_byte
+ 1184 0678 E59F300C 	.LVL132:
+ 1185              		.loc 3 44 0
+ 1186 067c E5C53000 		subs	r4, r4, #1
+  36:../lib/uart.c **** }
+ 1187              		.L206
+ 1188 0680 E8BD8070 		ldmfd	sp!, {r4, r5, pc}
+ 1189              	.LFE31:
+ 1191              		.align	2
+ 1192 0684 EBFFFFFE 		.global	timer0_isr
+ 1194 0688 EAFFFFF7 	timer0_isr:
+ 1195              	.LFB32:
+ 1196              		.file 4 "main.c"
+ 1197              		.loc 4 18 0
+ 1198 068c 00000000 		@ Interrupt Service Routine.
+ 1199              		@ args = 0, pretend = 0, frame = 0
+ 1200              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1201              		sub	lr, lr, #4
+ 1202              		stmfd	sp!, {r0, r1, r2, r3, ip, lr}
+ 1203              	.LCFI7:
+ 1204              		.loc 4 20 0
+ 1205              		mov	r0, #13
+  37:../lib/uart.c **** 
+  38:../lib/uart.c **** // ############################################################################################
+  39:../lib/uart.c **** // Print character buffer via UART 0
+  40:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
+  41:../lib/uart.c **** // ############################################################################################
+  42:../lib/uart.c **** {
+ 1206              	ov	r1, #13
+ 1207              		eor	r0, r0, #1
+ 1208              		bl	set_syscpreg
+ 1209              		.loc 4 23 0
+ 1210 0690 E92D4030 		mov	r2, #0
+ 1211              		mvn	r3, #0
+  43:../lib/uart.c **** 	unsigned char char_buffer = 0;
+  44:../lib/uart.c **** 	while(size > 0){
+ 1212              	2, [r3, #-4047]
+ 1213 0694 E2514000 		.loc 4 24 0
+ 1214              		ldmfd	sp!, {r0, r1, r2, r3, ip, pc}^
+ 1215 0698 E1A05000 	.LFE32:
+ 1217 069c D8BD8030 		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1218              		.align	2
+ 1219              	.LC1:
+  45:../lib/uart.c **** 		char_buffer = *buffer++;
+  46:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
+ 1220              	"\015\012\015\012STORM SoC Basic Configuration\015\012"
+ 1221 06a0 E4D50001 		.ascii	"\000"
+ 1222              		.align	2
+ 1223 06a4 EBFFFFFE 	.LC2:
+ 1224              		.ascii	"Demo program\015\012\015\012\000"
+ 1225              		.align	2
+ 1226 06a8 E2544001 	.LC3:
+ 1227 06ac 1AFFFFFB 		.ascii	"Press any key!\015\012\000"
+ 1228 06b0 E8BD8030 		.text
+ 1229              		.align	2
+ 1230              		.global	main
+ 1232              	main:
+ 1233              	.LFB33:
+ 1234              		.loc 4 29 0
+ 1235              		@ args = 0, pretend = 0, frame = 0
+ 1236              		@ frame_needed = 0, uses_anonymous_args = 0
    1:main.c        **** #include "../lib/storm_core.h"
    2:main.c        **** #include "../lib/storm_soc_basic.h"
    3:main.c        **** #include "../lib/io_driver.c"
@@ -1764,195 +1781,197 @@
   16:main.c        **** /* ---- IRQ: Timer ISR ---- */
   17:main.c        **** void __attribute__ ((interrupt("IRQ"))) timer0_isr(void)
   18:main.c        **** {
- 1221              	0
- 1222              		add	r2, r2, #192512
- 1223              		.loc 4 33 0
- 1224              		mvn	r1, #61440
- 1225 06a8 E24EE004 		.loc 4 34 0
- 1226 06ac E92D500F 		add	r2, r2, #128
- 1227              		.loc 4 33 0
+ 1237              		r2, #49807360
+ 1238              		add	r2, r2, #192512
+ 1239              		.loc 4 33 0
+ 1240              		mvn	r1, #61440
+ 1241 06b4 E24EE004 		.loc 4 34 0
+ 1242 06b8 E92D500F 		add	r2, r2, #128
+ 1243              		.loc 4 33 0
   19:main.c        **** 	// toggle status led
   20:main.c        **** 	set_syscpreg((get_syscpreg(SYS_IO) ^ 0x01), SYS_IO);
- 1228              	, #0
- 1229 06b0 E3A0000D 		str	r3, [r1, #-3583]
- 1230 06b4 EBFFFFFE 		.loc 4 34 0
- 1231 06b8 E3A0100D 		str	r2, [r1, #-3579]
- 1232 06bc E2200001 		.loc 4 36 0
- 1233 06c0 EBFFFFFE 		ldr	r2, .L219
+ 1244              	, #0
+ 1245 06bc E3A0000D 		str	r3, [r1, #-3583]
+ 1246 06c0 EBFFFFFE 		.loc 4 34 0
+ 1247 06c4 E3A0100D 		str	r2, [r1, #-3579]
+ 1248 06c8 E2200001 		.loc 4 36 0
+ 1249 06cc EBFFFFFE 		ldr	r2, .L221
   21:main.c        **** 
   22:main.c        **** 	// acknowledge interrupt
   23:main.c        **** 	VICVectAddr = 0;
- 1234              	0, #0
- 1235 06c4 E3A02000 		.loc 4 35 0
- 1236 06c8 E3E03000 		add	r3, r3, #7
- 1237 06cc E5032FCF 		str	r3, [r1, #-3575]
+ 1250              	0, #0
+ 1251 06d0 E3A02000 		.loc 4 35 0
+ 1252 06d4 E3E03000 		add	r3, r3, #7
+ 1253 06d8 E5032FCF 		str	r3, [r1, #-3575]
   24:main.c        **** }
- 1238              	c 4 36 0
- 1239 06d0 E8FD900F 		str	r2, [r0, #-4031]
- 1240              		.loc 4 37 0
- 1241              		add	r3, r3, #25
- 1242              		.loc 4 38 0
- 1243              		mov	r2, #1
- 1244              		.loc 4 37 0
- 1245 0000 0D0A0D0A 		str	r3, [r0, #-3967]
- 1245      53544F52 
- 1245      4D20536F 
- 1245      43204261 
- 1245      73696320 
- 1246 0023 00       		.loc 4 29 0
- 1247              		str	lr, [sp, #-4]!
- 1248              	.LCFI8:
- 1249 0024 44656D6F 		.loc 4 38 0
- 1249      2070726F 
- 1249      6772616D 
- 1249      0D0A0D0A 
- 1249      00
- 1250 0035 000000   		str	r2, [r0, #-4079]
- 1251              		.loc 4 39 0
- 1252 0038 50726573 		bl	io_enable_xint
- 1252      7320616E 
- 1252      79206B65 
- 1252      79210D0A 
- 1252      00
- 1253 0049 000000   		.loc 4 42 0
- 1254              		ldr	r0, .L219+4
- 1255              		bl	uart0_printf
- 1256              		.loc 4 43 0
- 1257              		ldr	r0, .L219+8
- 1258              		bl	uart0_printf
+ 1254              	c 4 36 0
+ 1255 06dc E8FD900F 		str	r2, [r0, #-4031]
+ 1256              		.loc 4 37 0
+ 1257              		add	r3, r3, #25
+ 1258              		.loc 4 38 0
+ 1259              		mov	r2, #1
+ 1260              		.loc 4 37 0
+ 1261 0000 0D0A0D0A 		str	r3, [r0, #-3967]
+ 1261      53544F52 
+ 1261      4D20536F 
+ 1261      43204261 
+ 1261      73696320 
+ 1262 0023 00       		.loc 4 29 0
+ 1263              		str	lr, [sp, #-4]!
+ 1264              	.LCFI8:
+ 1265 0024 44656D6F 		.loc 4 38 0
+ 1265      2070726F 
+ 1265      6772616D 
+ 1265      0D0A0D0A 
+ 1265      00
+ 1266 0035 000000   		str	r2, [r0, #-4079]
+ 1267              		.loc 4 39 0
+ 1268 0038 50726573 		bl	io_enable_xint
+ 1268      7320616E 
+ 1268      79206B65 
+ 1268      79210D0A 
+ 1268      00
+ 1269 0049 000000   		.loc 4 42 0
+ 1270              		ldr	r0, .L221+4
+ 1271              		bl	uart0_printf
+ 1272              		.loc 4 43 0
+ 1273              		ldr	r0, .L221+8
+ 1274              		bl	uart0_printf
   25:main.c        **** 
   26:main.c        **** 
   27:main.c        **** /* ---- Main function ---- */
   28:main.c        **** int main(void)
   29:main.c        **** {
- 1259              	 .L219+12
- 1260              		bl	uart0_printf
- 1261              	.L217:
+ 1275              	 .L221+12
+ 1276              		bl	uart0_printf
+ 1277              	.L219:
   30:main.c        **** 	int temp;
   31:main.c        **** 
   32:main.c        **** 	// timer init
   33:main.c        **** 	STME0_CNT  = 0;
   34:main.c        **** 	STME0_VAL  = 50000000; // threshold value for 1s ticks
- 1262              	oc 4 49 0
- 1263 06d4 E3A027BE 		bl	io_uart0_read_byte
- 1264 06d8 E2822A2F 		.loc 4 50 0
- 1265              		cmn	r0, #1
- 1266 06dc E3E01A0F 		beq	.L217
- 1267              	.L218:
- 1268 06e0 E2822080 		.loc 4 51 0
- 1269              		bl	io_uart0_send_byte
- 1270 06e4 E3A03000 		.loc 4 49 0
- 1271 06e8 E5013DFF 		bl	io_uart0_read_byte
- 1272              		.loc 4 50 0
- 1273 06ec E5012DFB 		cmn	r0, #1
+ 1278              	oc 4 49 0
+ 1279 06e0 E3A027BE 		bl	io_uart0_read_byte
+ 1280 06e4 E2822A2F 		.loc 4 50 0
+ 1281              		cmn	r0, #1
+ 1282 06e8 E3E01A0F 		beq	.L219
+ 1283              	.L220:
+ 1284 06ec E2822080 		.loc 4 51 0
+ 1285              		bl	io_uart0_send_byte
+ 1286 06f0 E3A03000 		.loc 4 49 0
+ 1287 06f4 E5013DFF 		bl	io_uart0_read_byte
+ 1288              		.loc 4 50 0
+ 1289 06f8 E5012DFB 		cmn	r0, #1
   35:main.c        **** 	STME0_CONF = (1<<2) | (1<<1) | (1<<0); // interrupt en, auto reset, timer enable
   36:main.c        **** 	VICVectAddr0 = (unsigned long)timer0_isr;
- 1274              	b	.L217
- 1275 06f0 E59F205C 	.L220:
- 1276 06f4 E3E00000 		.align	2
- 1277              	.L219:
- 1278 06f8 E2833007 		.word	timer0_isr
- 1279 06fc E5013DF7 		.word	.LC0
- 1280              		.word	.LC1
- 1281 0700 E5002FBF 		.word	.LC2
+ 1290              	b	.L219
+ 1291 06fc E59F205C 	.L222:
+ 1292 0700 E3E00000 		.align	2
+ 1293              	.L221:
+ 1294 0704 E2833007 		.word	timer0_isr
+ 1295 0708 E5013DF7 		.word	.LC1
+ 1296              		.word	.LC2
+ 1297 070c E5002FBF 		.word	.LC3
   37:main.c        **** 	VICVectCntl0 = (1<<5) | 0; // enable and channel select = 0 (timer0)
- 1283 0704 E2833019 		.section	.debug_frame,"",%progbits
+ 1299 0710 E2833019 		.section	.debug_frame,"",%progbits
   38:main.c        **** 	VICIntEnable = (1<<0); // enable channel 0 (timer0)
- 1284              	frame0:
- 1285 0708 E3A02001 		.4byte	.LECIE0-.LSCIE0
- 1286              	.LSCIE0:
- 1287 070c E5003F7F 		.4byte	0xffffffff
- 1288              		.byte	0x1
- 1289 0710 E52DE004 		.ascii	"\000"
- 1290              		.uleb128 0x1
- 1291              		.sleb128 -4
- 1292 0714 E5002FEF 		.byte	0xe
+ 1300              	frame0:
+ 1301 0714 E3A02001 		.4byte	.LECIE0-.LSCIE0
+ 1302              	.LSCIE0:
+ 1303 0718 E5003F7F 		.4byte	0xffffffff
+ 1304              		.byte	0x1
+ 1305 071c E52DE004 		.ascii	"\000"
+ 1306              		.uleb128 0x1
+ 1307              		.sleb128 -4
+ 1308 0720 E5002FEF 		.byte	0xe
   39:main.c        **** 	io_enable_xint(); // enable IRQ
- 1293              	c
- 1294 0718 EBFFFFFE 		.uleb128 0xd
+ 1309              	c
+ 1310 0724 EBFFFFFE 		.uleb128 0xd
   40:main.c        **** 
   41:main.c        **** 	// Intro
   42:main.c        **** 	uart0_printf("\r\n\r\nSTORM SoC Basic Configuration\r\n");
- 1295              	uleb128 0x0
- 1296 071c E59F0034 		.align	2
- 1297 0720 EBFFFFFE 	.LECIE0:
+ 1311              	uleb128 0x0
+ 1312 0728 E59F0034 		.align	2
+ 1313 072c EBFFFFFE 	.LECIE0:
   43:main.c        **** 	uart0_printf("Demo program\r\n\r\n");
- 1298              	FDE0:
- 1299 0724 E59F0030 		.4byte	.LEFDE0-.LASFDE0
- 1300 0728 EBFFFFFE 	.LASFDE0:
+ 1314              	FDE0:
+ 1315 0730 E59F0030 		.4byte	.LEFDE0-.LASFDE0
+ 1316 0734 EBFFFFFE 	.LASFDE0:
   44:main.c        **** 
   45:main.c        **** 	uart0_printf("Press any key!\r\n");
- 1301              	byte	.Lframe0
- 1302 072c E59F002C 		.4byte	.LFB2
- 1303 0730 EBFFFFFE 		.4byte	.LFE2-.LFB2
- 1304              		.align	2
+ 1317              	byte	.Lframe0
+ 1318 0738 E59F002C 		.4byte	.LFB2
+ 1319 073c EBFFFFFE 		.4byte	.LFE2-.LFB2
+ 1320              		.align	2
   46:main.c        **** 
   47:main.c        **** 	// echo received char
   48:main.c        **** 	while(1){
   49:main.c        **** 		temp = io_uart0_read_byte();
- 1305              	DE0:
- 1306 0734 EBFFFFFE 	.LSFDE2:
+ 1321              	DE0:
+ 1322 0740 EBFFFFFE 	.LSFDE2:
   50:main.c        **** 		if (temp != -1)
- 1307              	4byte	.LEFDE2-.LASFDE2
- 1308 0738 E3700001 	.LASFDE2:
- 1309 073c 0AFFFFFC 		.4byte	.Lframe0
- 1310              		.4byte	.LFB3
+ 1323              	4byte	.LEFDE2-.LASFDE2
+ 1324 0744 E3700001 	.LASFDE2:
+ 1325 0748 0AFFFFFC 		.4byte	.Lframe0
+ 1326              		.4byte	.LFB3
   51:main.c        **** 			io_uart0_send_byte(temp);
- 1311              	yte	.LFE3-.LFB3
- 1312 0740 EBFFFFFE 		.align	2
- 1313              	.LEFDE2:
- 1314 0744 EBFFFFFE 	.LSFDE4:
- 1315              		.4byte	.LEFDE4-.LASFDE4
- 1316 0748 E3700001 	.LASFDE4:
- 1317 074c 1AFFFFFB 		.4byte	.Lframe0
- 1318 0750 EAFFFFF7 		.4byte	.LFB4
- 1319              		.4byte	.LFE4-.LFB4
- 1320              		.align	2
- 1321              	.LEFDE4:
- 1322 0754 00000000 	.LSFDE6:
- 1323 0758 00000000 		.4byte	.LEFDE6-.LASFDE6
- 1324 075c 00000024 	.LASFDE6:
- 1325 0760 00000038 		.4byte	.Lframe0
- 1326              		.4byte	.LFB5
- 1327              		.4byte	.LFE5-.LFB5
- 1670              		.byte	0x53
+ 1327              	yte	.LFE3-.LFB3
+ 1328 074c EBFFFFFE 		.align	2
+ 1329              	.LEFDE2:
+ 1330 0750 EBFFFFFE 	.LSFDE4:
+ 1331              		.4byte	.LEFDE4-.LASFDE4
+ 1332 0754 E3700001 	.LASFDE4:
+ 1333 0758 1AFFFFFB 		.4byte	.Lframe0
+ 1334 075c EAFFFFF7 		.4byte	.LFB4
+ 1335              		.4byte	.LFE4-.LFB4
+ 1336              		.align	2
+ 1337              	.LEFDE4:
+ 1338 0760 00000000 	.LSFDE6:
+ 1339 0764 00000000 		.4byte	.LEFDE6-.LASFDE6
+ 1340 0768 00000024 	.LASFDE6:
+ 1341 076c 00000038 		.4byte	.Lframe0
+ 1342              		.4byte	.LFB5
+ 1343              		.4byte	.LFE5-.LFB5
+ 1686              		.byte	0x53
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:13     .text:00000000 io_read_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:22     .text:00000000 $a
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:39     .text:00000018 io_read_gpio0_port
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:59     .text:00000024 io_set_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:85     .text:00000040 io_clr_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:111    .text:00000064 io_toggle_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:137    .text:00000080 io_set_gpio0_port
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:157    .text:0000008c io_set_pwm
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:229    .text:00000108 io_get_pwm
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:282    .text:00000158 io_uart0_read_byte
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:306    .text:00000170 io_uart0_send_byte
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:331    .text:0000018c io_spi0_config
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:361    .text:000001b0 io_spi0_speed
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:381    .text:000001bc io_spi0_trans
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:418    .text:000001f4 io_spi0_enable
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:444    .text:00000210 io_spi0_disable
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:470    .text:00000234 io_i2c0_speed
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:503    .text:00000260 io_i2c0_byte_transfer
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:647    .text:00000390 get_syscpreg
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:662    .text:000003a0 $d
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:679    .text:000003e0 $a
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:785    .text:00000468 set_syscpreg
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:804    .text:0000047c $d
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:814    .text:0000049c $a
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:834    .text:000004bc io_enable_xint
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:863    .text:000004cc io_disable_xint
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:892    .text:000004dc long_to_hex_string
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:962    .text:0000054c get_adc
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1003   .text:0000058c delay
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1035   .text:000005b4 string_cmpc
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1086   .text:000005fc uart0_printf
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1126   .text:00000634 uart0_scanf
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1188   .text:00000684 uart0_print_buffer
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1218   .text:000006a8 timer0_isr
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1257   .text:000006d4 main
-C:\Users\jh\AppData\Local\Temp/ccUTaaaa.s:1322   .text:00000754 $d
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:13     .text:00000000 io_read_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:22     .text:00000000 $a
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:39     .text:00000018 io_read_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:59     .text:00000024 io_set_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:85     .text:00000040 io_clr_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:111    .text:00000064 io_toggle_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:137    .text:00000080 io_set_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:157    .text:0000008c io_set_pwm
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:229    .text:00000108 io_get_pwm
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:282    .text:00000158 io_uart0_read_byte
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:306    .text:00000170 io_uart0_send_byte
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:331    .text:0000018c io_spi0_config
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:361    .text:000001b0 io_spi0_speed
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:381    .text:000001bc io_spi0_trans
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:418    .text:000001f4 io_spi0_enable
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:444    .text:00000210 io_spi0_disable
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:470    .text:00000234 io_i2c0_speed
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:503    .text:00000260 io_i2c0_byte_transfer
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:647    .text:00000390 get_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:662    .text:000003a0 $d
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:679    .text:000003e0 $a
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:785    .text:00000468 set_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:804    .text:0000047c $d
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:814    .text:0000049c $a
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:834    .text:000004bc io_enable_xint
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:863    .text:000004cc io_disable_xint
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:892    .text:000004dc long_to_hex_string
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:962    .text:0000054c get_adc
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1003   .text:0000058c delay
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1035   .text:000005b4 string_cmpc
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1086   .text:000005fc uart0_printf
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1131   .text:00000634 uart0_scanf
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1198   .text:0000068c $d
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1204   .text:00000690 uart0_print_buffer
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1210   .text:00000690 $a
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1234   .text:000006b4 timer0_isr
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1273   .text:000006e0 main
+C:\Users\jh\AppData\Local\Temp/ccwPcaaa.s:1338   .text:00000760 $d
 
 NO UNDEFINED SYMBOLS

@@ -4,7 +4,17 @@
 #include "../lib/uart.c"
 #include "../lib/utilities.c"
 
-#define DUMPADDRESS 0x04000000
+// #define DUMPADDRESS 0x00000000
+// #define JUMPADDRESS 0x04000000
+//#define SRAM
+
+#ifdef SRAM
+	#define DUMPADDRESS 0x00000000
+	#define JUMPADDRESS 0x00000000
+#else
+	#define DUMPADDRESS 0x04000000
+	#define JUMPADDRESS 0x04000000
+#endif
 
 unsigned long int hex_string_to_long ( char *hexstr, int charlen )
 {
@@ -22,7 +32,33 @@ unsigned long int hex_string_to_long ( char *hexstr, int charlen )
  
 	return hexval;
 }
+void help_info () {
+	uart0_printf("\r\n\r\n\r\n+----------------------------------------------------------------+\r\n");
+	uart0_printf(            "|    <<< STORM Core Processor System - By Stephan Nolting >>>    |\r\n");
+	uart0_printf(            "+----------------------------------------------------------------+\r\n");
+	uart0_printf(            "|         Bootloader for STORM SoC   Version: 20120524-D         |\r\n");
+	uart0_printf(            "|               Contact: stnolting@googlemail.com                |\r\n");
+	uart0_printf(            "+----------------------------------------------------------------+\r\n\r\n");
+	uart0_printf("connected to I2C_CONTROLLER_0, operating frequency is 100kHz,\r\n");
+	uart0_printf("maximum EEPROM size = 65536 byte => 16 bit addresses,\r\n");
+	uart0_printf("fixed boot device address: 0xA0\r\n\r\n");
+	uart0_printf("Boot EEPROM: 24xxnnn (like 24AA64), 7 bit address + dont-care bit,\r\n");
+	uart0_printf(            " < Welcome to the STORM SoC bootloader console! >\r\n < Select an operation from the menu below or press >\r\n");
+	uart0_printf(            " < the boot key for immediate application start. >\r\n\r\n");
 
+	// Console menu
+	uart0_printf(" 0 - boot from core RAM (start application)\r\n 1 - program core RAM via UART_0\r\n 2 - core RAM dump\r\n");
+	uart0_printf(" 3 - boot from I2C EEPROM\r\n 4 - program I2C EEPROM via UART_0\r\n 5 - show content of I2C EEPROM\r\n");
+	uart0_printf(" a - automatic boot configuration\r\n h - help\r\n r - restart system\r\n\r\nSelect: ");	
+
+
+	// uart0_printf("Terminal setup: 9600 baud, 8 data bits, no parity, 1 stop bit\r\n\r\n");
+	// uart0_printf("For more information see the STORM Core / STORM SoC datasheet\r\n");
+	// uart0_printf("http://opencores.org/project,storm_core\r\n");
+	// uart0_printf("http://opencores.org/project,storm_soc\r\n");
+	// uart0_printf("Contact: stnolting@googlemail.com\r\n");
+	// uart0_printf("(c) 2012 by Stephan Nolting\r\n\r\nSelect: ");
+}
 unsigned long int qbytes_to_long ( unsigned char *buffer )
 {
 	unsigned char d = buffer[0];
@@ -64,21 +100,26 @@ unsigned long int qbytes_to_long ( unsigned char *buffer )
 	}
 
 	// Intro screen
-	uart0_printf("\r\n\r\n\r\n+----------------------------------------------------------------+\r\n");
-	uart0_printf(            "|    <<< STORM Core Processor System - By Stephan Nolting >>>    |\r\n");
-	uart0_printf(            "+----------------------------------------------------------------+\r\n");
-	uart0_printf(            "|         Bootloader for STORM SoC   Version: 20120524-D         |\r\n");
-	uart0_printf(            "|               Contact: stnolting@googlemail.com                |\r\n");
-	uart0_printf(            "+----------------------------------------------------------------+\r\n\r\n");
+	// uart0_printf("\r\n\r\n\r\n+----------------------------------------------------------------+\r\n");
+	// uart0_printf(            "|    <<< STORM Core Processor System - By Stephan Nolting >>>    |\r\n");
+	// uart0_printf(            "+----------------------------------------------------------------+\r\n");
+	// uart0_printf(            "|         Bootloader for STORM SoC   Version: 20120524-D         |\r\n");
+	// uart0_printf(            "|               Contact: stnolting@googlemail.com                |\r\n");
+	// uart0_printf(            "+----------------------------------------------------------------+\r\n\r\n");
 
-	uart0_printf(            " < Welcome to the STORM SoC bootloader console! >\r\n < Select an operation from the menu below or press >\r\n");
-	uart0_printf(            " < the boot key for immediate application start. >\r\n\r\n");
+	// uart0_printf(            " < Welcome to the STORM SoC bootloader console! >\r\n < Select an operation from the menu below or press >\r\n");
+	// uart0_printf(            " < the boot key for immediate application start. >\r\n\r\n");
 
-	// Console menu
-	uart0_printf(" 0 - boot from core RAM (start application)\r\n 1 - program core RAM via UART_0\r\n 2 - core RAM dump\r\n");
-	uart0_printf(" 3 - boot from I2C EEPROM\r\n 4 - program I2C EEPROM via UART_0\r\n 5 - show content of I2C EEPROM\r\n");
-	uart0_printf(" a - automatic boot configuration\r\n h - help\r\n r - restart system\r\n\r\nSelect: ");
-
+	// // Console menu
+	// uart0_printf(" 0 - boot from core RAM (start application)\r\n 1 - program core RAM via UART_0\r\n 2 - core RAM dump\r\n");
+	// uart0_printf(" 3 - boot from I2C EEPROM\r\n 4 - program I2C EEPROM via UART_0\r\n 5 - show content of I2C EEPROM\r\n");
+	// uart0_printf(" a - automatic boot configuration\r\n h - help\r\n r - restart system\r\n\r\nSelect: ");
+	help_info();
+	uart0_printf(" Load Address: ");
+	long_to_hex_string(JUMPADDRESS, temp_string, 8);
+	uart0_printf(temp_string);
+	uart0_printf(" \n\r ");
+	
 	while(1){
 
 		// console input
@@ -110,23 +151,34 @@ main_menu:
 				uart0_printf("\r\n\r\nApplication will start automatically after download.\r\n-> Waiting for 'storm_program.bin' in byte-stream mode...");
 				uart0_scanf(buffer,4,0); // get storm master boot record code
 				if((buffer[0] == 'S') && (buffer[1] == 'M') && (buffer[2] == 'B') && (buffer[3] == 'R')){
+					asm volatile ("NOP");asm volatile ("NOP");
 					uart0_scanf(buffer,4,0); // get image size
+					// uart0_printf("how big:");
+					// uart0_printf(buffer);
+					// uart0_printf("!\n\r");
 					adr_buffer = qbytes_to_long(buffer);
+					//long_to_hex_string(adr_buffer, temp_string,8);
+					
+					#ifdef SRAM
 					if (adr_buffer > RAM_SIZE-8){
-						uart0_printf(" ERROR! Program file too big!\r\n\r\n");
+						uart0_printf(" SRAM ERROR! Program file too big!\r\n\r\n");
 						break;
 					}
-					data_pointer = 0;
-					while(data_pointer != adr_buffer+4){
+					#else
+						if (adr_buffer > XRAM_SIZE-8){
+						uart0_printf(" SDRAM ERROR! Program file too big!\r\n\r\n");
+						break;
+					}
+					#endif
+					data_pointer = JUMPADDRESS;
+					while(data_pointer - JUMPADDRESS != adr_buffer+4){ // Adjust for address offset.
 						uart0_scanf(buffer,4,0); // get word
 						*data_pointer = qbytes_to_long(buffer); // store memory entry
 						data_pointer = data_pointer + 1;
 					}
-	asm volatile ("nop");
-	asm volatile ("nop");
-	asm volatile ("nop");
-
-					start_app = 1;
+					uart0_printf("Done Loading!\r\n");
+	
+					start_app = 0;
 				}
 				else
 					uart0_printf(" Invalid programming file!\r\n\r\nSelect: ");
@@ -299,26 +351,29 @@ main_menu:
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			case 'h':
 				io_uart0_send_byte((char)function_sel);
-				uart0_printf("\r\n\r\nSTORM SoC bootloader\r\n");
-				uart0_printf("'0': Execute program in RAM.\r\n");
-				uart0_printf("'1': Write 'storm_program.bin' to the core's RAM via UART.\r\n");
-				uart0_printf("'2': Print current content of complete core RAM.\r\n");
-				uart0_printf("'3': Load boot image from EEPROM and start application.\r\n");
-				uart0_printf("'4': Write 'storm_program.bin' to I2C EEPROM via UART.\r\n");
-				uart0_printf("'5': Print content of I2C EEPROM.\r\n");
-				uart0_printf("'a': Show DIP switch configurations for automatic boot.\r\n");
-				uart0_printf("'h': Show this screen.\r\n");
-				uart0_printf("'r': Reset system.\r\n\r\n");
-				uart0_printf("Boot EEPROM: 24xxnnn (like 24AA64), 7 bit address + dont-care bit,\r\n");
-				uart0_printf("connected to I2C_CONTROLLER_0, operating frequency is 100kHz,\r\n");
-				uart0_printf("maximum EEPROM size = 65536 byte => 16 bit addresses,\r\n");
-				uart0_printf("fixed boot device address: 0xA0\r\n\r\n");
-				uart0_printf("Terminal setup: 9600 baud, 8 data bits, no parity, 1 stop bit\r\n\r\n");
-				uart0_printf("For more information see the STORM Core / STORM SoC datasheet\r\n");
-				uart0_printf("http://opencores.org/project,storm_core\r\n");
-				uart0_printf("http://opencores.org/project,storm_soc\r\n");
-				uart0_printf("Contact: stnolting@googlemail.com\r\n");
-				uart0_printf("(c) 2012 by Stephan Nolting\r\n\r\nSelect: ");
+//				io_uart0_send_byte((char)function_sel);
+
+				help_info();
+				// uart0_printf("\r\n\r\nSTORM SoC bootloader\r\n");
+				// uart0_printf("'0': Execute program in RAM.\r\n");
+				// uart0_printf("'1': Write 'storm_program.bin' to the core's RAM via UART.\r\n");
+				// uart0_printf("'2': Print current content of complete core RAM.\r\n");
+				// uart0_printf("'3': Load boot image from EEPROM and start application.\r\n");
+				// uart0_printf("'4': Write 'storm_program.bin' to I2C EEPROM via UART.\r\n");
+				// uart0_printf("'5': Print content of I2C EEPROM.\r\n");
+				// uart0_printf("'a': Show DIP switch configurations for automatic boot.\r\n");
+				// uart0_printf("'h': Show this screen.\r\n");
+				// uart0_printf("'r': Reset system.\r\n\r\n");
+				// uart0_printf("Boot EEPROM: 24xxnnn (like 24AA64), 7 bit address + dont-care bit,\r\n");
+				// uart0_printf("connected to I2C_CONTROLLER_0, operating frequency is 100kHz,\r\n");
+				// uart0_printf("maximum EEPROM size = 65536 byte => 16 bit addresses,\r\n");
+				// uart0_printf("fixed boot device address: 0xA0\r\n\r\n");
+				// uart0_printf("Terminal setup: 9600 baud, 8 data bits, no parity, 1 stop bit\r\n\r\n");
+				// uart0_printf("For more information see the STORM Core / STORM SoC datasheet\r\n");
+				// uart0_printf("http://opencores.org/project,storm_core\r\n");
+				// uart0_printf("http://opencores.org/project,storm_soc\r\n");
+				// uart0_printf("Contact: stnolting@googlemail.com\r\n");
+				// uart0_printf("(c) 2012 by Stephan Nolting\r\n\r\nSelect: ");
 				break;
 
 			// back to the future
@@ -363,9 +418,13 @@ main_menu:
 	set_syscpreg(0x00, SYS_IO);
 
 	// disable write-through strategy
+	uart0_printf("\r\n\r\n-> disable write-through strategy...\r\n\r\n");
 	set_syscpreg(get_syscpreg(SYS_CTRL_0) & ~(1<<DC_WTHRU), SYS_CTRL_0);
 
+	uart0_printf("\r\n\r\n-> jump to application...\r\n\r\n");
 	// jump to application
-	asm volatile ("mov pc, #0");
+	_jump_to_program(JUMPADDRESS);
+//	asm volatile ("mov pc, #0");
+	uart0_printf("!!should not be here!!\r\n");
 	while(1);
 }

@@ -8,10 +8,10 @@
 #define BASE_ADDRESS  (volatile datum *) 0x04000000 //beginning of SDRAM memory
 #define NUM_BYTES      32 * 1024 * 1024
 
-//#define DATABTEST
-//#define ADDRBTEST
+#define DATABTEST
+#define ADDRBTEST
 #define DEVICETEST1
-//#define DEVICETEST2
+#define DEVICETEST2
 
 void memtest_run () {
 	int Step, result = 0;
@@ -81,7 +81,7 @@ void memtest_run () {
      }
 #endif
 	  uart0_printf("Mem test complete \r\n");
-	return; 
+	//return; 
 } //memtest_run()
 
 
