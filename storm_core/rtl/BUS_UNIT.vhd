@@ -436,9 +436,10 @@ begin
 					WB_BTE_O_NXT    <= "00"; -- increment Burst
 					WB_CYC_O_NXT    <= '1'; -- valid cycle
 					WB_STB_O_NXT    <= '1'; -- valid transfer
+					--IC_WE_O         <= '1'; -- cache write access
 					WB_WE_O_NXT     <= '0'; -- bus read
 					TIMEOUT_CNT_NXT <= Std_Logic_Vector(unsigned(TIMEOUT_CNT) + 1);
-					if (IC_ADR_BUF >= Std_Logic_Vector(unsigned(BASE_BUF) + (I_CACHE_PAGE_SIZE-1)*4)) and
+					if ((WB_HALT_I = '0') and (IC_ADR_BUF >= Std_Logic_Vector(unsigned(BASE_BUF) + (I_CACHE_PAGE_SIZE-1)*4))) and
 					   (to_integer(unsigned(WB_ACK_CNT)) >= I_CACHE_PAGE_SIZE) then
 						WB_CTI_O_NXT    <= WB_BST_END_CYC;
 						WB_BTE_O_NXT    <= "00"; --Incremennt Burst
@@ -503,10 +504,7 @@ begin
 						WB_CYC_O_NXT    <= '0'; -- terminate cycle
 						WB_STB_O_NXT    <= '0'; -- terminate cycle
 					end if;
-					-- if (WB_HALT_I = '1') then
-						-- ARB_STATE_RTN <= DOWNLOAD_D_PAGE;
-						-- ARB_STATE_NXT   <= HALT_TRANSFER;
-					-- end if;
+				
 				when IO_REQUEST => -- read/write IO location (single 32-bit word)
 				-------------------------------------------------------------------------------
 					WB_TGC_O_NXT(5) <= '0'; -- indicate data transfer

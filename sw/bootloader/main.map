@@ -21,7 +21,7 @@ LOAD d:/winarm/bin/../lib/gcc/arm-elf/4.1.1/../../../../arm-elf/lib/be\libc.a
 END GROUP
                 0x00002000                STACK_SIZE = 0x2000
 
-.text           0x00010000     0x1b68
+.text           0x00010000     0x1c3c
  *storm_startup_code.o(.text)
  *(.text)
  .text          0x00010000       0x70 build/storm_boot_startup_code.o
@@ -34,7 +34,7 @@ END GROUP
                 0x00010064                exit
                 0x00010058                _jump_to_program
                 0x00010020                start
- .text          0x00010070     0x1084 main.o
+ .text          0x00010070     0x1118 main.o
                 0x00010280                io_spi0_disable
                 0x00010094                io_set_gpio0_pin
                 0x000100d4                io_toggle_gpio0_pin
@@ -47,7 +47,7 @@ END GROUP
                 0x00010654                get_adc
                 0x00010564                uart0_scanf
                 0x00010264                io_spi0_enable
-                0x000110d4                io_enable_xint
+                0x00011168                io_enable_xint
                 0x0001022c                io_spi0_trans
                 0x000102d0                io_i2c0_byte_transfer
                 0x000104d8                set_syscpreg
@@ -63,40 +63,40 @@ END GROUP
                 0x000101fc                io_spi0_config
                 0x000101e0                io_uart0_send_byte
                 0x0001082c                qbytes_to_long
-                0x000110e4                io_disable_xint
+                0x00011178                io_disable_xint
                 0x00010070                io_read_gpio0_pin
                 0x00010088                io_read_gpio0_port
                 0x00010178                io_get_pwm
  *(.rodata)
- .rodata        0x000110f4        0x4 main.o
+ .rodata        0x00011188        0x4 main.o
  *(.rodata*)
  .rodata.str1.4
-                0x000110f8      0xa70 main.o
-                                0xa7c (size before relaxing)
+                0x0001118c      0xab0 main.o
+                                0xabc (size before relaxing)
  *(.glue_7)
- .glue_7        0x00011b68        0x0 build/storm_boot_startup_code.o
- .glue_7        0x00011b68        0x0 main.o
+ .glue_7        0x00011c3c        0x0 build/storm_boot_startup_code.o
+ .glue_7        0x00011c3c        0x0 main.o
  *(.glue_7t)
- .glue_7t       0x00011b68        0x0 build/storm_boot_startup_code.o
- .glue_7t       0x00011b68        0x0 main.o
-                0x00011b68                . = ALIGN (0x4)
+ .glue_7t       0x00011c3c        0x0 build/storm_boot_startup_code.o
+ .glue_7t       0x00011c3c        0x0 main.o
+                0x00011c3c                . = ALIGN (0x4)
 
-.ctors          0x00011b68        0x0
-                0x00011b68                PROVIDE (__ctors_start__, .)
+.ctors          0x00011c3c        0x0
+                0x00011c3c                PROVIDE (__ctors_start__, .)
  *(SORT(.ctors.*))
  *(.ctors)
-                0x00011b68                PROVIDE (__ctors_end__, .)
+                0x00011c3c                PROVIDE (__ctors_end__, .)
 
-.dtors          0x00011b68        0x0
-                0x00011b68                PROVIDE (__dtors_start__, .)
+.dtors          0x00011c3c        0x0
+                0x00011c3c                PROVIDE (__dtors_start__, .)
  *(SORT(.dtors.*))
  *(.dtors)
-                0x00011b68                PROVIDE (__dtors_end__, .)
-                0x00011b68                . = ALIGN (0x4)
-                0x00011b68                _etext = .
-                0x00011b68                PROVIDE (etext, .)
+                0x00011c3c                PROVIDE (__dtors_end__, .)
+                0x00011c3c                . = ALIGN (0x4)
+                0x00011c3c                _etext = .
+                0x00011c3c                PROVIDE (etext, .)
 
-.data           0x00000000        0x0 load address 0x00011b68
+.data           0x00000000        0x0 load address 0x00011c3c
                 0x00000000                _data = .
  *(.data)
  .data          0x00000000        0x0 build/storm_boot_startup_code.o
@@ -172,33 +172,33 @@ END GROUP
  .debug_pubnames
                 0x00000000      0x26c main.o
 
-.debug_info     0x00000000      0x926
+.debug_info     0x00000000      0x952
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000       0x6a build/storm_boot_startup_code.o
- .debug_info    0x0000006a      0x8bc main.o
+ .debug_info    0x0000006a      0x8e8 main.o
 
 .debug_abbrev   0x00000000      0x281
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0x14 build/storm_boot_startup_code.o
  .debug_abbrev  0x00000014      0x26d main.o
 
-.debug_line     0x00000000      0x39f
+.debug_line     0x00000000      0x3b3
  *(.debug_line)
  .debug_line    0x00000000       0x6e build/storm_boot_startup_code.o
- .debug_line    0x0000006e      0x331 main.o
+ .debug_line    0x0000006e      0x345 main.o
 
 .debug_frame    0x00000000      0x280
  *(.debug_frame)
  .debug_frame   0x00000000      0x280 main.o
 
-.debug_str      0x00000000      0x372
+.debug_str      0x00000000      0x39a
  *(.debug_str)
- .debug_str     0x00000000      0x372 main.o
-                                0x3ad (size before relaxing)
+ .debug_str     0x00000000      0x39a main.o
+                                0x3d5 (size before relaxing)
 
-.debug_loc      0x00000000      0xa34
+.debug_loc      0x00000000      0xaa4
  *(.debug_loc)
- .debug_loc     0x00000000      0xa34 main.o
+ .debug_loc     0x00000000      0xaa4 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
