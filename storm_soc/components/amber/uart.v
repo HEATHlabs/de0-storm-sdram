@@ -90,7 +90,7 @@ input                       i_uart_rxd      // Receive data
 
 //`include "register_addresses.v"
 // UART  1
-localparam UART1_OFFSET					= 16'h0200 ;
+localparam UART1_OFFSET					= 16'h0000 ;
 localparam AMBER_UART_PID0         =  16'h0fe0 ;
 localparam AMBER_UART_PID1         =  16'h0fe4;
 localparam AMBER_UART_PID2         =  16'h0fe8;

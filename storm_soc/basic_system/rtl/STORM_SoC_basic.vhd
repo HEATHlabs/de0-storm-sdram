@@ -11,12 +11,12 @@
 -- #  - SPI controller, 8 CS lines, split up into 3 ports                 #
 -- #  - System timer, 32 bit                                              #
 -- #  - Vector-interrupt-controller (LPC controller)                      #
--- #  - PWM controller, 8 channels                                        #
+-- #                                         #
 -- #                                                                      #
 -- # ******************************************************************** #
 -- # Last modified: 15.05.2012                                            #
 -- ########################################################################
-
+--modify amber_interrupt_controller to have i_gpio_int, i_spi_int, i_i2c_int.
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
@@ -82,10 +82,8 @@ entity STORM_SoC_basic is
 			SDRAM_DQM_O	  : out   STD_LOGIC_VECTOR(01 downto 0);
 			SDRAM_BA_O	  : out   STD_LOGIC_VECTOR(01 downto 0);
 			SDRAM_ADDR_O  : out   STD_LOGIC_VECTOR(12 downto 0);
-			SDRAM_DQ_IO	  : inout   STD_LOGIC_VECTOR(15 downto 0);
-			
-			-- PWM Port 0 --
-			PWM0_PORT_O   : out   STD_LOGIC_VECTOR(07 downto 0)
+			SDRAM_DQ_IO	  : inout   STD_LOGIC_VECTOR(15 downto 0)
+
 	     );
 end STORM_SoC_basic;
 
@@ -99,25 +97,28 @@ architecture Structure of STORM_SoC_basic is
 		constant BOOT_ROM_SIZE_C   : natural := 16*1024; -- byte       x00014000
 		constant SDRAM_MEM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0):= x"04000000";
 		constant SDRAM_MEM_SIZE_C   : natural := 32*1024*1024; -- byte x02ffffff
---		constant BOOT_ROM_BASE_C   : STD_LOGIC_VECTOR(31 downto 0) := x"FFF00000";
 		-- Begin of IO area ------------------------------------------------------
-		constant IO_AREA_BEGIN     : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0000";
-		constant GP_IO0_BASE_C     : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0000";
-		constant GP_IO0_SIZE_C     : natural := 2*4; -- byte
+		constant IO_AREA_BEGIN     : STD_LOGIC_VECTOR(31 downto 0) := x"FFFE0000";
+		----------AMBER PERIPH BEGIN----------------------------------------------
+		constant UART1_BASE_C      : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0000";
+		constant UART1_SIZE_C      : natural := 7*4; -- byte
+		constant VIC_BASE_C        : STD_LOGIC_VECTOR(31 downto 0) := x"FFFE2000";
+		constant VIC_SIZE_C        : natural := 64*4; -- byte
+		constant SYS_TIMER0_BASE_C : STD_LOGIC_VECTOR(31 downto 0) := x"FFFE1000";
+		constant SYS_TIMER0_SIZE_C : natural := 4*4; -- byte
+--		constant SYS_TIMER1_BASE_C : STD_LOGIC_VECTOR(31 downto 0) := x"FFFE1100";
+--		constant SYS_TIMER1_SIZE_C : natural := 4*4; -- byte
+		----------AMBER PERIPH END------------------------------------------------
+		----------STORM PERIPH BEGIN----------------------------------------------
 		constant UART0_BASE_C      : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0100";
 		constant UART0_SIZE_C      : natural := 2*4; -- byte
-		constant SYS_TIMER0_BASE_C : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0200";
-		constant SYS_TIMER0_SIZE_C : natural := 4*4; -- byte
 		constant SPI0_CTRL_BASE_C  : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0300";
 		constant SPI0_CTRL_SIZE_C  : natural := 8*4; -- byte
 		constant I2C0_CTRL_BASE_C  : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0400";
 		constant I2C0_CTRL_SIZE_C  : natural := 8*4; -- byte
-		constant PWM_CTRL0_BASE_C  : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0500";
-		constant PWM_CTRL0_SIZE_C  : natural := 2*4; -- byte
-		constant UART1_BASE_C      : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0600";
-		constant UART1_SIZE_C      : natural := 2*4; -- byte
-		constant VIC_BASE_C        : STD_LOGIC_VECTOR(31 downto 0) := x"FFFFF000";
-		constant VIC_SIZE_C        : natural := 64*4; -- byte
+		constant GP_IO0_BASE_C     : STD_LOGIC_VECTOR(31 downto 0) := x"FFFF0600";
+		constant GP_IO0_SIZE_C     : natural := 2*4; -- byte
+		----------STORM PERIPH END------------------------------------------------
 		constant IO_AREA_END       : STD_LOGIC_VECTOR(31 downto 0) := x"FFFFFFFF";
 		-- End of IO area --------------------------------------------------------
 
@@ -134,12 +135,10 @@ architecture Structure of STORM_SoC_basic is
 		constant CORE_CLOCK_C        : natural := 50000000; -- Hz
 		constant RST_RTIGGER_C       : natural := CORE_CLOCK_C/2;
 		constant LOW_ACTIVE_RST_C    : boolean := TRUE;
---		constant SDRAM_BURST_LEN     : natural := 1;
 --		constant UART0_BAUD_C        : natural := 9600;
 		constant UART0_BAUD_C        : natural := 38400;
 		constant UART0_BAUD_VAL_C    : natural := CORE_CLOCK_C/(4*UART0_BAUD_C);
 		constant USE_OUTPUT_GATES_C  : boolean := FALSE;
---		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := SDRAM_MEM_BASE_C;
 		constant UNCACHABLE_BEGIN	  : STD_LOGIC_VECTOR(31 downto 0)  := IO_AREA_BEGIN;
 		constant UNCACHABLE_END 	  : STD_LOGIC_VECTOR(31 downto 0)  := IO_AREA_END;
 		
@@ -153,7 +152,7 @@ architecture Structure of STORM_SoC_basic is
 		signal MAIN_RST_N         : STD_LOGIC;
 		signal XMEM_CLK           : STD_LOGIC;
 		signal XMEMD_CLK          : STD_LOGIC;
-		signal CPU_RST           : STD_LOGIC;
+		signal CPU_RST            : STD_LOGIC;
 		signal CLK_LOCK           : STD_LOGIC;
 		signal CLK_DIV            : STD_LOGIC_VECTOR(01 downto 0) := "00"; -- just for sim
 		signal MAIN_CLK           : STD_LOGIC;
@@ -196,7 +195,7 @@ architecture Structure of STORM_SoC_basic is
 		signal SDRAM_MEM_HALT_O     : STD_LOGIC;
 		signal SDRAM_MEM_ERR_O      : STD_LOGIC;
 		signal SDRAM_MEM_CTI_I      : STD_LOGIC;
-		-- DQ ---
+		-- external SDRAM Memory / DQ ---
 		signal internal_dqo   : STD_LOGIC_VECTOR(15 downto 0);
 		signal internal_dqi   : STD_LOGIC_VECTOR(15 downto 0);
 		signal internal_dqoe   : STD_LOGIC;
@@ -269,16 +268,17 @@ architecture Structure of STORM_SoC_basic is
 		signal SYS_TIMER0_DATA_O  : STD_LOGIC_VECTOR(31 downto 0);
 		signal SYS_TIMER0_STB_I   : STD_LOGIC;
 		signal SYS_TIMER0_ACK_O   : STD_LOGIC;
+		       
 		signal SYS_TIMER0_IRQ     : STD_LOGIC;
 		signal SYS_TIMER0_HALT_O  : STD_LOGIC;
 		signal SYS_TIMER0_ERR_O   : STD_LOGIC;
-
-		-- PWM Controller 0 --
-		signal PWM_CTRL0_DATA_O   : STD_LOGIC_VECTOR(31 downto 0);
-		signal PWM_CTRL0_STB_I    : STD_LOGIC;
-		signal PWM_CTRL0_ACK_O    : STD_LOGIC;
-		signal PWM_CTRL0_HALT_O   : STD_LOGIC;
-		signal PWM_CTRL0_ERR_O    : STD_LOGIC;
+		-- System Timer 1 --
+--		signal SYS_TIMER1_DATA_O  : STD_LOGIC_VECTOR(31 downto 0);
+--		signal SYS_TIMER1_STB_I   : STD_LOGIC;
+--		signal SYS_TIMER1_ACK_O   : STD_LOGIC;
+--		signal SYS_TIMER1_IRQ     : STD_LOGIC;
+--		signal SYS_TIMER1_HALT_O  : STD_LOGIC;
+--		signal SYS_TIMER1_ERR_O   : STD_LOGIC;
 
 		-- Vector Interrupt Controller --
 		signal VIC_DATA_O         : STD_LOGIC_VECTOR(31 downto 0);
@@ -404,37 +404,35 @@ architecture Structure of STORM_SoC_basic is
 			port (
                   
                 -- WB bus
-                    wb_clk			: in  STD_LOGIC;
-                    wb_rst			: in  STD_LOGIC;
+                    wb_clk				: in  STD_LOGIC;
+                    wb_rst				: in  STD_LOGIC;
                     wb_adr_i			: in  STD_LOGIC_VECTOR(31 downto 0);
                     wb_dat_i			: in  STD_LOGIC_VECTOR(31 downto 0);
                     wb_dat_o			: out STD_LOGIC_VECTOR(31 downto 0);
                     wb_sel_i			: in  STD_LOGIC_VECTOR(3 downto 0);
                     wb_cyc_i			: in  STD_LOGIC;
                     wb_stb_i			: in  STD_LOGIC;
-                    wb_we_i			: in  STD_LOGIC;
+                    wb_we_i				: in  STD_LOGIC;
                     wb_ack_o			: out STD_LOGIC;
-		    wb_cti_i			: in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
-		    wb_bte_i			: in  STD_LOGIC_VECTOR(01 downto 0); -- burst trans type
+					wb_cti_i			: in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
+					wb_bte_i			: in  STD_LOGIC_VECTOR(01 downto 0); -- burst trans type
 
 		
 				-- Interface to SDRAMs 
                     sdram_clk			: in  STD_LOGIC;
                     sdram_rst			: in  STD_LOGIC;
-                    cs_n_pad_o		: out STD_LOGIC;
-						  cke_pad_o			: out STD_LOGIC;
+                    cs_n_pad_o			: out STD_LOGIC;
+					cke_pad_o			: out STD_LOGIC;
                     we_pad_o			: out STD_LOGIC;
                     cas_pad_o			: out STD_LOGIC;
                     ras_pad_o			: out STD_LOGIC;
-                    dqm_pad_o 		: out STD_LOGIC_VECTOR(1 downto 0);
+                    dqm_pad_o			: out STD_LOGIC_VECTOR(1 downto 0);
                     a_pad_o 			: out STD_LOGIC_VECTOR(12 downto 0);
                     ba_pad_o			: out STD_LOGIC_VECTOR(1 downto 0);
-						  dq_o				: out STD_LOGIC_VECTOR(15 downto 0);
-						  dq_i				: in STD_LOGIC_VECTOR(15 downto 0);
-						  dq_oe				: out STD_LOGIC
-                    
-
-				);
+					dq_o				: out STD_LOGIC_VECTOR(15 downto 0);
+					dq_i				: in STD_LOGIC_VECTOR(15 downto 0);
+					dq_oe				: out STD_LOGIC
+                );
 		end component;
 	-- Simple general purpose UART ----------------------------------------------------
 	-- -----------------------------------------------------------------------------------
@@ -606,131 +604,64 @@ architecture Structure of STORM_SoC_basic is
 					);
 		end component;
 
-	-- Seven-Segment Controller -------------------------------------------------------
-	-- -----------------------------------------------------------------------------------
-		component SEVEN_SEG_CTRL
-			generic	(
-						HIGH_ACTIVE_OUTPUT : boolean := FALSE
-					);
-			port (
-						-- Wishbone Bus --
-						WB_CLK_I      : in  STD_LOGIC; -- master clock
-						WB_RST_I      : in  STD_LOGIC; -- high active sync reset
-						WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
-						WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
-						WB_ADR_I      : in  STD_LOGIC;                     -- adr in
-						WB_DATA_I     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
-						WB_DATA_O     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
-						WB_SEL_I      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
-						WB_WE_I       : in  STD_LOGIC; -- write enable
-						WB_STB_I      : in  STD_LOGIC; -- valid cycle
-						WB_ACK_O      : out STD_LOGIC; -- acknowledge
-						WB_HALT_O     : out STD_LOGIC; -- throttle master
-						WB_ERR_O      : out STD_LOGIC; -- abnormal cycle termination
-
-						-- HEX-Display output --
-						HEX_O         : out STD_LOGIC_VECTOR(27 downto 00)
-				 );
-		end component;
 
 	-- System Timer -------------------------------------------------------------------
 	-- -----------------------------------------------------------------------------------
-		component TIMER
+		component amber_timer_module
 			port (
 						-- Wishbone Bus --
-						WB_CLK_I      : in  STD_LOGIC; -- memory master clock
-						WB_RST_I      : in  STD_LOGIC; -- high active sync reset
-						WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
-						WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
-						WB_ADR_I      : in  STD_LOGIC_VECTOR(01 downto 0); -- adr in
-						WB_DATA_I     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
-						WB_DATA_O     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
-						WB_SEL_I      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
-						WB_WE_I       : in  STD_LOGIC; -- write enable
-						WB_STB_I      : in  STD_LOGIC; -- valid cycle
-						WB_ACK_O      : out STD_LOGIC; -- acknowledge
-						WB_HALT_O     : out STD_LOGIC; -- throttle master
-						WB_ERR_O      : out STD_LOGIC; -- abnormal termination
+						i_clk      : in  STD_LOGIC; -- memory master clock
+						--WB_RST_I      : in  STD_LOGIC; -- high active sync reset
+						--WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
+						--WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
+						i_wb_adr      : in  STD_LOGIC_VECTOR(31 downto 0); -- adr in
+						i_wb_dat     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
+						o_wb_dat     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
+						i_wb_sel      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
+						i_wb_we       : in  STD_LOGIC; -- write enable
+						i_wb_stb      : in  STD_LOGIC; -- valid cycle
+						o_wb_ack      : out STD_LOGIC; -- acknowledge
+						--WB_HALT_O     : out STD_LOGIC; -- throttle master
+						o_wb_err      : out STD_LOGIC; -- abnormal termination
 
 						-- Match Interrupt --
-						INT_O         : out STD_LOGIC
+						o_timer_int         : out STD_LOGIC_VECTOR(02 downto 0)
 				 );
 		end component;
 
-	-- PS2 Keyboard Interface ---------------------------------------------------------
-	-- -----------------------------------------------------------------------------------
-		component ps2_wb
-			port (
-						-- Wishbone Bus --
-						wb_clk_i      : in  std_logic;
-						wb_rst_i      : in  std_logic;
-						wb_dat_i      : in  std_logic_vector(7 downto 0);
-						wb_dat_o      : out std_logic_vector(7 downto 0);
-						wb_adr_i      : in  std_logic_vector(0 downto 0);
-						wb_stb_i      : in  std_logic;
-						wb_we_i       : in  std_logic;
-						wb_ack_o      : out std_logic;
-
-						-- IRQ output --
-						irq_o         : out std_logic;
-
-						-- PS2 signals --
-						ps2_clk       : inout std_logic;
-						ps2_dat       : inout std_logic
-				 );
-		end component;
-
-	-- PWM Controller -----------------------------------------------------------------
-	-- -----------------------------------------------------------------------------------
-		component PWM_CTRL
-			port (
-						-- Wishbone Bus --
-						WB_CLK_I      : in  STD_LOGIC; -- memory master clock
-						WB_RST_I      : in  STD_LOGIC; -- high active sync reset
-						WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
-						WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
-						WB_ADR_I      : in  STD_LOGIC; -- adr in
-						WB_DATA_I     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
-						WB_DATA_O     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
-						WB_SEL_I      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
-						WB_WE_I       : in  STD_LOGIC; -- write enable
-						WB_STB_I      : in  STD_LOGIC; -- valid cycle
-						WB_ACK_O      : out STD_LOGIC; -- acknowledge
-						WB_HALT_O     : out STD_LOGIC; -- throttle master
-						WB_ERR_O      : out STD_LOGIC; -- abnormal termination
-
-						-- PWM Port --
-						PWM_O         : out STD_LOGIC_VECTOR(07 downto 0)
-				 );
-		end component;
-		
 
 	-- Vector Interrupt Controller ----------------------------------------------------
 	-- -----------------------------------------------------------------------------------
-		component VIC
+		component amber_interrupt_controller
 			port (
 						-- Wishbone Bus --
-						WB_CLK_I      : in  STD_LOGIC; -- memory master clock
-						WB_RST_I      : in  STD_LOGIC; -- high active sync reset
-						WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
-						WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
-						WB_ADR_I      : in  STD_LOGIC_VECTOR(05 downto 0); -- adr in (word boundary)
-						WB_DATA_I     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
-						WB_DATA_O     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
-						WB_SEL_I      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
-						WB_WE_I       : in  STD_LOGIC; -- write enable
-						WB_STB_I      : in  STD_LOGIC; -- valid cycle
-						WB_ACK_O      : out STD_LOGIC; -- acknowledge
-						WB_HALT_O     : out STD_LOGIC; -- throttle master
-						WB_ERR_O      : out STD_LOGIC; -- abnormal termination
+						i_clk      : in  STD_LOGIC; -- memory master clock
+						--WB_RST_I      : in  STD_LOGIC; -- high active sync reset
+						--WB_CTI_I      : in  STD_LOGIC_VECTOR(02 downto 0); -- cycle indentifier
+						--WB_TGC_I      : in  STD_LOGIC_VECTOR(06 downto 0); -- cycle tag
+						i_wb_adr      : in  STD_LOGIC_VECTOR(31 downto 0); -- adr in (word boundary)
+						i_wb_dat     : in  STD_LOGIC_VECTOR(31 downto 0); -- write data
+						o_wb_dat     : out STD_LOGIC_VECTOR(31 downto 0); -- read data
+						i_wb_sel      : in  STD_LOGIC_VECTOR(03 downto 0); -- data quantity
+						i_wb_we       : in  STD_LOGIC; -- write enable
+						i_wb_stb      : in  STD_LOGIC; -- valid cycle
+						o_wb_ack      : out STD_LOGIC; -- acknowledge
+						--WB_HALT_O     : out STD_LOGIC; -- throttle master
+						o_wb_err      : out STD_LOGIC; -- abnormal termination
 
 						-- INT Lines & ACK --
-						IRQ_LINES_I   : in  STD_LOGIC_VECTOR(31 downto 0);
-						ACK_LINES_O   : out STD_LOGIC_VECTOR(31 downto 0);
+						i_tm_timer_int   : STD_LOGIC_VECTOR(01 downto 0);
+						i_uart0_int   : in  STD_LOGIC;
+						i_uart1_int   : in  STD_LOGIC;
+						i_gpio_int   : in  STD_LOGIC;
+						i_spi_int   : in  STD_LOGIC;
+						i_i2c_int   : in  STD_LOGIC;
+						
+						--ACK_LINES_O   : out STD_LOGIC_VECTOR(31 downto 0);
 
 						-- Global FIQ/IRQ signal to STORM --
-						STORM_IRQ_O   : out STD_LOGIC;
-						STORM_FIQ_O   : out STD_LOGIC
+						o_irq   : out STD_LOGIC;
+						o_firq   : out STD_LOGIC
 				 );
 		end component;
 
@@ -852,7 +783,7 @@ begin
 		UART1_STB_I       <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= UART1_BASE_C)      and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(UART1_BASE_C)      + UART1_SIZE_C)))      else '0';
 		SPI0_CTRL_STB_I   <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= SPI0_CTRL_BASE_C)  and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(SPI0_CTRL_BASE_C)  + SPI0_CTRL_SIZE_C)))  else '0';
 		I2C0_CTRL_STB_I   <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= I2C0_CTRL_BASE_C)  and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(I2C0_CTRL_BASE_C)  + I2C0_CTRL_SIZE_C)))  else '0';
-		PWM_CTRL0_STB_I   <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= PWM_CTRL0_BASE_C)  and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(PWM_CTRL0_BASE_C)  + PWM_CTRL0_SIZE_C)))  else '0';
+		--SYS_TIMER1_STB_I  <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= SYS_TIMER1_BASE_C) and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(SYS_TIMER1_BASE_C) + SYS_TIMER1_SIZE_C))) else '0';
 		VIC_STB_I         <= CORE_WB_STB_O when ((CORE_WB_ADR_O >= VIC_BASE_C)        and (CORE_WB_ADR_O < Std_logic_Vector(unsigned(VIC_BASE_C)        + VIC_SIZE_C)))        else '0';
 
 
@@ -868,7 +799,7 @@ begin
 			UART1_DATA_O       when (UART1_STB_I       = '1') else
 			SPI0_CTRL_DATA_O   when (SPI0_CTRL_STB_I   = '1') else
 			I2C0_CTRL_DATA_O   when (I2C0_CTRL_STB_I   = '1') else
-			PWM_CTRL0_DATA_O   when (PWM_CTRL0_STB_I   = '1') else
+			--SYS_TIMER1_DATA_O  when (SYS_TIMER1_STB_I  = '1') else
 			VIC_DATA_O         when (VIC_STB_I         = '1') else
 			x"00000000";
 
@@ -884,7 +815,7 @@ begin
 						  UART1_ACK_O        or
 						  SPI0_CTRL_ACK_O    or
 						  I2C0_CTRL_ACK_O    or
-						  PWM_CTRL0_ACK_O    or
+						  --SYS_TIMER1_ACK_O   or
 						  VIC_ACK_O          or
 						  '0';
 
@@ -900,7 +831,7 @@ begin
 						  UART1_ERR_O        or
 						  SPI0_CTRL_ERR_O    or
 						  I2C0_CTRL_ERR_O    or
-						  PWM_CTRL0_ERR_O    or
+						  --SYS_TIMER1_ERR_O   or
 						  VIC_ERR_O          or
 						  '0';
 
@@ -916,7 +847,7 @@ begin
 						  UART1_HALT_O       or
 						  SPI0_CTRL_HALT_O   or
 						  I2C0_CTRL_HALT_O   or
-						  PWM_CTRL0_HALT_O   or
+						  --SYS_TIMER1_HALT_O  or
 						  VIC_HALT_O         or
 						  '0';
 
@@ -986,34 +917,34 @@ begin
 --							)
 			port map (
 						-- Wishbone Bus --
-		    wb_clk        => MAIN_CLK,
-                    wb_rst        => MAIN_RST,
+							wb_clk        	=> MAIN_CLK,
+							wb_rst        	=> MAIN_RST,
 						  
-                    wb_adr_i      => CORE_WB_ADR_O, 
- 		    wb_dat_i      => CORE_WB_DATA_O,
-                    wb_dat_o      => SDRAM_MEM_DATA_O,
-                    wb_sel_i      => CORE_WB_SEL_O,
-                    wb_cyc_i      => CORE_WB_CYC_O,
-                    wb_stb_i      => SDRAM_MEM_STB_I,
-                    wb_we_i       => CORE_WB_WE_O,
-                    wb_ack_o      => SDRAM_MEM_ACK_O,
-		    wb_cti_i	  => CORE_WB_CTI_O,
-		    wb_bte_i	  => CORE_WB_BTE_O,
+							wb_adr_i      	=> CORE_WB_ADR_O, 
+							wb_dat_i      	=> CORE_WB_DATA_O,
+							wb_dat_o      	=> SDRAM_MEM_DATA_O,
+							wb_sel_i      	=> CORE_WB_SEL_O,
+							wb_cyc_i		=> CORE_WB_CYC_O,
+							wb_stb_i		=> SDRAM_MEM_STB_I,
+							wb_we_i       	=> CORE_WB_WE_O,
+							wb_ack_o      	=> SDRAM_MEM_ACK_O,
+							wb_cti_i		=> CORE_WB_CTI_O,
+							wb_bte_i		=> CORE_WB_BTE_O,
 
 				-- Interface to SDRAMs 
-                    sdram_clk	     => XMEM_CLK,
-		    sdram_rst		=>MAIN_RST,
-                    cke_pad_o    => SDRAM_CKE_O,
-                    cs_n_pad_o    => SDRAM_CS_O,
-                    we_pad_o    => SDRAM_WE_O,
-                    cas_pad_o    => SDRAM_CAS_O,
-                    ras_pad_o    => SDRAM_RAS_O,
-                    dqm_pad_o    => SDRAM_DQM_O,
-                    a_pad_o    => SDRAM_ADDR_O,
-                    ba_pad_o    => SDRAM_BA_O,
-                    dq_o    => internal_dqo,
-						  dq_i	=> internal_dqi,
-						  dq_oe		=> internal_dqoe 
+							sdram_clk		=> XMEM_CLK,
+							sdram_rst		=> MAIN_RST,
+							cke_pad_o    	=> SDRAM_CKE_O,
+							cs_n_pad_o    	=> SDRAM_CS_O,
+							we_pad_o    	=> SDRAM_WE_O,
+							cas_pad_o   	=> SDRAM_CAS_O,
+							ras_pad_o    	=> SDRAM_RAS_O,
+							dqm_pad_o    	=> SDRAM_DQM_O,
+							a_pad_o    		=> SDRAM_ADDR_O,
+							ba_pad_o    	=> SDRAM_BA_O,
+							dq_o			=> internal_dqo,
+							dq_i			=> internal_dqi,
+							dq_oe			=> internal_dqoe 
 					);
 
 
@@ -1021,10 +952,7 @@ begin
 		internal_dqi <= SDRAM_DQ_IO when (internal_dqoe = '0') else "ZZZZZZZZZZZZZZZZ";
 
 		SDRAM_MEM_HALT_O <= SDRAM_MEM_STB_I and (not SDRAM_MEM_ACK_O);
---		SDRAM_MEM_HALT_O <= '0';-- nothing can go wrong - never ever!
 		SDRAM_MEM_ERR_O <= '0';-- nothing can go wrong - never ever!
---		SDRAM_MEM_CTI_I <= '0';
---		XMEM_RST <= MAIN_RST ;
 		SDRAM_CLK_O <= XMEM_CLK;
 	
 	-- General Purpose IO 0 --------------------------------------------------------------------------------
@@ -1126,29 +1054,55 @@ begin
 
 	-- System Timer 0 --------------------------------------------------------------------------------------
 	-- --------------------------------------------------------------------------------------------------------
-		SYSTEM_TIMER_0: TIMER
+		SYSTEM_TIMER_0: amber_timer_module
 			port map (
 						-- Wishbone Bus --
-						WB_CLK_I      => MAIN_CLK,
-						WB_RST_I      => MAIN_RST,
-						WB_CTI_I      => CORE_WB_CTI_O,
-						WB_TGC_I      => CORE_WB_TGC_O,
-						WB_ADR_I      => CORE_WB_ADR_O(3 downto 2),
-						WB_DATA_I     => CORE_WB_DATA_O,
-						WB_DATA_O     => SYS_TIMER0_DATA_O,
-						WB_SEL_I      => CORE_WB_SEL_O,
-						WB_WE_I       => CORE_WB_WE_O,
-						WB_STB_I      => SYS_TIMER0_STB_I,
-						WB_ACK_O      => SYS_TIMER0_ACK_O,
-						WB_HALT_O     => SYS_TIMER0_HALT_O,
-						WB_ERR_O      => SYS_TIMER0_ERR_O,
+						i_clk      => MAIN_CLK,
+						--WB_RST_I      => MAIN_RST,
+						--WB_CTI_I      => CORE_WB_CTI_O,
+						--WB_TGC_I      => CORE_WB_TGC_O,
+						i_wb_adr      => CORE_WB_ADR_O,
+						i_wb_dat     => CORE_WB_DATA_O,
+						o_wb_dat     => SYS_TIMER0_DATA_O,
+						i_wb_sel      => CORE_WB_SEL_O,
+						i_wb_we       => CORE_WB_WE_O,
+						i_wb_stb      => SYS_TIMER0_STB_I,
+						o_wb_ack      => SYS_TIMER0_ACK_O,
+						--WB_HALT_O     => SYS_TIMER0_HALT_O,
+						o_wb_err      => SYS_TIMER0_ERR_O,
 
 						-- Match Interrupt --
-						INT_O         => SYS_TIMER0_IRQ
+						o_timer_int(0)         => SYS_TIMER0_IRQ
 				 );
-
-
-
+		SYS_TIMER0_HALT_O <= '0';
+		
+		
+	-- System Timer 1 --------------------------------------------------------------------------------------
+	-- --------------------------------------------------------------------------------------------------------
+--		SYSTEM_TIMER_1: amber_timer_module
+--			port map (
+--						-- Wishbone Bus --
+--						i_clk      => MAIN_CLK,
+--						--WB_RST_I      => MAIN_RST,
+--						--WB_CTI_I      => CORE_WB_CTI_O,
+--						--WB_TGC_I      => CORE_WB_TGC_O,
+--						i_wb_adr      => CORE_WB_ADR_O(31 downto 0),
+--						i_wb_dat     => CORE_WB_DATA_O,
+--						o_wb_dat     => SYS_TIMER1_DATA_O,
+--						i_wb_sel      => CORE_WB_SEL_O,
+--						i_wb_we       => CORE_WB_WE_O,
+--						i_wb_stb      => SYS_TIMER1_STB_I,
+--						o_wb_ack      => SYS_TIMER1_ACK_O,
+--						--WB_HALT_O     => SYS_TIMER0_HALT_O,
+--						o_wb_err      => SYS_TIMER1_ERR_O,
+--
+--						-- Match Interrupt --
+--						o_timer_int         => SYS_TIMER0_IRQ
+--				 );
+--
+--		SYS_TIMER1_HALT_O <= '0';
+--		
+		
 	-- SPI Controller 0 ------------------------------------------------------------------------------------
 	-- --------------------------------------------------------------------------------------------------------
 		SPI_CTRL_0: spi_top
@@ -1199,7 +1153,6 @@ begin
 		SPI_MISO_INT <= MISO_PORT_0 or MISO_PORT_1 or MISO_PORT_2;
 
 
-
 	-- I2C Controller 0 ------------------------------------------------------------------------------------
 	-- --------------------------------------------------------------------------------------------------------
 		I2C_CONTROLLER_0: i2c_master_top
@@ -1242,70 +1195,51 @@ begin
 		I2C0_CTRL_HALT_O <= '0'; -- no throttle -> full speed
 		I2C0_CTRL_ERR_O  <= '0'; -- nothing can go wrong - never ever!
 
-
-
-	-- PWM Controller 0 ------------------------------------------------------------------------------------
-	-- --------------------------------------------------------------------------------------------------------
-		PWM_CONTROLLER_0: PWM_CTRL
-			port map (
-						-- Wishbone Bus --
-						WB_CLK_I      => MAIN_CLK, -- memory master clock
-						WB_RST_I      => MAIN_RST, -- high active sync reset
-						WB_CTI_I      => CORE_WB_CTI_O,    -- cycle indentifier
-						WB_TGC_I      => CORE_WB_TGC_O,    -- cycle tag
-						WB_ADR_I      => CORE_WB_ADR_O(2), -- adr in
-						WB_DATA_I     => CORE_WB_DATA_O,   -- write data
-						WB_DATA_O     => PWM_CTRL0_DATA_O, -- read data
-						WB_SEL_I      => CORE_WB_SEL_O,    -- data quantity
-						WB_WE_I       => CORE_WB_WE_O,     -- write enable
-						WB_STB_I      => PWM_CTRL0_STB_I,  -- valid cycle
-						WB_ACK_O      => PWM_CTRL0_ACK_O,  -- acknowledge
-						WB_HALT_O     => PWM_CTRL0_HALT_O, -- throttle master
-						WB_ERR_O      => PWM_CTRL0_ERR_O,   -- abnormal termination
-
-						-- PWM Port --
-						PWM_O         => PWM0_PORT_O
-					);
-
-
 	-- Vector Interrupt Controller -------------------------------------------------------------------------
 	-- --------------------------------------------------------------------------------------------------------
-		VECTOR_INTERRUPT_CONTROLLER: VIC
+		VECTOR_INTERRUPT_CONTROLLER: amber_interrupt_controller
 			port map (
 						-- Wishbone Bus --
-						WB_CLK_I      => MAIN_CLK,
-						WB_RST_I      => MAIN_RST,
-						WB_CTI_I      => CORE_WB_CTI_O,
-						WB_TGC_I      => CORE_WB_TGC_O,
-						WB_ADR_I      => CORE_WB_ADR_O(log2(VIC_SIZE_C/4)+1 downto 2),
-						WB_DATA_I     => CORE_WB_DATA_O,
-						WB_DATA_O     => VIC_DATA_O,
-						WB_SEL_I      => CORE_WB_SEL_O,
-						WB_WE_I       => CORE_WB_WE_O,
-						WB_STB_I      => VIC_STB_I,
-						WB_ACK_O      => VIC_ACK_O,
-						WB_HALT_O     => VIC_HALT_O,
-						WB_ERR_O      => VIC_ERR_O,
+						i_clk      => MAIN_CLK,
+						--WB_RST_I      => MAIN_RST,
+						--WB_CTI_I      => CORE_WB_CTI_O,
+						--WB_TGC_I      => CORE_WB_TGC_O,
+						i_wb_adr      => CORE_WB_ADR_O,
+						i_wb_dat     => CORE_WB_DATA_O,
+						o_wb_dat     => VIC_DATA_O,
+						i_wb_sel      => CORE_WB_SEL_O,
+						i_wb_we       => CORE_WB_WE_O,
+						i_wb_stb      => VIC_STB_I,
+						o_wb_ack      => VIC_ACK_O,
+						--WB_HALT_O     => VIC_HALT_O,
+						o_wb_err      => VIC_ERR_O,
 
 						-- INT Lines & ACK --
-						IRQ_LINES_I   => INT_LINES,
-						ACK_LINES_O   => INT_LINES_ACK,
-
+						--ACK_LINES_O   => INT_LINES_ACK,
+						  i_tm_timer_int(0) => SYS_TIMER0_IRQ,
+						 -- i_tm_timer_int(1) => SYS_TIMER1_IRQ,
+						--IRQ_LINES_I   => i_tm_timer_int(0),
+						 i_uart0_int => UART0_RX_IRQ,
+						 i_uart1_int => UART1_RX_IRQ,
+						 i_gpio_int => GP_IO0_IRQ,
+						 i_spi_int => SPI0_CTRL_IRQ,
+						 i_i2c_int => I2C0_CTRL_IRQ,
+						
 						-- Global IRQ/FIQ signal to STORM --
-						STORM_IRQ_O   => STORM_IRQ,
-						STORM_FIQ_O   => STORM_FIQ
+						o_irq   => STORM_IRQ,
+						o_firq   => STORM_FIQ
 				 );
 
 			-- IRQ/FIQ Lines --
-			INT_LINES(00) <= SYS_TIMER0_IRQ;
-			INT_LINES(01) <= GP_IO0_IRQ;
-			INT_LINES(02) <= UART0_TX_IRQ;
-			INT_LINES(03) <= UART0_RX_IRQ;
-			INT_LINES(04) <= SPI0_CTRL_IRQ;
-			INT_LINES(05) <= I2C0_CTRL_IRQ;
-			INT_LINES(06) <= UART1_RX_IRQ;
-			INT_LINES(31 downto 07) <= (others => '0'); -- unused
+			--INT_LINES(00) <= SYS_TIMER0_IRQ;
+			-- INT_LINES(01) <= ;
+			-- INT_LINES(02) <= ;
+			-- INT_LINES(03) <= ;
+			-- INT_LINES(04) <= ;
+			-- INT_LINES(05) <= ;
+			-- INT_LINES(06) <= ;
+			-- INT_LINES(31 downto 07) <= (others => '0'); -- unused
 
-
+			VIC_HALT_O <= '0';
 
 end Structure;

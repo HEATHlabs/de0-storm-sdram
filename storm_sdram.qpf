@@ -18,17 +18,15 @@
 #
 # Quartus II 64-Bit
 # Version 13.0.1 Build 232 06/12/2013 Service Pack 1 SJ Web Edition
-# Date created = 09:52:01  May 12, 2016
+# Date created = 20:56:50  October 11, 2016
 #
 # -------------------------------------------------------------------------- #
 
 QUARTUS_VERSION = "13.0"
-DATE = "09:52:01  May 12, 2016"
+DATE = "20:56:50  October 11, 2016"
 
 # Revisions
 
+PROJECT_REVISION = "amber-periph"
 PROJECT_REVISION = "baseline"
-PROJECT_REVISION = "add-arm-devs"
-PROJECT_REVISION = "storm"
-PROJECT_REVISION = "storm-sdram-works"
-PROJECT_REVISION = "storm-add-amber-devs"
+PROJECT_REVISION = "add-i2c"

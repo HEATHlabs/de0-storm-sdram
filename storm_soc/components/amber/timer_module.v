@@ -62,18 +62,18 @@ output      [2:0]           o_timer_int
 
 
 //`include "register_addresses.v"
-localparam AMBER_TM_TIMER0_LOAD    =  16'h0000;
-localparam AMBER_TM_TIMER0_VALUE   =  16'h0004;
-localparam AMBER_TM_TIMER0_CTRL    =  16'h0008;
-localparam AMBER_TM_TIMER0_CLR     =  16'h000c;
-localparam AMBER_TM_TIMER1_LOAD    =  16'h0100;
-localparam AMBER_TM_TIMER1_VALUE   =  16'h0104;
-localparam AMBER_TM_TIMER1_CTRL    =  16'h0108;
-localparam AMBER_TM_TIMER1_CLR     =  16'h010c;
-localparam AMBER_TM_TIMER2_LOAD    =  16'h0200;
-localparam AMBER_TM_TIMER2_VALUE   =  16'h0204;
-localparam AMBER_TM_TIMER2_CTRL    =  16'h0208;
-localparam AMBER_TM_TIMER2_CLR     =  16'h020c;
+localparam AMBER_TM_TIMER0_LOAD    =  16'h1000;
+localparam AMBER_TM_TIMER0_VALUE   =  16'h1004;
+localparam AMBER_TM_TIMER0_CTRL    =  16'h1008;
+localparam AMBER_TM_TIMER0_CLR     =  16'h100c;
+localparam AMBER_TM_TIMER1_LOAD    =  16'h1100;
+localparam AMBER_TM_TIMER1_VALUE   =  16'h1104;
+localparam AMBER_TM_TIMER1_CTRL    =  16'h1108;
+localparam AMBER_TM_TIMER1_CLR     =  16'h110c;
+localparam AMBER_TM_TIMER2_LOAD    =  16'h1200;
+localparam AMBER_TM_TIMER2_VALUE   =  16'h1204;
+localparam AMBER_TM_TIMER2_CTRL    =  16'h1208;
+localparam AMBER_TM_TIMER2_CLR     =  16'h120c;
 
 // Wishbone registers
 reg  [15:0]     timer0_load_reg = 'd0;   // initial count value

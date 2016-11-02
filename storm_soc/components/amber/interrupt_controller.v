@@ -59,42 +59,49 @@ output                      o_wb_err,
 
 output                      o_irq,
 output                      o_firq,
-
+//-----------
+input       [1:0]           i_tm_timer_int,
 input                       i_uart0_int,
 input                       i_uart1_int,
-input                       i_ethmac_int,
-input                       i_test_reg_irq,
-input                       i_test_reg_firq,
-input       [2:0]           i_tm_timer_int
+input                       i_gpio_int,
+input                       i_spi_int,
+input                       i_i2c_int
+//---------------						
+//input                       i_uart0_int,
+//input                       i_uart1_int,
+//input                       i_ethmac_int,
+//input                       i_test_reg_irq,
+//input                       i_test_reg_firq,
+//input       [2:0]           i_tm_timer_int
 
 );
 
 
 //`include "register_addresses.v"
-localparam AMBER_IC_IRQ0_STATUS     = 16'h0000;  
-localparam AMBER_IC_IRQ0_RAWSTAT    = 16'h0004;  
-localparam AMBER_IC_IRQ0_ENABLESET  = 16'h0008; 
-localparam AMBER_IC_IRQ0_ENABLECLR  = 16'h000c; 
-localparam AMBER_IC_INT_SOFTSET_0   = 16'h0010;
-localparam AMBER_IC_INT_SOFTCLEAR_0 = 16'h0014;
-localparam AMBER_IC_FIRQ0_STATUS    = 16'h0020;  
-localparam AMBER_IC_FIRQ0_RAWSTAT   = 16'h0024;  
-localparam AMBER_IC_FIRQ0_ENABLESET = 16'h0028;  
-localparam AMBER_IC_FIRQ0_ENABLECLR = 16'h002c; 
-localparam AMBER_IC_IRQ1_STATUS     = 16'h0040;  
-localparam AMBER_IC_IRQ1_RAWSTAT    = 16'h0044;  
-localparam AMBER_IC_IRQ1_ENABLESET  = 16'h0048; 
-localparam AMBER_IC_IRQ1_ENABLECLR  = 16'h004c; 
-localparam AMBER_IC_INT_SOFTSET_1   = 16'h0050;
-localparam AMBER_IC_INT_SOFTCLEAR_1 = 16'h0054;
-localparam AMBER_IC_FIRQ1_STATUS    = 16'h0060;  
-localparam AMBER_IC_FIRQ1_RAWSTAT   = 16'h0064;  
-localparam AMBER_IC_FIRQ1_ENABLESET = 16'h0068;  
-localparam AMBER_IC_FIRQ1_ENABLECLR = 16'h006c; 
-localparam AMBER_IC_INT_SOFTSET_2   = 16'h0090;
-localparam AMBER_IC_INT_SOFTCLEAR_2 = 16'h0094;
-localparam AMBER_IC_INT_SOFTSET_3   = 16'h00d0;
-localparam AMBER_IC_INT_SOFTCLEAR_3 = 16'h00d4;
+localparam AMBER_IC_IRQ0_STATUS     = 16'h2000;  
+localparam AMBER_IC_IRQ0_RAWSTAT    = 16'h2004;  
+localparam AMBER_IC_IRQ0_ENABLESET  = 16'h2008; 
+localparam AMBER_IC_IRQ0_ENABLECLR  = 16'h200c; 
+localparam AMBER_IC_INT_SOFTSET_0   = 16'h2010;
+localparam AMBER_IC_INT_SOFTCLEAR_0 = 16'h2014;
+localparam AMBER_IC_FIRQ0_STATUS    = 16'h2020;  
+localparam AMBER_IC_FIRQ0_RAWSTAT   = 16'h2024;  
+localparam AMBER_IC_FIRQ0_ENABLESET = 16'h2028;  
+localparam AMBER_IC_FIRQ0_ENABLECLR = 16'h202c; 
+localparam AMBER_IC_IRQ1_STATUS     = 16'h2040;  
+localparam AMBER_IC_IRQ1_RAWSTAT    = 16'h2044;  
+localparam AMBER_IC_IRQ1_ENABLESET  = 16'h2048; 
+localparam AMBER_IC_IRQ1_ENABLECLR  = 16'h204c; 
+localparam AMBER_IC_INT_SOFTSET_1   = 16'h2050;
+localparam AMBER_IC_INT_SOFTCLEAR_1 = 16'h2054;
+localparam AMBER_IC_FIRQ1_STATUS    = 16'h2060;  
+localparam AMBER_IC_FIRQ1_RAWSTAT   = 16'h2064;  
+localparam AMBER_IC_FIRQ1_ENABLESET = 16'h2068;  
+localparam AMBER_IC_FIRQ1_ENABLECLR = 16'h206c; 
+localparam AMBER_IC_INT_SOFTSET_2   = 16'h2090;
+localparam AMBER_IC_INT_SOFTCLEAR_2 = 16'h2094;
+localparam AMBER_IC_INT_SOFTSET_3   = 16'h20d0;
+localparam AMBER_IC_INT_SOFTCLEAR_3 = 16'h20d4;
 
 // Wishbone registers
 reg  [31:0]     irq0_enable_reg  = 'd0;
@@ -160,10 +167,11 @@ endgenerate
 // ======================================
 // Interrupts
 // ======================================
-assign raw_interrupts =  {23'd0,   
-                          i_ethmac_int,             // 8: Ethernet MAC interrupt
+assign raw_interrupts =  {22'd0,   
+								  i_i2c_int,
+                          i_gpio_int,               // 8: GPIO interrupt
                           
-                          i_tm_timer_int[2],        // 7: Timer Module Interrupt 2
+                          i_spi_int,           		 // 7: SPI (ethernet) Interrupt 2
                           i_tm_timer_int[1],        // 6: Timer Module Interrupt 1
                           i_tm_timer_int[0],        // 5: Timer Module Interrupt 0
                           1'd0,
@@ -181,8 +189,10 @@ assign firq1_interrupts  = raw_interrupts & firq1_enable_reg;
 
 // The interrupts from the test registers module are not masked,
 // just to keep their usage really simple
-assign irq_0  = |{irq0_interrupts, i_test_reg_irq};
-assign firq_0 = |{firq0_interrupts, i_test_reg_firq};
+//assign irq_0  = |{irq0_interrupts, i_test_reg_irq};
+//assign firq_0 = |{firq0_interrupts, i_test_reg_firq};
+assign irq_0  = |{irq0_interrupts};
+assign firq_0 = |{firq0_interrupts};
 assign irq_1  = |irq1_interrupts;
 assign firq_1 = |firq1_interrupts;
 

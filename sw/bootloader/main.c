@@ -140,26 +140,7 @@ main_menu:
 
 		// main functions
 		switch(function_sel){
-			// case 't':
-				 // io_uart0_send_byte((char)function_sel);
-				 // uart0_printf("\r\n\r\nApplication HEADDtest_buffer.\r\n");
-				// uart0_scanf(buffer1,4,0); // get storm master boot record code
-				
-				// uart0_scanf(buffer2,4,0); // get image size
-				
-				// uart0_printf("HEADER:");
-				// test_buffer = qbytes_to_long(buffer1);
-				// long_to_hex_string(test_buffer, temp_string,8);
-				// uart0_printf(temp_string);
-				// uart0_printf("!\n\r");
 
-				// uart0_printf("how big:");
-				// test_buffer = qbytes_to_long(buffer2);
-				// long_to_hex_string(test_buffer, temp_string,8);
-				// uart0_printf(temp_string);
-				// uart0_printf("!\n\r");
-				
-				// break;
 			// boot from RAM (start application)
 			// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 			case '0':
@@ -174,14 +155,8 @@ main_menu:
 				uart0_printf("\r\n\r\nApplication will start automatically after download.\r\n-> Waiting for 'storm_program.bin' in byte-stream mode...");
 				uart0_scanf(buffer,4,0); // get storm master boot record code
 				if((buffer[0] == 'S') && (buffer[1] == 'M') && (buffer[2] == 'B') && (buffer[3] == 'R')){
-					//asm volatile ("NOP");asm volatile ("NOP");
 					uart0_scanf(buffer,4,0); // get image size
-				// test_buffer = qbytes_to_long(buffer);
-				// long_to_hex_string(test_buffer, temp_string,8);
-				// uart0_printf(temp_string);
-				// uart0_printf("!\n\r");
 					adr_buffer = qbytes_to_long(buffer);
-					//long_to_hex_string(adr_buffer, temp_string,8);
 					
 					#ifdef SRAM
 					if (adr_buffer > RAM_SIZE-8){
@@ -197,35 +172,19 @@ main_menu:
 					data_pointer = JUMPADDRESS;
 					end_address = (adr_buffer + 4 + (unsigned long) JUMPADDRESS);
 					
-				 // long_to_hex_string(end_address, temp_string,8);
-				 // uart0_printf(temp_string);
-				 // uart0_printf("!\n\r");
+					// long_to_hex_string(end_address, temp_string,8);
+					// uart0_printf(temp_string);
+					// uart0_printf("!\n\r");
 
 					while( (data_pointer) != end_address ){ // Adjust for address offset.
 						uart0_scanf(buffer,4,0); // get word
 						*data_pointer = qbytes_to_long(buffer); // store memory entry
 						data_pointer = data_pointer + 1;
-
-
-						// if (data_pointer > JUMPADDRESS + 0xA30){
-							// long_to_hex_string(data_pointer, temp_string,8);
-							// uart0_printf(temp_string);
-							// uart0_printf("!\n\r");
-						// }
-
-
-
 					}
-					// uart0_printf("Last mem access: ");
-					// long_to_hex_string(data_pointer, temp_string,8);
-					// uart0_printf(temp_string);
-					// uart0_printf("!\n\r");
-				uart0_printf("Done Loading!\r\n");
-				uart0_printf("LAST ADDRESS:");
-				long_to_hex_string(data_pointer, temp_string,8);
-				uart0_printf(temp_string);
-				uart0_printf("!\n\r");
-		
+
+					uart0_printf("Done Loading!\r\n");
+					uart0_printf("LAST ADDRESS:");
+
 					start_app = 0;
 				}
 				else
