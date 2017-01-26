@@ -88,7 +88,8 @@ _mainCRTStartup:
 // - Set stack location for each mode
 // - Leave in System Mode with Interrupts Disabled
 // -----------------------------------------------
-        ldr   r0,=_stack                    // Calc stack base
+        ldr	  r10, =0xAAAAAAAA
+		ldr   r0,=_stack                    // Calc stack base
 		mrs   r1,CPSR
 		bic   r1,r1,#0x7F
 		orr   r1,r1,#MODE_UND|IRQ_BIT|FIQ_BIT  // Change to Undefined Instruction mode

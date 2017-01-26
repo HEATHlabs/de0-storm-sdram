@@ -1165,14 +1165,14 @@
  800 0474 979FF101 		bx	lr
  801 0478 EA000008 	.LFE20:
  803              		.align	2
- 804 047c 000004A4 		.global	io_enable_xint
- 806 0484 000004A0 	io_enable_xint:
- 807 0488 000004A0 	.LFB23:
- 808 048c 000004A0 		.loc 1 444 0
- 809 0490 000004AC 		@ args = 0, pretend = 0, frame = 0
- 810 0494 000004B4 		@ frame_needed = 0, uses_anonymous_args = 0
- 811 0498 0000049C 		@ link register save eliminated.
- 812              		@ lr needed for prologue
+ 804 047c 000004A4 		.global	long_to_hex_string
+ 806 0484 000004A0 	long_to_hex_string:
+ 807 0488 000004A0 	.LFB25:
+ 808 048c 000004A0 		.file 2 "../lib/utilities.c"
+ 809 0490 000004AC 		.loc 2 9 0
+ 810 0494 000004B4 		@ args = 0, pretend = 0, frame = 0
+ 811 0498 0000049C 		@ frame_needed = 0, uses_anonymous_args = 0
+ 812              	.LVL82:
  403:../lib/io_driver.c **** //		case ID_REG_0:   asm volatile ("mcr p15,0,%0, c0, c0,0" : /* no outputs */ : "r" (_cp_val)); br
  404:../lib/io_driver.c **** //		case ID_REG_1:   asm volatile ("mcr p15,0,%0, c1, c1,0" : /* no outputs */ : "r" (_cp_val)); br
  405:../lib/io_driver.c **** //		case ID_REG_2:   asm volatile ("mcr p15,0,%0, c2, c2,0" : /* no outputs */ : "r" (_cp_val)); br
@@ -1187,27 +1187,601 @@
  414:../lib/io_driver.c **** 		case LFSR_POLY:  asm volatile ("mcr p15,0,%0,c11,c11,0" : /* no outputs */ : "r" (_cp_val)); brea
  415:../lib/io_driver.c **** 		case LFSR_DATA:  asm volatile ("mcr p15,0,%0,c12,c12,0" : /* no outputs */ : "r" (_cp_val)); brea
  416:../lib/io_driver.c **** 		case SYS_IO:     asm volatile ("mcr p15,0,%0,c13,c13,0" : /* no outputs */ : "r" (_cp_val)); brea
- 813              	 1 428 0
- 814 049c EE0D0F1D 		 mrs r3, cpsr
- 815              	.LVL82:
- 816 04a0 E12FFF1E 	.LBE7:
- 817              	.LBE6:
- 818              	.LBB8:
- 819 04a4 EE060F16 	.LBB9:
- 820 04a8 E12FFF1E 		.loc 1 437 0
- 821              		bic	r3, r3, #192
- 822              	.LVL83:
- 823 04ac EE0B0F1B 		 msr cpsr, r3
- 824 04b0 E12FFF1E 	.LBE9:
- 825              	.LBE8:
- 826              		.loc 1 448 0
- 827 04b4 EE0C0F1C 		bx	lr
- 828 04b8 E12FFF1E 	.LFE23:
- 830              		.align	2
- 831              		.global	io_disable_xint
- 833              	io_disable_xint:
- 834              	.LFB24:
- 835              		.loc 1 454 0
+ 813              	}
+ 814 049c EE0D0F1D 	.LCFI2:
+ 815              		.loc 2 9 0
+ 816 04a0 E12FFF1E 		and	r4, r2, #255
+ 817              		.loc 2 14 0
+ 818              		cmp	r4, #8
+ 819 04a4 EE060F16 		movhi	r4, #8
+ 820 04a8 E12FFF1E 		bhi	.L142
+ 821              	.LVL83:
+ 822              		.loc 2 16 0
+ 823 04ac EE0B0F1B 		cmp	r4, #0
+ 824 04b0 E12FFF1E 		.loc 2 39 0
+ 825              		moveq	r4, #1
+ 826              	.L142:
+ 827 04b4 EE0C0F1C 		mov	r2, r1
+ 828 04b8 E12FFF1E 	.LVL84:
+ 829              		mov	lr, r4
+ 830              	.LVL85:
+ 831              	.L144:
+ 832              		.loc 2 22 0
+ 833              		mov	r3, lr, asl #2
+ 834              		.loc 2 21 0
+ 835              		cmp	lr, #1
+ 836              		.loc 2 22 0
+   1:../lib/utilities.c **** #include "utilities.h"
+   2:../lib/utilities.c **** 
+   3:../lib/utilities.c **** // ############################################################################################
+   4:../lib/utilities.c **** // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
+   5:../lib/utilities.c ****    void long_to_hex_string(unsigned long data,    // max 32 bit data word
+   6:../lib/utilities.c ****                            unsigned char *buffer, // buffer to store the string
+   7:../lib/utilities.c **** 						   unsigned char numbers) // number of places, max 8
+   8:../lib/utilities.c **** // ############################################################################################
+   9:../lib/utilities.c **** {
+ 837              	21 0
+ 838              		mov	ip, r0
+ 839              	.LVL86:
+ 840              		.loc 2 22 0
+ 841 04bc E92D4010 		movhi	ip, r0, lsr r3
+ 842              		.loc 2 26 0
+ 843              		sub	r3, lr, #1
+ 844 04c0 E20240FF 		.loc 2 25 0
+  10:../lib/utilities.c **** 	unsigned char temp_char = 0;
+  11:../lib/utilities.c **** 	unsigned long temp_data = 0;
+  12:../lib/utilities.c **** 
+  13:../lib/utilities.c **** 	// fit into range
+  14:../lib/utilities.c **** 	if(numbers > 8)
+ 845              	 ip, #15
+ 846 04c4 E3540008 	.LVL87:
+ 847 04c8 83A04008 		.loc 2 26 0
+ 848 04cc 8A000001 		and	lr, r3, #255
+ 849              		.loc 2 29 0
+  15:../lib/utilities.c **** 		numbers = 8;
+  16:../lib/utilities.c **** 	if(numbers < 1)
+ 850              	ip, #9
+ 851 04d0 E3540000 		.loc 2 30 0
+  17:../lib/utilities.c **** 		numbers = 1;
+  18:../lib/utilities.c **** 
+  19:../lib/utilities.c **** 	while(numbers > 0){
+  20:../lib/utilities.c **** 		// isolate one 4-bit value
+  21:../lib/utilities.c **** 		if(numbers > 1)
+  22:../lib/utilities.c **** 			temp_data = data >> ((numbers-1)*4);
+  23:../lib/utilities.c **** 		else
+  24:../lib/utilities.c **** 			temp_data = data;
+  25:../lib/utilities.c **** 		temp_data = temp_data & 0x0000000F;
+  26:../lib/utilities.c **** 		numbers--;
+  27:../lib/utilities.c **** 
+  28:../lib/utilities.c **** 		// convert 4-bit value temp_data to char temp_char
+  29:../lib/utilities.c **** 		if(temp_data < 10)
+  30:../lib/utilities.c **** 			temp_char = '0' + temp_data;
+  31:../lib/utilities.c **** 		else
+  32:../lib/utilities.c **** 			temp_char = 'A' + temp_data - 10;
+  33:../lib/utilities.c **** 
+  34:../lib/utilities.c **** 		// save character
+  35:../lib/utilities.c **** 		*buffer++ = temp_char;
+  36:../lib/utilities.c **** 	}
+  37:../lib/utilities.c **** 
+  38:../lib/utilities.c **** 	*buffer++ = 0; // terminate string
+  39:../lib/utilities.c **** }
+ 852              	dd	r3, ip, #48
+ 853 04d4 03A04001 	.LVL88:
+ 854              		.loc 2 32 0
+ 855 04d8 E1A02001 		addhi	r3, ip, #55
+ 856              		.loc 2 19 0
+ 857 04dc E1A0E004 		cmp	lr, #0
+ 858              		.loc 2 35 0
+ 859              		strb	r3, [r2], #1
+ 860              		.loc 2 19 0
+ 861 04e0 E1A0310E 		bne	.L144
+ 862              		.loc 2 38 0
+ 863 04e4 E35E0001 		sub	r3, r4, #1
+ 864              	.LVL89:
+ 865 04e8 E2433004 		and	r3, r3, #255
+ 866              		add	r3, r1, r3
+ 867 04ec E1A0C000 		strb	lr, [r3, #1]
+ 868              		.loc 2 39 0
+ 869              		ldmfd	sp!, {r4, pc}
+ 870 04f0 81A0C330 	.LFE25:
+ 872 04f4 E24E3001 		.align	2
+ 873              		.global	get_adc
+ 875              	get_adc:
+ 876              	.LFB26:
+ 877 04fc E203E0FF 		.loc 2 45 0
+ 878              		@ args = 0, pretend = 0, frame = 0
+ 879 0500 E35C0009 		@ frame_needed = 0, uses_anonymous_args = 0
+ 880              	.LVL90:
+ 881 0504 E28C3030 		stmfd	sp!, {r4, lr}
+ 882              	.LCFI3:
+ 883              		.loc 2 45 0
+ 884 0508 828C3037 		mov	r4, r0
+ 885              		.loc 2 48 0
+ 886 050c E35E0000 		cmp	r4, #7
+ 887              		.loc 2 52 0
+ 888 0510 E4C23001 		mov	r1, #16
+ 889              		mov	r0, #1
+ 890 0514 1AFFFFF1 	.LVL91:
+ 891              		.loc 2 48 0
+ 892 0518 E2443001 		bls	.L161
+ 893              		.loc 2 58 0
+ 894 051c E20330FF 		mov	r0, #0
+ 895 0520 E0813003 		ldmfd	sp!, {r4, pc}
+ 896 0524 E5C3E001 	.L161:
+ 897              		.loc 2 52 0
+ 898 0528 E8BD8010 		bl	io_spi0_config
+ 899              		.loc 2 53 0
+ 900              		mov	r0, #6
+ 901              		bl	io_spi0_enable
+ 902              		.loc 2 56 0
+ 903              		mov	r0, #0
+ 904              		bl	io_spi0_trans
+ 905              		.loc 2 57 0
+  40:../lib/utilities.c **** 
+  41:../lib/utilities.c **** // ############################################################################################
+  42:../lib/utilities.c **** // read external ADC value
+  43:../lib/utilities.c ****    unsigned int get_adc(int adc_index) // adc 0..7
+  44:../lib/utilities.c **** // ############################################################################################
+  45:../lib/utilities.c **** {
+ 906              	
+ 907              		.loc 2 57 0
+ 908              		b	io_spi0_trans
+ 909              	.LFE26:
+ 911              		.align	2
+ 912              		.global	delay
+  46:../lib/utilities.c **** 	unsigned long temp;
+  47:../lib/utilities.c **** 
+  48:../lib/utilities.c **** 	if ((adc_index < 0) || (adc_index > 7))
+ 914              	.LFB27:
+ 915 0534 E3540007 		.loc 2 64 0
+  49:../lib/utilities.c **** 		return 0;
+  50:../lib/utilities.c **** 
+  51:../lib/utilities.c **** 	// config spi
+  52:../lib/utilities.c **** 	io_spi0_config(1,16); // auto assert cs, 16 bit transfer
+ 916              	 args = 0, pretend = 0, frame = 0
+ 917 0538 E3A01010 		@ frame_needed = 0, uses_anonymous_args = 0
+ 918 053c E3A00001 		@ link register save eliminated.
+ 919              	.LVL92:
+ 920              		.loc 2 65 0
+ 921 0540 9A000001 		rsb	r3, r0, r0, asl #5
+  53:../lib/utilities.c **** 	io_spi0_enable(adc_cs);
+  54:../lib/utilities.c **** 
+  55:../lib/utilities.c **** 	temp = adc_index * 2048;
+  56:../lib/utilities.c **** 	io_spi0_trans(0); // dummy read
+  57:../lib/utilities.c **** 	return (unsigned int)io_spi0_trans(temp);
+  58:../lib/utilities.c **** }
+ 922              	0, r0, r3, asl #2
+ 923 0544 E3A00000 	.LVL93:
+ 924 0548 E8BD8010 		add	r0, r0, r0, asl #2
+ 925              		mov	r0, r0, asl #4
+ 926              	.LVL94:
+ 927 054c EBFFFFFE 		.loc 2 66 0
+ 928              		cmp	r0, #0
+ 929 0550 E3A00006 		.loc 2 64 0
+ 930 0554 EBFFFFFE 		@ lr needed for prologue
+ 931              		.loc 2 66 0
+ 932 0558 E3A00000 		bxle	lr
+ 933 055c EBFFFFFE 	.L166:
+ 934              		.loc 2 67 0
+ 935 0560 E1A00584 		NOP
+ 936              		.loc 2 66 0
+ 937 0564 E8BD4010 		subs	r0, r0, #1
+ 938              		bne	.L166
+ 939 0568 EAFFFFFE 		bx	lr
+ 940              	.LFE27:
+ 942              		.align	2
+ 943              		.global	string_cmpc
+ 945              	string_cmpc:
+ 946              	.LFB28:
+  59:../lib/utilities.c **** 
+  60:../lib/utilities.c **** // ############################################################################################
+  61:../lib/utilities.c **** // simple delay routine
+  62:../lib/utilities.c ****    void delay(int time) // waits time*10000 clock ticks
+  63:../lib/utilities.c **** // ############################################################################################
+  64:../lib/utilities.c **** {
+ 947              	 pretend = 0, frame = 0
+ 948              		@ frame_needed = 0, uses_anonymous_args = 0
+ 949              		@ link register save eliminated.
+ 950              	.LVL95:
+ 951              		.loc 2 77 0
+  65:../lib/utilities.c **** 	time = time*2500*4;
+ 952              		ip, r2, #255
+ 953 056c E0603280 		.loc 2 76 0
+ 954 0570 E0800103 		@ lr needed for prologue
+ 955              		.loc 2 77 0
+ 956 0574 E0800100 		beq	.L169
+ 957 0578 E1A00200 	.LVL96:
+ 958              		.loc 2 78 0
+  66:../lib/utilities.c **** 	while(time > 0){
+ 959              	2, [r0, #0]	@ zero_extendqisi2
+ 960 057c E3500000 		ldrb	r3, [r1, #0]	@ zero_extendqisi2
+ 961              		cmp	r2, r3
+ 962              		beq	.L173
+ 963              		b	.L171
+ 964 0580 D12FFF1E 	.L174:
+ 965              	.LVL97:
+  67:../lib/utilities.c **** 		asm volatile ("NOP");
+ 966              	2, [r0, #1]!	@ zero_extendqisi2
+ 967 0584 E1A00000 	.LVL98:
+ 968              		ldrb	r3, [r1, #1]!	@ zero_extendqisi2
+ 969 0588 E2500001 		cmp	r2, r3
+ 970 058c 1AFFFFFC 		bne	.L171
+ 971 0590 E12FFF1E 	.LVL99:
+ 972              	.L173:
+ 973              		.loc 2 80 0
+ 974              		sub	r3, ip, #1
+ 975              		.loc 2 77 0
+ 976              		ands	ip, r3, #255
+ 977              		bne	.L174
+ 978              	.LVL100:
+  68:../lib/utilities.c **** 		time--;
+  69:../lib/utilities.c **** 	}
+  70:../lib/utilities.c **** }
+  71:../lib/utilities.c **** 
+  72:../lib/utilities.c **** // ############################################################################################
+  73:../lib/utilities.c **** // String compare, buffered string with immediate const char string
+  74:../lib/utilities.c ****    unsigned char string_cmpc(unsigned char *string1, const char *string2, unsigned char length)
+  75:../lib/utilities.c **** // ############################################################################################
+  76:../lib/utilities.c **** {
+ 979              	0, #1
+ 980              	.LVL101:
+ 981              		.loc 2 83 0
+ 982              		bx	lr
+ 983              	.LVL102:
+  77:../lib/utilities.c **** 	while(length != 0){
+ 984              	:
+ 985 0594 E212C0FF 		.loc 2 77 0
+ 986              		mov	r0, #0
+ 987              	.LVL103:
+ 988              		bx	lr
+ 989 0598 0A00000B 	.LFE28:
+  78:../lib/utilities.c **** 		if(*string1++ != (unsigned char)*string2++)
+ 991              		2
+ 992 059c E5D02000 		.global	uart0_printf
+ 994 05a4 E1520003 	uart0_printf:
+ 995 05a8 0A000004 	.LFB29:
+ 996 05ac EA000008 		.file 3 "../lib/uart.c"
+ 997              		.loc 3 7 0
+ 998              		@ args = 0, pretend = 0, frame = 0
+ 999 05b0 E5F02001 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1000              	.LVL104:
+ 1001 05b4 E5F13001 		stmfd	sp!, {r4, lr}
+ 1002 05b8 E1520003 	.LCFI4:
+ 1003 05bc 1A000004 		.loc 3 7 0
+ 1004              		mov	r4, r0
+ 1005              		.loc 3 10 0
+  79:../lib/utilities.c **** 			return(0); // missmatch
+  80:../lib/utilities.c **** 		length--;
+ 1006              	#0]	@ zero_extendqisi2
+ 1007 05c0 E24C3001 	.LVL105:
+ 1008              		cmp	r0, #0
+ 1009 05c4 E213C0FF 		bne	.L182
+ 1010 05c8 1AFFFFF8 		b	.L178
+ 1011              	.LVL106:
+ 1012              	.L184:
+ 1013 05cc E3A00001 		ldrb	r0, [r4, #1]!	@ zero_extendqisi2
+ 1014              	.LVL107:
+  81:../lib/utilities.c **** 	}
+  82:../lib/utilities.c **** 	return(1); // match
+  83:../lib/utilities.c **** }
+ 1015              	#0
+ 1016 05d0 E12FFF1E 		beq	.L178
+ 1017              	.L182:
+ 1018              		.loc 3 11 0
+ 1019              		bl	io_uart0_send_byte
+ 1020 05d4 E3A00000 	.LVL108:
+ 1021              		cmp	r0, #0
+ 1022 05d8 E12FFF1E 		bgt	.L184
+ 1023              	.LVL109:
+ 1024              	.L178:
+ 1025              		.loc 3 16 0
+ 1026              		mov	r0, r4
+ 1027              	.LVL110:
+ 1028              		ldmfd	sp!, {r4, pc}
+ 1029              	.LFE29:
+   1:../lib/uart.c **** #include "uart.h"
+   2:../lib/uart.c **** 
+   3:../lib/uart.c **** // ############################################################################################
+   4:../lib/uart.c **** // Print text string via UART 0
+   5:../lib/uart.c ****    const char *uart0_printf(const char *string)
+   6:../lib/uart.c **** // ############################################################################################
+   7:../lib/uart.c **** {
+ 1031              	a
+ 1032              		.align	2
+ 1033              	.LC0:
+ 1034              		.ascii	"\000\000"
+ 1035 05dc E92D4010 		.text
+ 1036              		.align	2
+ 1037              		.global	uart0_scanf
+   8:../lib/uart.c **** 	char ch;
+   9:../lib/uart.c **** 
+  10:../lib/uart.c **** 	while ((ch = *string)){
+ 1039              	anf:
+ 1040 05e4 E5D00000 	.LFB30:
+ 1041              		.loc 3 22 0
+ 1042 05e8 E3500000 		@ args = 0, pretend = 0, frame = 0
+ 1043 05ec 1A000003 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1044 05f0 EA000005 	.LVL111:
+ 1045              		stmfd	sp!, {r4, r5, r6, lr}
+ 1046              	.LCFI5:
+ 1047 05f4 E5F40001 		.loc 3 25 0
+ 1048              		subs	r4, r1, #0
+ 1049 05f8 E3500000 		.loc 3 22 0
+ 1050 05fc 0A000002 		mov	r5, r0
+ 1051              		and	r6, r2, #255
+  11:../lib/uart.c **** 		if (io_uart0_send_byte(ch)<=0)
+ 1052              		ble	.L186
+ 1053 0600 EBFFFFFE 	.LVL112:
+ 1054              	.L193:
+ 1055 0604 E3500000 		.loc 3 26 0
+ 1056 0608 CAFFFFF9 		bl	io_uart0_read_byte
+ 1057              	.LVL113:
+ 1058              	.LVL114:
+  12:../lib/uart.c **** 			break;
+  13:../lib/uart.c **** 		string++;
+  14:../lib/uart.c **** 	}
+  15:../lib/uart.c **** 	return string;
+  16:../lib/uart.c **** }
+ 1059              	 27 0
+ 1060 060c E1A00004 		cmn	r0, #1
+ 1061              		.loc 3 28 0
+ 1062 0610 E8BD8010 		and	r3, r0, #255
+ 1063              	.LVL115:
+ 1064              		.loc 3 27 0
+ 1065              		beq	.L188
+ 1066              		.loc 3 30 0
+ 1067              		cmp	r6, #1
+ 1068 0000 0000     	.LVL116:
+ 1069 0002 0000     		.loc 3 29 0
+ 1070              		strb	r3, [r5, #0]
+ 1071              	.LVL117:
+ 1072              		.loc 3 31 0
+ 1073              		mov	r0, r3
+ 1074              	.LVL118:
+  17:../lib/uart.c **** 
+  18:../lib/uart.c **** // ############################################################################################
+  19:../lib/uart.c **** // Read text string via UART 0
+  20:../lib/uart.c ****    void uart0_scanf(unsigned char *buffer, int length, unsigned char en_echo)
+  21:../lib/uart.c **** // ############################################################################################
+  22:../lib/uart.c **** {
+ 1075              	d	r5, r5, #1
+ 1076              		.loc 3 30 0
+ 1077              		beq	.L195
+ 1078              	.LVL119:
+ 1079 0614 E92D4070 	.L190:
+ 1080              		.loc 3 32 0
+  23:../lib/uart.c **** 	int temp = 0;
+  24:../lib/uart.c **** 
+  25:../lib/uart.c **** 	while(length > 0){
+ 1081              	4, r4, #1
+ 1082 0618 E2514000 	.LVL120:
+ 1083              	.L188:
+ 1084 061c E1A05000 		.loc 3 25 0
+ 1085 0620 E20260FF 		cmp	r4, #0
+ 1086              		bgt	.L193
+ 1087 0624 DA00000B 	.LVL121:
+ 1088              	.L186:
+ 1089              		.loc 3 35 0
+  26:../lib/uart.c **** 		temp = io_uart0_read_byte();
+ 1090              	.L196
+ 1091 0628 EBFFFFFE 	.LVL122:
+ 1092              		strb	r3, [r5, #0]
+ 1093              		.loc 3 36 0
+  27:../lib/uart.c **** 		if(temp != -1){
+ 1094              	fd	sp!, {r4, r5, r6, pc}
+ 1095 062c E3700001 	.LVL123:
+  28:../lib/uart.c **** 			temp = (unsigned char)(temp & 0x000000FF);
+ 1096              	195:
+ 1097 0630 E20030FF 		.loc 3 31 0
+ 1098              		bl	io_uart0_send_byte
+ 1099              	.LVL124:
+ 1100 0634 0A000005 		b	.L190
+  29:../lib/uart.c **** 			*buffer++ = temp;
+  30:../lib/uart.c **** 			if(en_echo == 1)
+ 1101              	:
+ 1102 0638 E3560001 		.align	2
+ 1103              	.L196:
+ 1104              		.word	.LC0
+ 1105 063c E5C53000 	.LFE30:
+  31:../lib/uart.c **** 				io_uart0_send_byte(temp); // echo
+ 1107              	n	2
+ 1108 0640 E1A00003 		.global	uart0_print_buffer
+ 1110              	uart0_print_buffer:
+ 1111 0644 E2855001 	.LFB31:
+ 1112              		.loc 3 42 0
+ 1113 0648 0A000005 		@ args = 0, pretend = 0, frame = 0
+ 1114              		@ frame_needed = 0, uses_anonymous_args = 0
+ 1115              	.LVL125:
+  32:../lib/uart.c **** 			length--;
+ 1116              	!, {r4, r5, lr}
+ 1117 064c E2444001 	.LCFI6:
+ 1118              		.loc 3 44 0
+ 1119              		subs	r4, r1, #0
+ 1120              		.loc 3 42 0
+ 1121 0650 E3540000 		mov	r5, r0
+ 1122 0654 CAFFFFF3 		.loc 3 44 0
+ 1123              		ldmlefd	sp!, {r4, r5, pc}
+ 1124              	.LVL126:
+  33:../lib/uart.c **** 		}
+  34:../lib/uart.c **** 	}
+  35:../lib/uart.c **** 	*buffer="\0";
+ 1125              	loc 3 46 0
+ 1126 0658 E59F300C 		ldrb	r0, [r5], #1	@ zero_extendqisi2
+ 1127              	.LVL127:
+ 1128 065c E5C53000 		bl	io_uart0_send_byte
+  36:../lib/uart.c **** }
+ 1129              	128:
+ 1130 0660 E8BD8070 		.loc 3 44 0
+ 1131              		subs	r4, r4, #1
+ 1132              		bne	.L202
+ 1133              		ldmfd	sp!, {r4, r5, pc}
+ 1134 0664 EBFFFFFE 	.LFE31:
+ 1136 0668 EAFFFFF7 		.section	.rodata.str1.4,"aMS",%progbits,1
+ 1137              		.align	2
+ 1138              	.LC1:
+ 1139              		.ascii	"\015\012\015\012STORM SoC Basic Configuration\015\012"
+ 1140 066c 00000000 		.ascii	"\000"
+ 1141              		.align	2
+ 1142              	.LC2:
+ 1143              		.ascii	"Demo program\015\012\015\012\000"
+ 1144              		.align	2
+ 1145              	.LC3:
+ 1146              		.ascii	"Press any key!\015\012\000"
+ 1147              		.text
+  37:../lib/uart.c **** 
+  38:../lib/uart.c **** // ############################################################################################
+  39:../lib/uart.c **** // Print character buffer via UART 0
+  40:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
+  41:../lib/uart.c **** // ############################################################################################
+  42:../lib/uart.c **** {
+ 1148              	main
+ 1150              	main:
+ 1151              	.LFB32:
+ 1152 0670 E92D4030 		.file 4 "main.c"
+ 1153              		.loc 4 29 0
+  43:../lib/uart.c **** 	unsigned char char_buffer = 0;
+  44:../lib/uart.c **** 	while(size > 0){
+ 1154              	s = 0, pretend = 0, frame = 0
+ 1155 0674 E2514000 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1156              		str	lr, [sp, #-4]!
+ 1157 0678 E1A05000 	.LCFI7:
+ 1158              		.loc 4 42 0
+ 1159 067c D8BD8030 		ldr	r0, .L215
+ 1160              		bl	uart0_printf
+ 1161              		.loc 4 43 0
+  45:../lib/uart.c **** 		char_buffer = *buffer++;
+  46:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
+ 1162              	 .L215+4
+ 1163 0680 E4D50001 		bl	uart0_printf
+ 1164              		.loc 4 45 0
+ 1165 0684 EBFFFFFE 		ldr	r0, .L215+8
+ 1166              		bl	uart0_printf
+ 1167              	.L213:
+ 1168 0688 E2544001 		.loc 4 49 0
+ 1169 068c 1AFFFFFB 		bl	io_uart0_read_byte
+ 1170 0690 E8BD8030 		.loc 4 50 0
+ 1171              		cmn	r0, #1
+ 1172              		beq	.L213
+ 1173              	.L214:
+ 1174              		.loc 4 51 0
+ 1175              		bl	io_uart0_send_byte
+ 1176 0000 0D0A0D0A 		.loc 4 49 0
+ 1176      53544F52 
+ 1176      4D20536F 
+ 1176      43204261 
+ 1176      73696320 
+ 1177 0023 00       		bl	io_uart0_read_byte
+ 1178              		.loc 4 50 0
+ 1179              		cmn	r0, #1
+ 1180 0024 44656D6F 		bne	.L214
+ 1180      2070726F 
+ 1180      6772616D 
+ 1180      0D0A0D0A 
+ 1180      00
+ 1181 0035 000000   		b	.L213
+ 1182              	.L216:
+ 1183 0038 50726573 		.align	2
+ 1183      7320616E 
+ 1183      79206B65 
+ 1183      79210D0A 
+ 1183      00
+ 1184 0049 000000   	.L215:
+ 1185              		.word	.LC1
+ 1186              		.word	.LC2
+ 1187              		.word	.LC3
+ 1188              	.LFE32:
+ 1190              		.align	2
+   1:main.c        **** #include "../lib/storm_core.h"
+   2:main.c        **** #include "../lib/storm_soc_basic.h"
+   3:main.c        **** #include "../lib/io_driver.c"
+   4:main.c        **** #include "../lib/utilities.c"
+   5:main.c        **** #include "../lib/uart.c"
+   6:main.c        **** 
+   7:main.c        **** // +------------------------------+
+   8:main.c        **** // |    Simple Program Demo       |
+   9:main.c        **** // +------------------------------+
+  10:main.c        **** 
+  11:main.c        **** // This program uses the system timer to toggle LED(0) of the System IO
+  12:main.c        **** // port every second. Also a demo output to the terminal is made.
+  13:main.c        **** // Received UART transmission are echoed.
+  14:main.c        **** 
+  15:main.c        **** 
+  16:main.c        **** /* ---- IRQ: Timer ISR ---- */
+  17:main.c        **** // void __attribute__ ((interrupt("IRQ"))) timer0_isr(void)
+  18:main.c        **** // {
+  19:main.c        **** 	// // toggle status led
+  20:main.c        **** 	// set_syscpreg((get_syscpreg(SYS_IO) ^ 0x01), SYS_IO);
+  21:main.c        **** 
+  22:main.c        **** 	// // acknowledge interrupt
+  23:main.c        **** 	// VICVectAddr = 0;
+  24:main.c        **** // }
+  25:main.c        **** 
+  26:main.c        **** 
+  27:main.c        **** /* ---- Main function ---- */
+  28:main.c        **** int main(void)
+  29:main.c        **** {
+ 1191              	e	io_enable_xint, %function
+ 1192              	io_enable_xint:
+ 1193              	.LFB23:
+ 1194 0694 E52DE004 		.loc 1 444 0
+ 1195              		@ args = 0, pretend = 0, frame = 0
+  30:main.c        **** 	int temp;
+  31:main.c        **** 
+  32:main.c        **** 	// timer init
+  33:main.c        **** 	// STME0_CNT  = 0;
+  34:main.c        **** 	// STME0_VAL  = 50000000; // threshold value for 1s ticks
+  35:main.c        **** 	// STME0_CONF = (1<<2) | (1<<1) | (1<<0); // interrupt en, auto reset, timer enable
+  36:main.c        **** 	// VICVectAddr0 = (unsigned long)timer0_isr;
+  37:main.c        **** 	// VICVectCntl0 = (1<<5) | 0; // enable and channel select = 0 (timer0)
+  38:main.c        **** 	// VICIntEnable = (1<<0); // enable channel 0 (timer0)
+  39:main.c        **** 	// io_enable_xint(); // enable IRQ
+  40:main.c        **** 
+  41:main.c        **** 	// Intro
+  42:main.c        **** 	uart0_printf("\r\n\r\nSTORM SoC Basic Configuration\r\n");
+ 1196              	ame_needed = 0, uses_anonymous_args = 0
+ 1197 0698 E59F0030 		@ link register save eliminated.
+ 1198 069c EBFFFFFE 		@ lr needed for prologue
+  43:main.c        **** 	uart0_printf("Demo program\r\n\r\n");
+ 1199              	B6:
+ 1200 06a0 E59F002C 	.LBB7:
+ 1201 06a4 EBFFFFFE 		.loc 1 428 0
+  44:main.c        **** 
+  45:main.c        **** 	uart0_printf("Press any key!\r\n");
+ 1202              	rs r3, cpsr
+ 1203 06a8 E59F0028 	.LVL129:
+ 1204 06ac EBFFFFFE 	.LBE7:
+ 1205              	.LBE6:
+  46:main.c        **** 
+  47:main.c        **** 	// echo received char
+  48:main.c        **** 	while(1){
+  49:main.c        **** 		temp = io_uart0_read_byte();
+ 1206              	8:
+ 1207 06b0 EBFFFFFE 	.LBB9:
+  50:main.c        **** 		if (temp != -1)
+ 1208              	loc 1 437 0
+ 1209 06b4 E3700001 		bic	r3, r3, #192
+ 1210 06b8 0AFFFFFC 	.LVL130:
+ 1211              		 msr cpsr, r3
+  51:main.c        **** 			io_uart0_send_byte(temp);
+ 1212              	9:
+ 1213 06bc EBFFFFFE 	.LBE8:
+ 1214              		.loc 1 448 0
+ 1215 06c0 EBFFFFFE 		bx	lr
+ 1216              	.LFE23:
+ 1218 06c8 1AFFFFFB 		.align	2
+ 1219 06cc EAFFFFF7 		.global	io_disable_xint
+ 1221              	io_disable_xint:
+ 1222              	.LFB24:
+ 1223 06d0 00000000 		.loc 1 454 0
+ 1224 06d4 00000024 		@ args = 0, pretend = 0, frame = 0
+ 1225 06d8 00000038 		@ frame_needed = 0, uses_anonymous_args = 0
+ 1226              		@ link register save eliminated.
+ 1227              		@ lr needed for prologue
+ 1228              	.LBB14:
+ 1229              	.LBB15:
+ 1230              		.loc 1 428 0
+ 1231              		 mrs r3, cpsr
+ 1232              	.LVL131:
  417:../lib/io_driver.c **** //		case 14:         asm volatile ("mcr p15,0,%0,c14,c14,0" : /* no outputs */ : "r" (_cp_val)); br
  418:../lib/io_driver.c **** //		case 15:         asm volatile ("mcr p15,0,%0,c15,c15,0" : /* no outputs */ : "r" (_cp_val)); br
  419:../lib/io_driver.c **** 		default:         break;
@@ -1236,725 +1810,112 @@
  442:../lib/io_driver.c ****    void io_enable_xint(void)
  443:../lib/io_driver.c **** // ******************************************************************************
  444:../lib/io_driver.c **** {
- 836              	0, frame = 0
- 837              		@ frame_needed = 0, uses_anonymous_args = 0
- 838              		@ link register save eliminated.
- 839              		@ lr needed for prologue
- 840              	.LBB14:
- 841              	.LBB15:
- 842              		.loc 1 428 0
- 843              		 mrs r3, cpsr
- 844 04bc E10F3000 	.LVL84:
- 845              	.LBE15:
- 846              	.LBE14:
- 847              	.LBB16:
- 848              	.LBB17:
- 849              		.loc 1 437 0
- 850              		orr	r3, r3, #192
- 851 04c0 E3C330C0 	.LVL85:
- 852              		 msr cpsr, r3
- 853 04c4 E129F003 	.LBE17:
- 854              	.LBE16:
- 855              		.loc 1 458 0
+ 1233              	6:
+ 1234              	.LBB17:
+ 1235              		.loc 1 437 0
+ 1236              		orr	r3, r3, #192
+ 1237              	.LVL132:
+ 1238              		 msr cpsr, r3
+ 1239              	.LBE17:
+ 1240              	.LBE16:
+ 1241 06dc E10F3000 		.loc 1 458 0
+ 1242              		bx	lr
+ 1243              	.LFE24:
+ 1245              		.section	.debug_frame,"",%progbits
+ 1246              	.Lframe0:
+ 1247              		.4byte	.LECIE0-.LSCIE0
+ 1248 06e0 E3C330C0 	.LSCIE0:
+ 1249              		.4byte	0xffffffff
+ 1250 06e4 E129F003 		.byte	0x1
+ 1251              		.ascii	"\000"
+ 1252              		.uleb128 0x1
  445:../lib/io_driver.c **** 	unsigned long _cmsr = get_cmsr();
  446:../lib/io_driver.c **** 	_cmsr = _cmsr & ~(1<<CMSR_FIQ) &~(1<<CMSR_IRQ);
  447:../lib/io_driver.c **** 	set_cmsr(_cmsr);
  448:../lib/io_driver.c **** }
- 856              	e	io_disable_xint, .-io_disable_xint
- 857 04c8 E12FFF1E 		.align	2
- 858              		.global	long_to_hex_string
- 860              	long_to_hex_string:
- 861              	.LFB25:
- 862              		.file 2 "../lib/utilities.c"
- 863              		.loc 2 9 0
- 864              		@ args = 0, pretend = 0, frame = 0
+ 1253              	0xe
+ 1254 06e8 E12FFF1E 		.byte	0xc
+ 1255              		.uleb128 0xd
+ 1256              		.uleb128 0x0
+ 1257              		.align	2
+ 1258              	.LECIE0:
+ 1259              	.LSFDE0:
+ 1260              		.4byte	.LEFDE0-.LASFDE0
+ 1261              	.LASFDE0:
  449:../lib/io_driver.c **** 
  450:../lib/io_driver.c **** // ******************************************************************************
  451:../lib/io_driver.c **** // Disable all global IBTs
  452:../lib/io_driver.c ****    void io_disable_xint(void)
  453:../lib/io_driver.c **** // ******************************************************************************
  454:../lib/io_driver.c **** {
- 865              	needed = 0, uses_anonymous_args = 0
- 866              	.LVL86:
- 867              		stmfd	sp!, {r4, lr}
- 868              	.LCFI2:
- 869              		.loc 2 9 0
- 870              		and	r4, r2, #255
- 871              		.loc 2 14 0
- 872              		cmp	r4, #8
- 873 04cc E10F3000 		movhi	r4, #8
- 874              		bhi	.L146
- 875              	.LVL87:
- 876              		.loc 2 16 0
- 877              		cmp	r4, #0
- 878              		.loc 2 39 0
- 879              		moveq	r4, #1
- 880 04d0 E38330C0 	.L146:
- 881              		mov	r2, r1
- 882 04d4 E129F003 	.LVL88:
- 883              		mov	lr, r4
- 884              	.LVL89:
+ 1262              	Lframe0
+ 1263              		.4byte	.LFB2
+ 1264              		.4byte	.LFE2-.LFB2
+ 1265              		.align	2
+ 1266              	.LEFDE0:
+ 1267              	.LSFDE2:
+ 1268              		.4byte	.LEFDE2-.LASFDE2
+ 1269              	.LASFDE2:
+ 1270 06ec E10F3000 		.4byte	.Lframe0
+ 1271              		.4byte	.LFB3
+ 1272              		.4byte	.LFE3-.LFB3
+ 1273              		.align	2
+ 1274              	.LEFDE2:
+ 1275              	.LSFDE4:
+ 1276              		.4byte	.LEFDE4-.LASFDE4
+ 1277 06f0 E38330C0 	.LASFDE4:
+ 1278              		.4byte	.Lframe0
+ 1279 06f4 E129F003 		.4byte	.LFB4
+ 1280              		.4byte	.LFE4-.LFB4
+ 1281              		.align	2
  455:../lib/io_driver.c **** 	unsigned long _cmsr = get_cmsr();
  456:../lib/io_driver.c **** 	_cmsr = _cmsr | (1<<CMSR_FIQ) | (1<<CMSR_IRQ);
  457:../lib/io_driver.c **** 	set_cmsr(_cmsr);
  458:../lib/io_driver.c **** }
- 885              		mov	r3, lr, asl #2
- 886 04d8 E12FFF1E 		.loc 2 21 0
- 887              		cmp	lr, #1
- 888              		.loc 2 22 0
- 889              		sub	r3, r3, #4
- 890              		.loc 2 21 0
- 891              		mov	ip, r0
- 892              	.LVL90:
- 893              		.loc 2 22 0
- 894              		movhi	ip, r0, lsr r3
-   1:../lib/utilities.c **** #include "utilities.h"
-   2:../lib/utilities.c **** 
-   3:../lib/utilities.c **** // ############################################################################################
-   4:../lib/utilities.c **** // Convert 4/8/12/16/20/24/28/32 bit hexadecimal value to ASCII string
-   5:../lib/utilities.c ****    void long_to_hex_string(unsigned long data,    // max 32 bit data word
-   6:../lib/utilities.c ****                            unsigned char *buffer, // buffer to store the string
-   7:../lib/utilities.c **** 						   unsigned char numbers) // number of places, max 8
-   8:../lib/utilities.c **** // ############################################################################################
-   9:../lib/utilities.c **** {
- 895              	 0
- 896              		sub	r3, lr, #1
- 897              		.loc 2 25 0
- 898              		and	ip, ip, #15
- 899 04dc E92D4010 	.LVL91:
- 900              		.loc 2 26 0
- 901              		and	lr, r3, #255
- 902 04e0 E20240FF 		.loc 2 29 0
-  10:../lib/utilities.c **** 	unsigned char temp_char = 0;
-  11:../lib/utilities.c **** 	unsigned long temp_data = 0;
-  12:../lib/utilities.c **** 
-  13:../lib/utilities.c **** 	// fit into range
-  14:../lib/utilities.c **** 	if(numbers > 8)
- 903              	 #9
- 904 04e4 E3540008 		.loc 2 30 0
- 905 04e8 83A04008 		add	r3, ip, #48
- 906 04ec 8A000001 	.LVL92:
- 907              		.loc 2 32 0
-  15:../lib/utilities.c **** 		numbers = 8;
-  16:../lib/utilities.c **** 	if(numbers < 1)
- 908              	i	r3, ip, #55
- 909 04f0 E3540000 		.loc 2 19 0
-  17:../lib/utilities.c **** 		numbers = 1;
-  18:../lib/utilities.c **** 
-  19:../lib/utilities.c **** 	while(numbers > 0){
-  20:../lib/utilities.c **** 		// isolate one 4-bit value
-  21:../lib/utilities.c **** 		if(numbers > 1)
-  22:../lib/utilities.c **** 			temp_data = data >> ((numbers-1)*4);
-  23:../lib/utilities.c **** 		else
-  24:../lib/utilities.c **** 			temp_data = data;
-  25:../lib/utilities.c **** 		temp_data = temp_data & 0x0000000F;
-  26:../lib/utilities.c **** 		numbers--;
-  27:../lib/utilities.c **** 
-  28:../lib/utilities.c **** 		// convert 4-bit value temp_data to char temp_char
-  29:../lib/utilities.c **** 		if(temp_data < 10)
-  30:../lib/utilities.c **** 			temp_char = '0' + temp_data;
-  31:../lib/utilities.c **** 		else
-  32:../lib/utilities.c **** 			temp_char = 'A' + temp_data - 10;
-  33:../lib/utilities.c **** 
-  34:../lib/utilities.c **** 		// save character
-  35:../lib/utilities.c **** 		*buffer++ = temp_char;
-  36:../lib/utilities.c **** 	}
-  37:../lib/utilities.c **** 
-  38:../lib/utilities.c **** 	*buffer++ = 0; // terminate string
-  39:../lib/utilities.c **** }
- 910              	mp	lr, #0
- 911 04f4 03A04001 		.loc 2 35 0
- 912              		strb	r3, [r2], #1
- 913 04f8 E1A02001 		.loc 2 19 0
- 914              		bne	.L148
- 915 04fc E1A0E004 		.loc 2 38 0
- 916              		sub	r3, r4, #1
- 917              	.LVL93:
- 918              		and	r3, r3, #255
- 919 0500 E1A0310E 		add	r3, r1, r3
- 920              		strb	lr, [r3, #1]
- 921 0504 E35E0001 		.loc 2 39 0
- 922              		ldmfd	sp!, {r4, pc}
- 923 0508 E2433004 	.LFE25:
- 925 050c E1A0C000 		.align	2
- 926              		.global	get_adc
- 928 0510 81A0C330 	get_adc:
- 929              	.LFB26:
- 930 0514 E24E3001 		.loc 2 45 0
- 931              		@ args = 0, pretend = 0, frame = 0
- 932 0518 E20CC00F 		@ frame_needed = 0, uses_anonymous_args = 0
- 933              	.LVL94:
- 934              		stmfd	sp!, {r4, lr}
- 935 051c E203E0FF 	.LCFI3:
- 936              		.loc 2 45 0
- 937 0520 E35C0009 		mov	r4, r0
- 938              		.loc 2 48 0
- 939 0524 E28C3030 		cmp	r4, #7
- 940              		.loc 2 52 0
- 941              		mov	r1, #16
- 942 0528 828C3037 		mov	r0, #1
- 943              	.LVL95:
- 944 052c E35E0000 		.loc 2 48 0
- 945              		bls	.L165
- 946 0530 E4C23001 		.loc 2 58 0
- 947              		mov	r0, #0
- 948 0534 1AFFFFF1 		ldmfd	sp!, {r4, pc}
- 949              	.L165:
- 950 0538 E2443001 		.loc 2 52 0
- 951              		bl	io_spi0_config
- 952 053c E20330FF 		.loc 2 53 0
- 953 0540 E0813003 		mov	r0, #6
- 954 0544 E5C3E001 		bl	io_spi0_enable
- 955              		.loc 2 56 0
- 956 0548 E8BD8010 		mov	r0, #0
- 957              		bl	io_spi0_trans
- 958              		.loc 2 57 0
- 959              		mov	r0, r4, asl #11
- 960              		.loc 2 58 0
- 961              		ldmfd	sp!, {r4, lr}
- 962              		.loc 2 57 0
- 963              		b	io_spi0_trans
-  40:../lib/utilities.c **** 
-  41:../lib/utilities.c **** // ############################################################################################
-  42:../lib/utilities.c **** // read external ADC value
-  43:../lib/utilities.c ****    unsigned int get_adc(int adc_index) // adc 0..7
-  44:../lib/utilities.c **** // ############################################################################################
-  45:../lib/utilities.c **** {
- 964              	elay
- 966              	delay:
- 967              	.LFB27:
- 968 054c E92D4010 		.loc 2 64 0
- 969              		@ args = 0, pretend = 0, frame = 0
- 970              		@ frame_needed = 0, uses_anonymous_args = 0
- 971 0550 E1A04000 		@ link register save eliminated.
-  46:../lib/utilities.c **** 	unsigned long temp;
-  47:../lib/utilities.c **** 
-  48:../lib/utilities.c **** 	if ((adc_index < 0) || (adc_index > 7))
- 972              		.loc 2 65 0
- 973 0554 E3540007 		rsb	r3, r0, r0, asl #5
-  49:../lib/utilities.c **** 		return 0;
-  50:../lib/utilities.c **** 
-  51:../lib/utilities.c **** 	// config spi
-  52:../lib/utilities.c **** 	io_spi0_config(1,16); // auto assert cs, 16 bit transfer
- 974              	dd	r0, r0, r3, asl #2
- 975 0558 E3A01010 	.LVL97:
- 976 055c E3A00001 		add	r0, r0, r0, asl #2
- 977              		mov	r0, r0, asl #4
- 978              	.LVL98:
- 979 0560 9A000001 		.loc 2 66 0
-  53:../lib/utilities.c **** 	io_spi0_enable(adc_cs);
-  54:../lib/utilities.c **** 
-  55:../lib/utilities.c **** 	temp = adc_index * 2048;
-  56:../lib/utilities.c **** 	io_spi0_trans(0); // dummy read
-  57:../lib/utilities.c **** 	return (unsigned int)io_spi0_trans(temp);
-  58:../lib/utilities.c **** }
- 980              	0, #0
- 981 0564 E3A00000 		.loc 2 64 0
- 982 0568 E8BD8010 		@ lr needed for prologue
- 983              		.loc 2 66 0
- 984              		bxle	lr
- 985 056c EBFFFFFE 	.L170:
- 986              		.loc 2 67 0
- 987 0570 E3A00006 		NOP
- 988 0574 EBFFFFFE 		.loc 2 66 0
- 989              		subs	r0, r0, #1
- 990 0578 E3A00000 		bne	.L170
- 991 057c EBFFFFFE 		bx	lr
- 992              	.LFE27:
- 994              		.align	2
- 995 0584 E8BD4010 		.global	string_cmpc
- 997 0588 EAFFFFFE 	string_cmpc:
- 998              	.LFB28:
- 999              		.loc 2 76 0
- 1000              		@ args = 0, pretend = 0, frame = 0
- 1001              		@ frame_needed = 0, uses_anonymous_args = 0
- 1002              		@ link register save eliminated.
- 1003              	.LVL99:
- 1004              		.loc 2 77 0
-  59:../lib/utilities.c **** 
-  60:../lib/utilities.c **** // ############################################################################################
-  61:../lib/utilities.c **** // simple delay routine
-  62:../lib/utilities.c ****    void delay(int time) // waits time*10000 clock ticks
-  63:../lib/utilities.c **** // ############################################################################################
-  64:../lib/utilities.c **** {
- 1005              	2 76 0
- 1006              		@ lr needed for prologue
- 1007              		.loc 2 77 0
- 1008              		beq	.L173
- 1009              	.LVL100:
-  65:../lib/utilities.c **** 	time = time*2500*4;
- 1010              	 2 78 0
- 1011 058c E0603280 		ldrb	r2, [r0, #0]	@ zero_extendqisi2
- 1012 0590 E0800103 		ldrb	r3, [r1, #0]	@ zero_extendqisi2
- 1013              		cmp	r2, r3
- 1014 0594 E0800100 		beq	.L177
- 1015 0598 E1A00200 		b	.L175
- 1016              	.L178:
-  66:../lib/utilities.c **** 	while(time > 0){
- 1017              	:
- 1018 059c E3500000 		ldrb	r2, [r0, #1]!	@ zero_extendqisi2
- 1019              	.LVL102:
- 1020              		ldrb	r3, [r1, #1]!	@ zero_extendqisi2
- 1021              		cmp	r2, r3
- 1022 05a0 D12FFF1E 		bne	.L175
- 1023              	.LVL103:
-  67:../lib/utilities.c **** 		asm volatile ("NOP");
- 1024              		.loc 2 80 0
- 1025 05a4 E1A00000 		sub	r3, ip, #1
- 1026              		.loc 2 77 0
- 1027 05a8 E2500001 		ands	ip, r3, #255
- 1028 05ac 1AFFFFFC 		bne	.L178
- 1029 05b0 E12FFF1E 	.LVL104:
- 1030              	.L173:
- 1031              		mov	r0, #1
- 1032              	.LVL105:
- 1033              		.loc 2 83 0
- 1034              		bx	lr
- 1035              	.LVL106:
- 1036              	.L175:
-  68:../lib/utilities.c **** 		time--;
-  69:../lib/utilities.c **** 	}
-  70:../lib/utilities.c **** }
-  71:../lib/utilities.c **** 
-  72:../lib/utilities.c **** // ############################################################################################
-  73:../lib/utilities.c **** // String compare, buffered string with immediate const char string
-  74:../lib/utilities.c ****    unsigned char string_cmpc(unsigned char *string1, const char *string2, unsigned char length)
-  75:../lib/utilities.c **** // ############################################################################################
-  76:../lib/utilities.c **** {
- 1037              		mov	r0, #0
- 1038              	.LVL107:
- 1039              		bx	lr
- 1040              	.LFE28:
-  77:../lib/utilities.c **** 	while(length != 0){
- 1042              	gn	2
- 1043 05b4 E212C0FF 		.global	uart0_printf
- 1045              	uart0_printf:
- 1046              	.LFB29:
- 1047 05b8 0A00000B 		.file 3 "../lib/uart.c"
- 1048              		.loc 3 7 0
-  78:../lib/utilities.c **** 		if(*string1++ != (unsigned char)*string2++)
- 1049              	 = 0, pretend = 0, frame = 0
- 1050 05bc E5D02000 		@ frame_needed = 0, uses_anonymous_args = 0
- 1051 05c0 E5D13000 	.LVL108:
- 1052 05c4 E1520003 		stmfd	sp!, {r4, lr}
- 1053 05c8 0A000004 	.LCFI4:
- 1054 05cc EA000008 		.loc 3 7 0
- 1055              		mov	r4, r0
- 1056              		.loc 3 10 0
- 1057 05d0 E5F02001 		ldrb	r0, [r0, #0]	@ zero_extendqisi2
- 1058              	.LVL109:
- 1059 05d4 E5F13001 		cmp	r0, #0
- 1060 05d8 E1520003 		bne	.L186
- 1061 05dc 1A000004 		b	.L182
- 1062              	.LVL110:
- 1063              	.L188:
-  79:../lib/utilities.c **** 			return(0); // missmatch
-  80:../lib/utilities.c **** 		length--;
- 1064              	#1]!	@ zero_extendqisi2
- 1065 05e0 E24C3001 	.LVL111:
- 1066              		cmp	r0, #0
- 1067 05e4 E213C0FF 		beq	.L182
- 1068 05e8 1AFFFFF8 	.L186:
- 1069              		.loc 3 11 0
- 1070              		bl	io_uart0_send_byte
- 1071 05ec E3A00001 	.LVL112:
- 1072              		cmp	r0, #0
-  81:../lib/utilities.c **** 	}
-  82:../lib/utilities.c **** 	return(1); // match
-  83:../lib/utilities.c **** }
- 1073              	8
- 1074 05f0 E12FFF1E 	.LVL113:
- 1075              	.L182:
- 1076              		.loc 3 16 0
- 1077              		mov	r0, r4
- 1078 05f4 E3A00000 	.LVL114:
- 1079              		ldmfd	sp!, {r4, pc}
- 1080 05f8 E12FFF1E 	.LFE29:
- 1082              		.align	2
- 1083              		.global	uart0_scanf
- 1085              	uart0_scanf:
- 1086              	.LFB30:
- 1087              		.loc 3 22 0
- 1088              		@ args = 0, pretend = 0, frame = 0
-   1:../lib/uart.c **** #include "uart.h"
-   2:../lib/uart.c **** 
-   3:../lib/uart.c **** // ############################################################################################
-   4:../lib/uart.c **** // Print text string via UART 0
-   5:../lib/uart.c ****    const char *uart0_printf(const char *string)
-   6:../lib/uart.c **** // ############################################################################################
-   7:../lib/uart.c **** {
- 1089              	= 0, uses_anonymous_args = 0
- 1090              	.LVL115:
- 1091              		stmfd	sp!, {r4, r5, r6, lr}
- 1092              	.LCFI5:
- 1093 05fc E92D4010 		.loc 3 25 0
- 1094              		subs	r4, r1, #0
- 1095              		.loc 3 22 0
- 1096 0600 E1A04000 		mov	r5, r0
-   8:../lib/uart.c **** 	char ch;
-   9:../lib/uart.c **** 
-  10:../lib/uart.c **** 	while ((ch = *string)){
- 1097              	 r2, #255
- 1098 0604 E5D00000 		.loc 3 25 0
- 1099              		ldmlefd	sp!, {r4, r5, r6, pc}
- 1100 0608 E3500000 	.LVL116:
- 1101 060c 1A000003 	.L197:
- 1102 0610 EA000005 		.loc 3 26 0
- 1103              		bl	io_uart0_read_byte
- 1104              	.LVL117:
- 1105 0614 E5F40001 	.LVL118:
- 1106              		.loc 3 27 0
- 1107 0618 E3500000 		cmn	r0, #1
- 1108 061c 0A000002 		.loc 3 28 0
- 1109              		and	r3, r0, #255
-  11:../lib/uart.c **** 		if (io_uart0_send_byte(ch)<=0)
- 1110              	c 3 27 0
- 1111 0620 EBFFFFFE 		beq	.L192
- 1112              		.loc 3 30 0
- 1113 0624 E3500000 		cmp	r6, #1
- 1114 0628 CAFFFFF9 	.LVL120:
- 1115              		.loc 3 29 0
- 1116              		strb	r3, [r5, #0]
-  12:../lib/uart.c **** 			break;
-  13:../lib/uart.c **** 		string++;
-  14:../lib/uart.c **** 	}
-  15:../lib/uart.c **** 	return string;
-  16:../lib/uart.c **** }
- 1117              	:
- 1118 062c E1A00004 		.loc 3 31 0
- 1119              		mov	r0, r3
- 1120 0630 E8BD8010 	.LVL122:
- 1121              		.loc 3 29 0
- 1122              		add	r5, r5, #1
- 1123              		.loc 3 30 0
- 1124              		beq	.L199
- 1125              	.LVL123:
- 1126              	.L194:
- 1127              		.loc 3 32 0
-  17:../lib/uart.c **** 
-  18:../lib/uart.c **** // ############################################################################################
-  19:../lib/uart.c **** // Read text string via UART 0
-  20:../lib/uart.c ****    void uart0_scanf(unsigned char *buffer, int length, unsigned char en_echo)
-  21:../lib/uart.c **** // ############################################################################################
-  22:../lib/uart.c **** {
- 1128              	, #1
- 1129              	.LVL124:
- 1130              	.L192:
- 1131              		.loc 3 25 0
- 1132 0634 E92D4070 		cmp	r4, #0
- 1133              		bgt	.L197
-  23:../lib/uart.c **** 	int temp = 0;
-  24:../lib/uart.c **** 
-  25:../lib/uart.c **** 	while(length > 0){
- 1134              		sp!, {r4, r5, r6, pc}
- 1135 0638 E2514000 	.LVL125:
- 1136              	.L199:
- 1137 063c E1A05000 		.loc 3 31 0
- 1138 0640 E20260FF 		bl	io_uart0_send_byte
- 1139              	.LVL126:
- 1140 0644 D8BD8070 		b	.L194
- 1141              	.LFE30:
-  26:../lib/uart.c **** 		temp = io_uart0_read_byte();
- 1143              	
- 1144 0648 EBFFFFFE 		.global	uart0_print_buffer
- 1146              	uart0_print_buffer:
-  27:../lib/uart.c **** 		if(temp != -1){
- 1147              	B31:
- 1148 064c E3700001 		.loc 3 41 0
-  28:../lib/uart.c **** 			temp = (unsigned char)(temp & 0x000000FF);
- 1149              	 args = 0, pretend = 0, frame = 0
- 1150 0650 E20030FF 		@ frame_needed = 0, uses_anonymous_args = 0
- 1151              	.LVL127:
- 1152              		stmfd	sp!, {r4, r5, lr}
- 1153 0654 0A000005 	.LCFI6:
-  29:../lib/uart.c **** 			*buffer++ = temp;
-  30:../lib/uart.c **** 			if(en_echo == 1)
- 1154              	 3 43 0
- 1155 0658 E3560001 		subs	r4, r1, #0
- 1156              		.loc 3 41 0
- 1157              		mov	r5, r0
- 1158 065c E5C53000 		.loc 3 43 0
- 1159              		ldmlefd	sp!, {r4, r5, pc}
-  31:../lib/uart.c **** 				io_uart0_send_byte(temp); // echo
- 1160              	8:
- 1161 0660 E1A00003 	.L204:
- 1162              		.loc 3 45 0
- 1163              		ldrb	r0, [r5], #1	@ zero_extendqisi2
- 1164 0664 E2855001 	.LVL129:
- 1165              		bl	io_uart0_send_byte
- 1166 0668 0A000003 	.LVL130:
- 1167              		.loc 3 43 0
- 1168              		subs	r4, r4, #1
-  32:../lib/uart.c **** 			length--;
- 1169              	4
- 1170 066c E2444001 		ldmfd	sp!, {r4, r5, pc}
- 1171              	.LFE31:
- 1173              		.align	2
- 1174 0670 E3540000 		.global	timer0_isr
- 1176 0678 E8BD8070 	timer0_isr:
- 1177              	.LFB32:
- 1178              		.file 4 "main.c"
- 1179              		.loc 4 18 0
- 1180 067c EBFFFFFE 		@ Interrupt Service Routine.
- 1181              		@ args = 0, pretend = 0, frame = 0
- 1182 0680 EAFFFFF9 		@ frame_needed = 0, uses_anonymous_args = 0
- 1183              		sub	lr, lr, #4
- 1184              		stmfd	sp!, {r0, r1, r2, r3, ip, lr}
- 1185              	.LCFI7:
- 1186              		.loc 4 20 0
- 1187              		mov	r0, #13
- 1188              		bl	get_syscpreg
- 1189              		mov	r1, #13
-  33:../lib/uart.c **** 		}
-  34:../lib/uart.c **** 	}
-  35:../lib/uart.c **** }
-  36:../lib/uart.c **** 
-  37:../lib/uart.c **** // ############################################################################################
-  38:../lib/uart.c **** // Print character buffer via UART 0
-  39:../lib/uart.c ****    void uart0_print_buffer(unsigned char *buffer, int size)
-  40:../lib/uart.c **** // ############################################################################################
-  41:../lib/uart.c **** {
- 1190              	et_syscpreg
- 1191              		.loc 4 23 0
- 1192              		mov	r2, #0
- 1193              		mvn	r3, #0
- 1194 0684 E92D4030 		str	r2, [r3, #-4047]
- 1195              		.loc 4 24 0
-  42:../lib/uart.c **** 	unsigned char char_buffer = 0;
-  43:../lib/uart.c **** 	while(size > 0){
- 1196              		sp!, {r0, r1, r2, r3, ip, pc}^
- 1197 0688 E2514000 	.LFE32:
- 1199 068c E1A05000 		.section	.rodata.str1.4,"aMS",%progbits,1
- 1200              		.align	2
- 1201 0690 D8BD8030 	.LC0:
- 1202              		.ascii	"\015\012\015\012STORM SoC Basic Configuration\015\012"
- 1203              		.ascii	"\000"
-  44:../lib/uart.c **** 		char_buffer = *buffer++;
-  45:../lib/uart.c **** 		io_uart0_send_byte((int)char_buffer);
- 1204              	2
- 1205 0694 E4D50001 	.LC1:
- 1206              		.ascii	"Demo program\015\012\015\012\000"
- 1207 0698 EBFFFFFE 		.align	2
- 1208              	.LC2:
- 1209              		.ascii	"Press any key!\015\012\000"
- 1210 069c E2544001 		.text
- 1211 06a0 1AFFFFFB 		.align	2
- 1212 06a4 E8BD8030 		.global	main
- 1214              	main:
- 1215              	.LFB33:
- 1216              		.loc 4 29 0
- 1217              		@ args = 0, pretend = 0, frame = 0
- 1218              		@ frame_needed = 0, uses_anonymous_args = 0
- 1219              		.loc 4 34 0
- 1220              		mov	r2, #49807360
-   1:main.c        **** #include "../lib/storm_core.h"
-   2:main.c        **** #include "../lib/storm_soc_basic.h"
-   3:main.c        **** #include "../lib/io_driver.c"
-   4:main.c        **** #include "../lib/utilities.c"
-   5:main.c        **** #include "../lib/uart.c"
-   6:main.c        **** 
-   7:main.c        **** // +------------------------------+
-   8:main.c        **** // |    Simple Program Demo       |
-   9:main.c        **** // +------------------------------+
-  10:main.c        **** 
-  11:main.c        **** // This program uses the system timer to toggle LED(0) of the System IO
-  12:main.c        **** // port every second. Also a demo output to the terminal is made.
-  13:main.c        **** // Received UART transmission are echoed.
-  14:main.c        **** 
-  15:main.c        **** 
-  16:main.c        **** /* ---- IRQ: Timer ISR ---- */
-  17:main.c        **** void __attribute__ ((interrupt("IRQ"))) timer0_isr(void)
-  18:main.c        **** {
- 1221              	512
- 1222              		.loc 4 33 0
- 1223              		mvn	r1, #61440
- 1224              		.loc 4 34 0
- 1225 06a8 E24EE004 		add	r2, r2, #128
- 1226 06ac E92D500F 		.loc 4 33 0
- 1227              		mov	r3, #0
-  19:main.c        **** 	// toggle status led
-  20:main.c        **** 	set_syscpreg((get_syscpreg(SYS_IO) ^ 0x01), SYS_IO);
- 1228              	, [r1, #-3583]
- 1229 06b0 E3A0000D 		.loc 4 34 0
- 1230 06b4 EBFFFFFE 		str	r2, [r1, #-3579]
- 1231 06b8 E3A0100D 		.loc 4 36 0
- 1232 06bc E2200001 		ldr	r2, .L219
- 1233 06c0 EBFFFFFE 		mvn	r0, #0
-  21:main.c        **** 
-  22:main.c        **** 	// acknowledge interrupt
-  23:main.c        **** 	VICVectAddr = 0;
- 1234              	4 35 0
- 1235 06c4 E3A02000 		add	r3, r3, #7
- 1236 06c8 E3E03000 		str	r3, [r1, #-3575]
- 1237 06cc E5032FCF 		.loc 4 36 0
-  24:main.c        **** }
- 1238              		r2, [r0, #-4031]
- 1239 06d0 E8FD900F 		.loc 4 37 0
- 1240              		add	r3, r3, #25
- 1241              		.loc 4 38 0
- 1242              		mov	r2, #1
- 1243              		.loc 4 37 0
- 1244              		str	r3, [r0, #-3967]
- 1245 0000 0D0A0D0A 		.loc 4 29 0
- 1245      53544F52 
- 1245      4D20536F 
- 1245      43204261 
- 1245      73696320 
- 1246 0023 00       		str	lr, [sp, #-4]!
- 1247              	.LCFI8:
- 1248              		.loc 4 38 0
- 1249 0024 44656D6F 		str	r2, [r0, #-4079]
- 1249      2070726F 
- 1249      6772616D 
- 1249      0D0A0D0A 
- 1249      00
- 1250 0035 000000   		.loc 4 39 0
- 1251              		bl	io_enable_xint
- 1252 0038 50726573 		.loc 4 42 0
- 1252      7320616E 
- 1252      79206B65 
- 1252      79210D0A 
- 1252      00
- 1253 0049 000000   		ldr	r0, .L219+4
- 1254              		bl	uart0_printf
- 1255              		.loc 4 43 0
- 1256              		ldr	r0, .L219+8
- 1257              		bl	uart0_printf
- 1258              		.loc 4 45 0
-  25:main.c        **** 
-  26:main.c        **** 
-  27:main.c        **** /* ---- Main function ---- */
-  28:main.c        **** int main(void)
-  29:main.c        **** {
- 1259              		uart0_printf
- 1260              	.L217:
- 1261              		.loc 4 49 0
-  30:main.c        **** 	int temp;
-  31:main.c        **** 
-  32:main.c        **** 	// timer init
-  33:main.c        **** 	STME0_CNT  = 0;
-  34:main.c        **** 	STME0_VAL  = 50000000; // threshold value for 1s ticks
- 1262              		io_uart0_read_byte
- 1263 06d4 E3A027BE 		.loc 4 50 0
- 1264 06d8 E2822A2F 		cmn	r0, #1
- 1265              		beq	.L217
- 1266 06dc E3E01A0F 	.L218:
- 1267              		.loc 4 51 0
- 1268 06e0 E2822080 		bl	io_uart0_send_byte
- 1269              		.loc 4 49 0
- 1270 06e4 E3A03000 		bl	io_uart0_read_byte
- 1271 06e8 E5013DFF 		.loc 4 50 0
- 1272              		cmn	r0, #1
- 1273 06ec E5012DFB 		bne	.L218
-  35:main.c        **** 	STME0_CONF = (1<<2) | (1<<1) | (1<<0); // interrupt en, auto reset, timer enable
-  36:main.c        **** 	VICVectAddr0 = (unsigned long)timer0_isr;
- 1274              	20:
- 1275 06f0 E59F205C 		.align	2
- 1276 06f4 E3E00000 	.L219:
- 1277              		.word	timer0_isr
- 1278 06f8 E2833007 		.word	.LC0
- 1279 06fc E5013DF7 		.word	.LC1
- 1280              		.word	.LC2
- 1281 0700 E5002FBF 	.LFE33:
-  37:main.c        **** 	VICVectCntl0 = (1<<5) | 0; // enable and channel select = 0 (timer0)
- 1282              	ain, .-main
- 1283 0704 E2833019 		.section	.debug_frame,"",%progbits
-  38:main.c        **** 	VICIntEnable = (1<<0); // enable channel 0 (timer0)
- 1284              	frame0:
- 1285 0708 E3A02001 		.4byte	.LECIE0-.LSCIE0
- 1286              	.LSCIE0:
- 1287 070c E5003F7F 		.4byte	0xffffffff
- 1288              		.byte	0x1
- 1289 0710 E52DE004 		.ascii	"\000"
- 1290              		.uleb128 0x1
- 1291              		.sleb128 -4
- 1292 0714 E5002FEF 		.byte	0xe
-  39:main.c        **** 	io_enable_xint(); // enable IRQ
- 1293              	c
- 1294 0718 EBFFFFFE 		.uleb128 0xd
-  40:main.c        **** 
-  41:main.c        **** 	// Intro
-  42:main.c        **** 	uart0_printf("\r\n\r\nSTORM SoC Basic Configuration\r\n");
- 1295              	uleb128 0x0
- 1296 071c E59F0034 		.align	2
- 1297 0720 EBFFFFFE 	.LECIE0:
-  43:main.c        **** 	uart0_printf("Demo program\r\n\r\n");
- 1298              	FDE0:
- 1299 0724 E59F0030 		.4byte	.LEFDE0-.LASFDE0
- 1300 0728 EBFFFFFE 	.LASFDE0:
-  44:main.c        **** 
-  45:main.c        **** 	uart0_printf("Press any key!\r\n");
- 1301              	byte	.Lframe0
- 1302 072c E59F002C 		.4byte	.LFB2
- 1303 0730 EBFFFFFE 		.4byte	.LFE2-.LFB2
- 1304              		.align	2
-  46:main.c        **** 
-  47:main.c        **** 	// echo received char
-  48:main.c        **** 	while(1){
-  49:main.c        **** 		temp = io_uart0_read_byte();
- 1305              	DE0:
- 1306 0734 EBFFFFFE 	.LSFDE2:
-  50:main.c        **** 		if (temp != -1)
- 1307              	4byte	.LEFDE2-.LASFDE2
- 1308 0738 E3700001 	.LASFDE2:
- 1309 073c 0AFFFFFC 		.4byte	.Lframe0
- 1310              		.4byte	.LFB3
-  51:main.c        **** 			io_uart0_send_byte(temp);
- 1311              	yte	.LFE3-.LFB3
- 1312 0740 EBFFFFFE 		.align	2
- 1313              	.LEFDE2:
- 1314 0744 EBFFFFFE 	.LSFDE4:
- 1315              		.4byte	.LEFDE4-.LASFDE4
- 1316 0748 E3700001 	.LASFDE4:
- 1317 074c 1AFFFFFB 		.4byte	.Lframe0
- 1318 0750 EAFFFFF7 		.4byte	.LFB4
- 1319              		.4byte	.LFE4-.LFB4
- 1320              		.align	2
- 1321              	.LEFDE4:
- 1322 0754 00000000 	.LSFDE6:
- 1323 0758 00000000 		.4byte	.LEFDE6-.LASFDE6
- 1324 075c 00000024 	.LASFDE6:
- 1325 0760 00000038 		.4byte	.Lframe0
- 1326              		.4byte	.LFB5
- 1327              		.4byte	.LFE5-.LFB5
- 1670              		.byte	0x53
+ 1282              	4byte	.LEFDE6-.LASFDE6
+ 1283 06f8 E12FFF1E 	.LASFDE6:
+ 1284              		.4byte	.Lframe0
+ 1285              		.4byte	.LFB5
+ 1604              		.2byte	0x1
 DEFINED SYMBOLS
                             *ABS*:00000000 main.c
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:13     .text:00000000 io_read_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:22     .text:00000000 $a
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:39     .text:00000018 io_read_gpio0_port
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:59     .text:00000024 io_set_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:85     .text:00000040 io_clr_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:111    .text:00000064 io_toggle_gpio0_pin
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:137    .text:00000080 io_set_gpio0_port
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:157    .text:0000008c io_set_pwm
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:229    .text:00000108 io_get_pwm
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:282    .text:00000158 io_uart0_read_byte
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:306    .text:00000170 io_uart0_send_byte
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:331    .text:0000018c io_spi0_config
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:361    .text:000001b0 io_spi0_speed
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:381    .text:000001bc io_spi0_trans
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:418    .text:000001f4 io_spi0_enable
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:444    .text:00000210 io_spi0_disable
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:470    .text:00000234 io_i2c0_speed
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:503    .text:00000260 io_i2c0_byte_transfer
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:647    .text:00000390 get_syscpreg
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:662    .text:000003a0 $d
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:679    .text:000003e0 $a
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:785    .text:00000468 set_syscpreg
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:804    .text:0000047c $d
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:814    .text:0000049c $a
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:834    .text:000004bc io_enable_xint
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:863    .text:000004cc io_disable_xint
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:892    .text:000004dc long_to_hex_string
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:962    .text:0000054c get_adc
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1003   .text:0000058c delay
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1035   .text:000005b4 string_cmpc
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1086   .text:000005fc uart0_printf
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1126   .text:00000634 uart0_scanf
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1188   .text:00000684 uart0_print_buffer
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1218   .text:000006a8 timer0_isr
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1257   .text:000006d4 main
-C:\Users\jh\AppData\Local\Temp/cc8Ocaaa.s:1322   .text:00000754 $d
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:13     .text:00000000 io_read_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:22     .text:00000000 $a
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:39     .text:00000018 io_read_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:59     .text:00000024 io_set_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:85     .text:00000040 io_clr_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:111    .text:00000064 io_toggle_gpio0_pin
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:137    .text:00000080 io_set_gpio0_port
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:157    .text:0000008c io_set_pwm
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:229    .text:00000108 io_get_pwm
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:282    .text:00000158 io_uart0_read_byte
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:306    .text:00000170 io_uart0_send_byte
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:331    .text:0000018c io_spi0_config
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:361    .text:000001b0 io_spi0_speed
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:381    .text:000001bc io_spi0_trans
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:418    .text:000001f4 io_spi0_enable
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:444    .text:00000210 io_spi0_disable
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:470    .text:00000234 io_i2c0_speed
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:503    .text:00000260 io_i2c0_byte_transfer
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:647    .text:00000390 get_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:662    .text:000003a0 $d
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:679    .text:000003e0 $a
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:785    .text:00000468 set_syscpreg
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:804    .text:0000047c $d
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:814    .text:0000049c $a
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:834    .text:000004bc long_to_hex_string
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:904    .text:0000052c get_adc
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:945    .text:0000056c delay
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:977    .text:00000594 string_cmpc
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1028   .text:000005dc uart0_printf
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1073   .text:00000614 uart0_scanf
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1140   .text:0000066c $d
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1146   .text:00000670 uart0_print_buffer
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1152   .text:00000670 $a
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1188   .text:00000694 main
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1223   .text:000006d0 $d
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1231   .text:000006dc io_enable_xint
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1241   .text:000006dc $a
+C:\Users\jh\AppData\Local\Temp/ccYLaaaa.s:1260   .text:000006ec io_disable_xint
 
 NO UNDEFINED SYMBOLS

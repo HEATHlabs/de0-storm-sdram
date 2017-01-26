@@ -42,10 +42,10 @@
   38              	// -------------------------
   39              	Vectors:
   40 0000 EAFFFFFE 	        b     _start                    // reset - _start
-  41 0004 EA000062 	        b     und_handler               // undefined - _undf
-  42 0008 EA000055 	        b     swi_handler               // SWI - _swi
-  43 000c EA000048 	        b     iab_handler               // program abort - _pabt
-  44 0010 EA000047 	        b     iab_handler               // data abort - _dabt
+  41 0004 EA000063 	        b     und_handler               // undefined - _undf
+  42 0008 EA000056 	        b     swi_handler               // SWI - _swi
+  43 000c EA000049 	        b     iab_handler               // program abort - _pabt
+  44 0010 EA000048 	        b     iab_handler               // data abort - _dabt
   45 0014 E1A00000 	        nop                             // reserved
   46 0018 E51FFFF0 	        ldr   pc,[pc,#-0xFF0]           // IRQ - read the VIC
   47 001c E51FFFF0 	        ldr   pc,[pc,#-0xFF0]           // FIQ - read the VIC
@@ -91,237 +91,239 @@
   88              	// - Set stack location for each mode
   89              	// - Leave in System Mode with Interrupts Disabled
   90              	// -----------------------------------------------
-  91 0050 E59F0228 	        ldr   r0,=_stack                    // Calc stack base
-  92 0054 E10F1000 			mrs   r1,CPSR
-  93 0058 E3C1107F 			bic   r1,r1,#0x7F
-  94 005c E38110DB 			orr   r1,r1,#MODE_UND|IRQ_BIT|FIQ_BIT  // Change to Undefined Instruction mode
-  95 0060 E129F001 	        msr   CPSR,r1
-  96 0064 E1A0D000 	        mov   sp,r0                         // Store stack base
-  97              	
-  98 0068 E2400004 	        sub   r0,r0,#UND_STACK_SIZE         // Calc stack base
-  99 006c E10F1000 			mrs   r1,CPSR
- 100 0070 E3C1107F 			bic   r1,r1,#0x7F
- 101 0074 E38110D7 	        orr   r1,r1,#MODE_ABT|IRQ_BIT|FIQ_BIT  // Change to Abort Mode
- 102 0078 E129F001 	        msr   CPSR,r1
- 103 007c E1A0D000 	        mov   sp,r0                         // Store stack base
- 104              	
- 105 0080 E2400004 	        sub   r0,r0,#ABT_STACK_SIZE         // Calc stack base
- 106 0084 E10F1000 			mrs   r1,CPSR
- 107 0088 E3C1107F 			bic   r1,r1,#0x7F
- 108 008c E38110D1 	        orr   r1,r1,#MODE_FIQ|IRQ_BIT|FIQ_BIT  // Change to FIQ Mode
- 109 0090 E129F001 	        msr   CPSR,r1
- 110 0094 E1A0D000 	        mov   sp,r0                         // Store stack base
- 111              	
- 112 0098 E2400004 	        sub   r0,r0,#FIQ_STACK_SIZE         // Calc stack base
- 113 009c E10F1000 			mrs   r1,CPSR
- 114 00a0 E3C1107F 			bic   r1,r1,#0x7F
- 115 00a4 E38110D2 	        orr   r1,r1,#MODE_IRQ|IRQ_BIT|FIQ_BIT  // Change to IRQ Mode
- 116 00a8 E129F001 	        msr   CPSR,r1
- 117 00ac E1A0D000 	        mov   sp,r0                         // Store stack base
- 118              	
- 119 00b0 E2400080 	        sub   r0,r0,#IRQ_STACK_SIZE         // Calc stack base
- 120 00b4 E10F1000 			mrs   r1,CPSR
- 121 00b8 E3C1107F 			bic   r1,r1,#0x7F
- 122 00bc E38110D3 	        orr   r1,r1,#MODE_SVC|IRQ_BIT|FIQ_BIT  // Change to Supervisor Mode
- 123 00c0 E129F001 	        msr   CPSR,r1
- 124 00c4 E1A0D000 	        mov   sp,r0                         // Store stack base
- 125              	
- 126 00c8 E2400004 	        sub   r0,r0,#SVC_STACK_SIZE         // Calc stack base
- 127 00cc E10F1000 			mrs   r1,CPSR
- 128 00d0 E3C1107F 			bic   r1,r1,#0x7F
- 129 00d4 E38110DF 	        orr   r1,r1,#MODE_SYS|IRQ_BIT|FIQ_BIT  // Change to System Mode
- 130 00d8 E129F001 	        msr   CPSR,r1
- 131 00dc E1A0D000 	        mov   sp,r0                         // Store stack base
- 132              	
- 133              	// Copy initialized data to its execution address in RAM
- 134              	// -> not necessary, bootloader can be directly ecxecuted from ROM
- 135              	// -----------------------------------------------------
- 136              	//#ifdef ROM_RUN
- 137              	//        ldr   r1,=_etext                // -> ROM data start
- 138              	//        ldr   r2,=_data                 // -> data start
- 139              	//        ldr   r3,=_edata                // -> end of data
- 140              	//1:      cmp   r2,r3                     // check if data to move
- 141              	//        ldrlo r0,[r1],#4                // copy it
- 142              	//        strlo r0,[r2],#4
- 143              	//        blo   1b                        // loop until done
- 144              	//#endif
- 145              	
- 146              	// Clear .bss
- 147              	// Hell no!
- 148              	// ----------
- 149              	//        mov   r0,#0                     // get a zero
- 150              	//        ldr   r1,=__bss_start           // -> bss start
- 151              	//        ldr   r2,=__bss_end__           // -> bss end
- 152              	//2:      cmp   r1,r2                     // check if data to clear
- 153              	//        strlo r0,[r1],#4                // clear 4 bytes
- 154              	//        blo   2b                        // loop until done
- 155              	
- 156              	// Call main program: main(0)
- 157              	// --------------------------
- 158 00e0 E3A00000 	        mov   r0,#0                     // no arguments (argc = 0)
- 159 00e4 E1A01000 	        mov   r1,r0
- 160 00e8 E1A02000 	        mov   r2,r0
- 161 00ec E1A0B000 	        mov   fp,r0                     // null frame pointer
- 162 00f0 E1A07000 	        mov   r7,r0                     // null frame pointer for thumb
- 163 00f4 E59FA188 	        ldr   r10,=main
- 164 00f8 E1A0E00F 	        mov   lr,pc
- 165 00fc E12FFF1A 	        bx    r10                       // enter main()
- 166              	
- 168              	        .endfunc
- 169              	
- 170              	        .global _reset, reset, exit, abort
- 171              	        .func   _reset
- 172              	_reset:
- 173              	reset:
- 174              	exit:
- 175              	abort:
- 176              	
- 177 0100 EAFFFFFE 	        b     .                         // loop until reset
- 178              	
- 179              	// Data Fetch Abort Interrupt Handler
- 180              	// -------------------------------------------------------------------
- 181              	dab_handler:
- 182 0104 E1A0D00E 			mov   r13, lr
- 183 0108 E3A04010 			mov   r4, #16
- 184 010c EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
- 185 0110 E3A0403C 			mov   r4, #'<'
- 186 0114 EB000051 			bl    uart0_send_byte
- 187 0118 E3A04044 			mov   r4, #'D'
- 188 011c EB00004F 			bl    uart0_send_byte
- 189 0120 E3A04041 			mov   r4, #'A'
- 190 0124 EB00004D 			bl    uart0_send_byte
- 191 0128 E3A04042 			mov   r4, #'B'
- 192 012c EB00004B 			bl    uart0_send_byte
- 193 0130 EA000022 			b     isr_handler
- 194              	
- 195              	// Instruction Fetch Abort Interrupt Handler
- 196              	// -------------------------------------------------------------------
- 197              	iab_handler:
- 198 0134 E1A0D00E 			mov   r13, lr
- 199 0138 E3A04020 			mov   r4, #32
- 200 013c EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
- 201 0140 E3A0403C 			mov   r4, #'<'
- 202 0144 EB000045 			bl    uart0_send_byte
- 203 0148 E3A04049 			mov   r4, #'I'
- 204 014c EB000043 			bl    uart0_send_byte
- 205 0150 E3A04041 			mov   r4, #'A'
- 206 0154 EB000041 			bl    uart0_send_byte
- 207 0158 E3A04042 			mov   r4, #'B'
- 208 015c EB00003F 			bl    uart0_send_byte
- 209 0160 EA000016 			b     isr_handler
- 210              	
- 211              	// Software Interrupt Handler
- 212              	// -------------------------------------------------------------------
- 213              	swi_handler:
- 214 0164 E1A0D00E 			mov   r13, lr
- 215 0168 E3A04040 			mov   r4, #64
- 216 016c EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
- 217 0170 E3A0403C 			mov   r4, #'<'
- 218 0174 EB000039 			bl    uart0_send_byte
- 219 0178 E3A04053 			mov   r4, #'S'
- 220 017c EB000037 			bl    uart0_send_byte
- 221 0180 E3A04057 			mov   r4, #'W'
- 222 0184 EB000035 			bl    uart0_send_byte
- 223 0188 E3A04049 			mov   r4, #'I'
- 224 018c EB000033 			bl    uart0_send_byte
- 225 0190 EA00000A 			b     isr_handler
- 226              	
- 227              	// Undefined Instruction Interrupt Handler
- 228              	// -------------------------------------------------------------------
- 229              	und_handler:
- 230 0194 E1A0D00E 			mov   r13, lr
- 231 0198 E3A04080 			mov   r4, #128
- 232 019c EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
- 233 01a0 E3A0403C 			mov   r4, #'<'
- 234 01a4 EB00002D 			bl    uart0_send_byte
- 235 01a8 E3A04055 			mov   r4, #'U'
- 236 01ac EB00002B 			bl    uart0_send_byte
- 237 01b0 E3A0404E 			mov   r4, #'N'
- 238 01b4 EB000029 			bl    uart0_send_byte
- 239 01b8 E3A04044 			mov   r4, #'D'
- 240 01bc EB000027 			bl    uart0_send_byte
- 241              	
- 242              	// Interrupt Handler
- 243              	// -------------------------------------------------------------------
- 244              	isr_handler:
- 245 01c0 E3A0402D 			mov   r4, #'-'
- 246 01c4 EB000025 			bl    uart0_send_byte
- 247 01c8 E3A04049 			mov   r4, #'I'
- 248 01cc EB000023 			bl    uart0_send_byte
- 249 01d0 E3A0404E 			mov   r4, #'N'
- 250 01d4 EB000021 			bl    uart0_send_byte
- 251 01d8 E3A04054 			mov   r4, #'T'
- 252 01dc EB00001F 			bl    uart0_send_byte
- 253 01e0 E3A04020 			mov   r4, #' '
- 254 01e4 EB00001D 			bl    uart0_send_byte
- 255 01e8 E3A04040 			mov   r4, #'@'
- 256 01ec EB00001B 			bl    uart0_send_byte
- 257              	
- 258 01f0 E24D7004 			sub   r7, r13, #4
- 259 01f4 EB00000A 			bl    uart0_print_hex
- 260              	
- 261 01f8 E3A04020 			mov   r4, #' '
- 262 01fc EB000017 			bl    uart0_send_byte
- 263 0200 E3A0405B 			mov   r4, #'['		
- 264 0204 EB000015 			bl    uart0_send_byte
- 265              	
- 266 0208 EE197F19 			mrc   p15,0,r7, c9, c9
- 267 020c EB000004 			bl    uart0_print_hex
- 268              	
- 269 0210 E3A0405D 			mov   r4, #']'
- 270 0214 EB000011 			bl    uart0_send_byte
- 271 0218 E3A0403E 			mov   r4, #'>'
- 272 021c EB00000F 			bl    uart0_send_byte
- 273 0220 EAFFFFFE 			b .
- 274              	
+  91 0050 E59FA22C 	        ldr	  r10, =0xAAAAAAAA
+  92 0054 E59F022C 			ldr   r0,=_stack                    // Calc stack base
+  93 0058 E10F1000 			mrs   r1,CPSR
+  94 005c E3C1107F 			bic   r1,r1,#0x7F
+  95 0060 E38110DB 			orr   r1,r1,#MODE_UND|IRQ_BIT|FIQ_BIT  // Change to Undefined Instruction mode
+  96 0064 E129F001 	        msr   CPSR,r1
+  97 0068 E1A0D000 	        mov   sp,r0                         // Store stack base
+  98              	
+  99 006c E2400004 	        sub   r0,r0,#UND_STACK_SIZE         // Calc stack base
+ 100 0070 E10F1000 			mrs   r1,CPSR
+ 101 0074 E3C1107F 			bic   r1,r1,#0x7F
+ 102 0078 E38110D7 	        orr   r1,r1,#MODE_ABT|IRQ_BIT|FIQ_BIT  // Change to Abort Mode
+ 103 007c E129F001 	        msr   CPSR,r1
+ 104 0080 E1A0D000 	        mov   sp,r0                         // Store stack base
+ 105              	
+ 106 0084 E2400004 	        sub   r0,r0,#ABT_STACK_SIZE         // Calc stack base
+ 107 0088 E10F1000 			mrs   r1,CPSR
+ 108 008c E3C1107F 			bic   r1,r1,#0x7F
+ 109 0090 E38110D1 	        orr   r1,r1,#MODE_FIQ|IRQ_BIT|FIQ_BIT  // Change to FIQ Mode
+ 110 0094 E129F001 	        msr   CPSR,r1
+ 111 0098 E1A0D000 	        mov   sp,r0                         // Store stack base
+ 112              	
+ 113 009c E2400004 	        sub   r0,r0,#FIQ_STACK_SIZE         // Calc stack base
+ 114 00a0 E10F1000 			mrs   r1,CPSR
+ 115 00a4 E3C1107F 			bic   r1,r1,#0x7F
+ 116 00a8 E38110D2 	        orr   r1,r1,#MODE_IRQ|IRQ_BIT|FIQ_BIT  // Change to IRQ Mode
+ 117 00ac E129F001 	        msr   CPSR,r1
+ 118 00b0 E1A0D000 	        mov   sp,r0                         // Store stack base
+ 119              	
+ 120 00b4 E2400080 	        sub   r0,r0,#IRQ_STACK_SIZE         // Calc stack base
+ 121 00b8 E10F1000 			mrs   r1,CPSR
+ 122 00bc E3C1107F 			bic   r1,r1,#0x7F
+ 123 00c0 E38110D3 	        orr   r1,r1,#MODE_SVC|IRQ_BIT|FIQ_BIT  // Change to Supervisor Mode
+ 124 00c4 E129F001 	        msr   CPSR,r1
+ 125 00c8 E1A0D000 	        mov   sp,r0                         // Store stack base
+ 126              	
+ 127 00cc E2400004 	        sub   r0,r0,#SVC_STACK_SIZE         // Calc stack base
+ 128 00d0 E10F1000 			mrs   r1,CPSR
+ 129 00d4 E3C1107F 			bic   r1,r1,#0x7F
+ 130 00d8 E38110DF 	        orr   r1,r1,#MODE_SYS|IRQ_BIT|FIQ_BIT  // Change to System Mode
+ 131 00dc E129F001 	        msr   CPSR,r1
+ 132 00e0 E1A0D000 	        mov   sp,r0                         // Store stack base
+ 133              	
+ 134              	// Copy initialized data to its execution address in RAM
+ 135              	// -> not necessary, bootloader can be directly ecxecuted from ROM
+ 136              	// -----------------------------------------------------
+ 137              	//#ifdef ROM_RUN
+ 138              	//        ldr   r1,=_etext                // -> ROM data start
+ 139              	//        ldr   r2,=_data                 // -> data start
+ 140              	//        ldr   r3,=_edata                // -> end of data
+ 141              	//1:      cmp   r2,r3                     // check if data to move
+ 142              	//        ldrlo r0,[r1],#4                // copy it
+ 143              	//        strlo r0,[r2],#4
+ 144              	//        blo   1b                        // loop until done
+ 145              	//#endif
+ 146              	
+ 147              	// Clear .bss
+ 148              	// Hell no!
+ 149              	// ----------
+ 150              	//        mov   r0,#0                     // get a zero
+ 151              	//        ldr   r1,=__bss_start           // -> bss start
+ 152              	//        ldr   r2,=__bss_end__           // -> bss end
+ 153              	//2:      cmp   r1,r2                     // check if data to clear
+ 154              	//        strlo r0,[r1],#4                // clear 4 bytes
+ 155              	//        blo   2b                        // loop until done
+ 156              	
+ 157              	// Call main program: main(0)
+ 158              	// --------------------------
+ 159 00e4 E3A00000 	        mov   r0,#0                     // no arguments (argc = 0)
+ 160 00e8 E1A01000 	        mov   r1,r0
+ 161 00ec E1A02000 	        mov   r2,r0
+ 162 00f0 E1A0B000 	        mov   fp,r0                     // null frame pointer
+ 163 00f4 E1A07000 	        mov   r7,r0                     // null frame pointer for thumb
+ 164 00f8 E59FA18C 	        ldr   r10,=main
+ 165 00fc E1A0E00F 	        mov   lr,pc
+ 166 0100 E12FFF1A 	        bx    r10                       // enter main()
+ 167              	
+ 169              	        .endfunc
+ 170              	
+ 171              	        .global _reset, reset, exit, abort
+ 172              	        .func   _reset
+ 173              	_reset:
+ 174              	reset:
+ 175              	exit:
+ 176              	abort:
+ 177              	
+ 178 0104 EAFFFFFE 	        b     .                         // loop until reset
+ 179              	
+ 180              	// Data Fetch Abort Interrupt Handler
+ 181              	// -------------------------------------------------------------------
+ 182              	dab_handler:
+ 183 0108 E1A0D00E 			mov   r13, lr
+ 184 010c E3A04010 			mov   r4, #16
+ 185 0110 EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
+ 186 0114 E3A0403C 			mov   r4, #'<'
+ 187 0118 EB000051 			bl    uart0_send_byte
+ 188 011c E3A04044 			mov   r4, #'D'
+ 189 0120 EB00004F 			bl    uart0_send_byte
+ 190 0124 E3A04041 			mov   r4, #'A'
+ 191 0128 EB00004D 			bl    uart0_send_byte
+ 192 012c E3A04042 			mov   r4, #'B'
+ 193 0130 EB00004B 			bl    uart0_send_byte
+ 194 0134 EA000022 			b     isr_handler
+ 195              	
+ 196              	// Instruction Fetch Abort Interrupt Handler
+ 197              	// -------------------------------------------------------------------
+ 198              	iab_handler:
+ 199 0138 E1A0D00E 			mov   r13, lr
+ 200 013c E3A04020 			mov   r4, #32
+ 201 0140 EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
+ 202 0144 E3A0403C 			mov   r4, #'<'
+ 203 0148 EB000045 			bl    uart0_send_byte
+ 204 014c E3A04049 			mov   r4, #'I'
+ 205 0150 EB000043 			bl    uart0_send_byte
+ 206 0154 E3A04041 			mov   r4, #'A'
+ 207 0158 EB000041 			bl    uart0_send_byte
+ 208 015c E3A04042 			mov   r4, #'B'
+ 209 0160 EB00003F 			bl    uart0_send_byte
+ 210 0164 EA000016 			b     isr_handler
+ 211              	
+ 212              	// Software Interrupt Handler
+ 213              	// -------------------------------------------------------------------
+ 214              	swi_handler:
+ 215 0168 E1A0D00E 			mov   r13, lr
+ 216 016c E3A04040 			mov   r4, #64
+ 217 0170 EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
+ 218 0174 E3A0403C 			mov   r4, #'<'
+ 219 0178 EB000039 			bl    uart0_send_byte
+ 220 017c E3A04053 			mov   r4, #'S'
+ 221 0180 EB000037 			bl    uart0_send_byte
+ 222 0184 E3A04057 			mov   r4, #'W'
+ 223 0188 EB000035 			bl    uart0_send_byte
+ 224 018c E3A04049 			mov   r4, #'I'
+ 225 0190 EB000033 			bl    uart0_send_byte
+ 226 0194 EA00000A 			b     isr_handler
+ 227              	
+ 228              	// Undefined Instruction Interrupt Handler
+ 229              	// -------------------------------------------------------------------
+ 230              	und_handler:
+ 231 0198 E1A0D00E 			mov   r13, lr
+ 232 019c E3A04080 			mov   r4, #128
+ 233 01a0 EE0D4F1D 			mcr   p15, 0, r4, c13, c13, 0
+ 234 01a4 E3A0403C 			mov   r4, #'<'
+ 235 01a8 EB00002D 			bl    uart0_send_byte
+ 236 01ac E3A04055 			mov   r4, #'U'
+ 237 01b0 EB00002B 			bl    uart0_send_byte
+ 238 01b4 E3A0404E 			mov   r4, #'N'
+ 239 01b8 EB000029 			bl    uart0_send_byte
+ 240 01bc E3A04044 			mov   r4, #'D'
+ 241 01c0 EB000027 			bl    uart0_send_byte
+ 242              	
+ 243              	// Interrupt Handler
+ 244              	// -------------------------------------------------------------------
+ 245              	isr_handler:
+ 246 01c4 E3A0402D 			mov   r4, #'-'
+ 247 01c8 EB000025 			bl    uart0_send_byte
+ 248 01cc E3A04049 			mov   r4, #'I'
+ 249 01d0 EB000023 			bl    uart0_send_byte
+ 250 01d4 E3A0404E 			mov   r4, #'N'
+ 251 01d8 EB000021 			bl    uart0_send_byte
+ 252 01dc E3A04054 			mov   r4, #'T'
+ 253 01e0 EB00001F 			bl    uart0_send_byte
+ 254 01e4 E3A04020 			mov   r4, #' '
+ 255 01e8 EB00001D 			bl    uart0_send_byte
+ 256 01ec E3A04040 			mov   r4, #'@'
+ 257 01f0 EB00001B 			bl    uart0_send_byte
+ 258              	
+ 259 01f4 E24D7004 			sub   r7, r13, #4
+ 260 01f8 EB00000A 			bl    uart0_print_hex
+ 261              	
+ 262 01fc E3A04020 			mov   r4, #' '
+ 263 0200 EB000017 			bl    uart0_send_byte
+ 264 0204 E3A0405B 			mov   r4, #'['		
+ 265 0208 EB000015 			bl    uart0_send_byte
+ 266              	
+ 267 020c EE197F19 			mrc   p15,0,r7, c9, c9
+ 268 0210 EB000004 			bl    uart0_print_hex
+ 269              	
+ 270 0214 E3A0405D 			mov   r4, #']'
+ 271 0218 EB000011 			bl    uart0_send_byte
+ 272 021c E3A0403E 			mov   r4, #'>'
+ 273 0220 EB00000F 			bl    uart0_send_byte
+ 274 0224 EAFFFFFE 			b .
  275              	
- 276              	// Send 32-bit HEX value via UART0
- 277              	// -------------------------------------------------------------------
- 278              	uart0_print_hex:
- 279 0224 E1A0900E 			mov   r9, lr // save link register
- 280 0228 E3A08020 			mov   r8, #32
- 281              	
- 282              	uart0_print_hex_loop:
- 283 022c E3580000 			cmp   r8, #0
- 284 0230 01A0F009 			moveq pc, r9
- 285              	
- 286 0234 E2488004 			sub   r8, r8, #4
- 287 0238 E1A06837 			mov   r6, r7, lsr r8 // isolate 4-bit value
- 288 023c E206600F 			and   r6, r6, #0x0F
- 289              	
- 290 0240 E3560009 			cmp   r6, #9
- 291 0244 CA000001 			bgt   adapt_char
- 292 0248 E2864030 			add   r4, r6, #'0'
- 293              	
- 294 024c EA000001 			b     uart0_print_hex_char
- 295              	adapt_char:
- 296 0250 E246600A 			sub   r6, r6, #10
- 297 0254 E2864041 			add   r4, r6, #'A'
- 298              	
- 299              	uart0_print_hex_char:
- 300 0258 EB000000 			bl    uart0_send_byte
- 301 025c EAFFFFF2 			b     uart0_print_hex_loop
- 302              	
+ 276              	
+ 277              	// Send 32-bit HEX value via UART0
+ 278              	// -------------------------------------------------------------------
+ 279              	uart0_print_hex:
+ 280 0228 E1A0900E 			mov   r9, lr // save link register
+ 281 022c E3A08020 			mov   r8, #32
+ 282              	
+ 283              	uart0_print_hex_loop:
+ 284 0230 E3580000 			cmp   r8, #0
+ 285 0234 01A0F009 			moveq pc, r9
+ 286              	
+ 287 0238 E2488004 			sub   r8, r8, #4
+ 288 023c E1A06837 			mov   r6, r7, lsr r8 // isolate 4-bit value
+ 289 0240 E206600F 			and   r6, r6, #0x0F
+ 290              	
+ 291 0244 E3560009 			cmp   r6, #9
+ 292 0248 CA000001 			bgt   adapt_char
+ 293 024c E2864030 			add   r4, r6, #'0'
+ 294              	
+ 295 0250 EA000001 			b     uart0_print_hex_char
+ 296              	adapt_char:
+ 297 0254 E246600A 			sub   r6, r6, #10
+ 298 0258 E2864041 			add   r4, r6, #'A'
+ 299              	
+ 300              	uart0_print_hex_char:
+ 301 025c EB000000 			bl    uart0_send_byte
+ 302 0260 EAFFFFF2 			b     uart0_print_hex_loop
  303              	
- 304              	// Send one char via UART0
- 305              	// -------------------------------------------------------------------
- 306              	uart0_send_byte:
- 307 0260 E59F0020 			ldr   r0, =(0xFFFF001C)
- 308 0264 E5900000 			ldr   r0, [r0]
- 309 0268 E2000001 			and   r0, r0, #0x01
- 310 026c E3500000 			cmp   r0, #0
- 311 0270 0AFFFFFA 			beq   uart0_send_byte
- 312 0274 E59F0010 			ldr   r0, =(0xFFFF0018)
- 313 0278 E5804000 			str   r4, [r0]
- 314 027c E1A0F00E 			mov   pc, lr
- 315              	
+ 304              	
+ 305              	// Send one char via UART0
+ 306              	// -------------------------------------------------------------------
+ 307              	uart0_send_byte:
+ 308 0264 E59F0024 			ldr   r0, =(0xFFFF001C)
+ 309 0268 E5900000 			ldr   r0, [r0]
+ 310 026c E2000001 			and   r0, r0, #0x01
+ 311 0270 E3500000 			cmp   r0, #0
+ 312 0274 0AFFFFFA 			beq   uart0_send_byte
+ 313 0278 E59F0014 			ldr   r0, =(0xFFFF0018)
+ 314 027c E5804000 			str   r4, [r0]
+ 315 0280 E1A0F00E 			mov   pc, lr
  316              	
- 318              	        .endfunc
- 319              	
- 320 0280 00000000 	        .end
- 320      00000000 
- 320      FFFF001C 
- 320      FFFF0018 
+ 317              	
+ 319              	        .endfunc
+ 320              	
+ 321 0284 AAAAAAAA 	        .end
+ 321      00000000 
+ 321      00000000 
+ 321      FFFF001C 
+ 321      FFFF0018 
 DEFINED SYMBOLS
                             *ABS*:00000000 build/storm_startup_code.S
 build/storm_startup_code.S:11     *ABS*:00000004 UND_STACK_SIZE
@@ -342,9 +344,9 @@ build/storm_startup_code.S:30     .text:00000000 $a
 build/storm_startup_code.S:35     .text:00000000 _boot
 build/storm_startup_code.S:39     .text:00000000 Vectors
 build/storm_startup_code.S:83     .text:00000050 _start
-build/storm_startup_code.S:229    .text:00000194 und_handler
-build/storm_startup_code.S:213    .text:00000164 swi_handler
-build/storm_startup_code.S:197    .text:00000134 iab_handler
+build/storm_startup_code.S:230    .text:00000198 und_handler
+build/storm_startup_code.S:214    .text:00000168 swi_handler
+build/storm_startup_code.S:198    .text:00000138 iab_handler
 build/storm_startup_code.S:60     .text:00000020 _undf
 build/storm_startup_code.S:60     .text:00000020 $d
 build/storm_startup_code.S:67     .text:00000038 __undf
@@ -361,18 +363,18 @@ build/storm_startup_code.S:72     .text:0000004c __fiq
 build/storm_startup_code.S:67     .text:00000038 $a
 build/storm_startup_code.S:84     .text:00000050 start
 build/storm_startup_code.S:85     .text:00000050 _mainCRTStartup
-build/storm_startup_code.S:172    .text:00000100 _reset
-build/storm_startup_code.S:173    .text:00000100 reset
-build/storm_startup_code.S:174    .text:00000100 exit
-build/storm_startup_code.S:175    .text:00000100 abort
-build/storm_startup_code.S:181    .text:00000104 dab_handler
-build/storm_startup_code.S:306    .text:00000260 uart0_send_byte
-build/storm_startup_code.S:244    .text:000001c0 isr_handler
-build/storm_startup_code.S:278    .text:00000224 uart0_print_hex
-build/storm_startup_code.S:282    .text:0000022c uart0_print_hex_loop
-build/storm_startup_code.S:295    .text:00000250 adapt_char
-build/storm_startup_code.S:299    .text:00000258 uart0_print_hex_char
-build/storm_startup_code.S:320    .text:00000280 $d
+build/storm_startup_code.S:173    .text:00000104 _reset
+build/storm_startup_code.S:174    .text:00000104 reset
+build/storm_startup_code.S:175    .text:00000104 exit
+build/storm_startup_code.S:176    .text:00000104 abort
+build/storm_startup_code.S:182    .text:00000108 dab_handler
+build/storm_startup_code.S:307    .text:00000264 uart0_send_byte
+build/storm_startup_code.S:245    .text:000001c4 isr_handler
+build/storm_startup_code.S:279    .text:00000228 uart0_print_hex
+build/storm_startup_code.S:283    .text:00000230 uart0_print_hex_loop
+build/storm_startup_code.S:296    .text:00000254 adapt_char
+build/storm_startup_code.S:300    .text:0000025c uart0_print_hex_char
+build/storm_startup_code.S:321    .text:00000284 $d
 
 UNDEFINED SYMBOLS
 main

@@ -14,14 +14,14 @@
 
 
 /* ---- IRQ: Timer ISR ---- */
-void __attribute__ ((interrupt("IRQ"))) timer0_isr(void)
-{
-	// toggle status led
-	set_syscpreg((get_syscpreg(SYS_IO) ^ 0x01), SYS_IO);
+// void __attribute__ ((interrupt("IRQ"))) timer0_isr(void)
+// {
+	// // toggle status led
+	// set_syscpreg((get_syscpreg(SYS_IO) ^ 0x01), SYS_IO);
 
-	// acknowledge interrupt
-	VICVectAddr = 0;
-}
+	// // acknowledge interrupt
+	// VICVectAddr = 0;
+// }
 
 
 /* ---- Main function ---- */
@@ -30,13 +30,13 @@ int main(void)
 	int temp;
 
 	// timer init
-	STME0_CNT  = 0;
-	STME0_VAL  = 50000000; // threshold value for 1s ticks
-	STME0_CONF = (1<<2) | (1<<1) | (1<<0); // interrupt en, auto reset, timer enable
-	VICVectAddr0 = (unsigned long)timer0_isr;
-	VICVectCntl0 = (1<<5) | 0; // enable and channel select = 0 (timer0)
-	VICIntEnable = (1<<0); // enable channel 0 (timer0)
-	io_enable_xint(); // enable IRQ
+	// STME0_CNT  = 0;
+	// STME0_VAL  = 50000000; // threshold value for 1s ticks
+	// STME0_CONF = (1<<2) | (1<<1) | (1<<0); // interrupt en, auto reset, timer enable
+	// VICVectAddr0 = (unsigned long)timer0_isr;
+	// VICVectCntl0 = (1<<5) | 0; // enable and channel select = 0 (timer0)
+	// VICIntEnable = (1<<0); // enable channel 0 (timer0)
+	// io_enable_xint(); // enable IRQ
 
 	// Intro
 	uart0_printf("\r\n\r\nSTORM SoC Basic Configuration\r\n");

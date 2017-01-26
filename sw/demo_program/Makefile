@@ -38,7 +38,8 @@ THUMB_IW =
 
 
 ## Create RAM-Image
-RUN_MODE = RAM_RUN
+#RUN_MODE = RAM_RUN
+RUN_MODE = RUN_MODE
 
 
 # Output format. (can be srec, ihex, binary)
