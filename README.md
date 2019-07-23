@@ -12,4 +12,5 @@ The Stor Core processor has a co-processor interface that allow the modification
   changing the SYS_CTRL_l register before loading the Program counter causes the SDRAM controller to read back all 0x0 or 0x0 between
   valid data.
   
+Equivalent to ARM700 processor with instruction set armv3 (no recent linux available).
 
